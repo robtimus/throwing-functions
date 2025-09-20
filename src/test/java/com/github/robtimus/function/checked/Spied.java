@@ -18,6 +18,9 @@
 package com.github.robtimus.function.checked;
 
 import static org.mockito.Mockito.spy;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -27,6 +30,18 @@ import java.util.function.Supplier;
 final class Spied {
 
     private Spied() {
+    }
+
+    static <T, U, X extends Exception> CheckedBiConsumer<T, U, X> checkedBiConsumer(CheckedBiConsumer<T, U, X> consumer) {
+        return spy(new CheckedBiConsumerWrapper<>(consumer));
+    }
+
+    static <T, U, R, X extends Exception> CheckedBiFunction<T, U, R, X> checkedBiFunction(CheckedBiFunction<T, U, R, X> function) {
+        return spy(new CheckedBiFunctionWrapper<>(function));
+    }
+
+    static <T, U, X extends Exception> CheckedBiPredicate<T, U, X> checkedBiPredicate(CheckedBiPredicate<T, U, X> predicate) {
+        return spy(new CheckedBiPredicateWrapper<>(predicate));
     }
 
     static <X extends Exception> CheckedBooleanSupplier<X> checkedBooleanSupplier(CheckedBooleanSupplier<X> supplier) {
@@ -53,6 +68,18 @@ final class Spied {
         return spy(new CheckedSupplierWrapper<>(supplier));
     }
 
+    static <T, U> BiConsumer<T, U> biConsumer(BiConsumer<T, U> consumer) {
+        return spy(new BiConsumerWrapper<>(consumer));
+    }
+
+    static <T, U, R> BiFunction<T, U, R> biFunction(BiFunction<T, U, R> function) {
+        return spy(new BiFunctionWrapper<>(function));
+    }
+
+    static <T, U> BiPredicate<T, U> biPredicate(BiPredicate<T, U> predicate) {
+        return spy(new BiPredicateWrapper<>(predicate));
+    }
+
     static BooleanSupplier booleanSupplier(BooleanSupplier supplier) {
         return spy(new BooleanSupplierWrapper(supplier));
     }
@@ -75,6 +102,48 @@ final class Spied {
 
     static <T> Supplier<T> supplier(Supplier<T> supplier) {
         return spy(new SupplierWrapper<>(supplier));
+    }
+
+    private static final class CheckedBiConsumerWrapper<T, U, X extends Exception> implements CheckedBiConsumer<T, U, X> {
+
+        private CheckedBiConsumer<T, U, X> consumer;
+
+        private CheckedBiConsumerWrapper(CheckedBiConsumer<T, U, X> consumer) {
+            this.consumer = consumer;
+        }
+
+        @Override
+        public void accept(T t, U u) throws X {
+            consumer.accept(t, u);
+        }
+    }
+
+    private static final class CheckedBiFunctionWrapper<T, U, R, X extends Exception> implements CheckedBiFunction<T, U, R, X> {
+
+        private CheckedBiFunction<T, U, R, X> function;
+
+        private CheckedBiFunctionWrapper(CheckedBiFunction<T, U, R, X> function) {
+            this.function = function;
+        }
+
+        @Override
+        public R apply(T t, U u) throws X {
+            return function.apply(t, u);
+        }
+    }
+
+    private static final class CheckedBiPredicateWrapper<T, U, X extends Exception> implements CheckedBiPredicate<T, U, X> {
+
+        private CheckedBiPredicate<T, U, X> predicate;
+
+        private CheckedBiPredicateWrapper(CheckedBiPredicate<T, U, X> predicate) {
+            this.predicate = predicate;
+        }
+
+        @Override
+        public boolean test(T t, U u) throws X {
+            return predicate.test(t, u);
+        }
     }
 
     private static final class CheckedBooleanSupplierWrapper<X extends Exception> implements CheckedBooleanSupplier<X> {
@@ -158,6 +227,48 @@ final class Spied {
         @Override
         public T get() throws X {
             return supplier.get();
+        }
+    }
+
+    private static final class BiConsumerWrapper<T, U> implements BiConsumer<T, U> {
+
+        private BiConsumer<T, U> consumer;
+
+        private BiConsumerWrapper(BiConsumer<T, U> consumer) {
+            this.consumer = consumer;
+        }
+
+        @Override
+        public void accept(T t, U u) {
+            consumer.accept(t, u);
+        }
+    }
+
+    private static final class BiFunctionWrapper<T, U, R> implements BiFunction<T, U, R> {
+
+        private BiFunction<T, U, R> function;
+
+        private BiFunctionWrapper(BiFunction<T, U, R> function) {
+            this.function = function;
+        }
+
+        @Override
+        public R apply(T t, U u) {
+            return function.apply(t, u);
+        }
+    }
+
+    private static final class BiPredicateWrapper<T, U> implements BiPredicate<T, U> {
+
+        private BiPredicate<T, U> predicate;
+
+        private BiPredicateWrapper(BiPredicate<T, U> predicate) {
+            this.predicate = predicate;
+        }
+
+        @Override
+        public boolean test(T t, U u) {
+            return predicate.test(t, u);
         }
     }
 
