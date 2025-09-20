@@ -23,7 +23,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Represents a function that accepts two arguments and produces a result. This is a checked-exception throwing equivalent of {@link Function}.
+ * Represents a function that accepts two arguments and produces a result.
+ * This is a checked-exception throwing equivalent of {@link BiFunction}.
  *
  * @param <T> The type of the first argument to the function.
  * @param <U> The type of the second argument to the function.

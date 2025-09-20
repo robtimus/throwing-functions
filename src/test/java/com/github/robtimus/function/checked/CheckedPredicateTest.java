@@ -1377,26 +1377,6 @@ class CheckedPredicateTest {
     }
 
     @Nested
-    class IsEqual {
-
-        @Test
-        void testNullArgument() throws IOException {
-            CheckedPredicate<String, IOException> predicate = CheckedPredicate.isEqual(null);
-
-            assertTrue(predicate.test(null));
-            assertFalse(predicate.test("foo"));
-        }
-
-        @Test
-        void testNonNullArgument() throws IOException {
-            CheckedPredicate<String, IOException> predicate = CheckedPredicate.isEqual("foo");
-
-            assertFalse(predicate.test(null));
-            assertTrue(predicate.test("foo"));
-        }
-    }
-
-    @Nested
     class Not {
 
         @Test

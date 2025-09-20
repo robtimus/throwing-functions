@@ -311,18 +311,6 @@ public interface CheckedPredicate<T, X extends Exception> {
     }
 
     /**
-     * Returns a predicate that tests if two arguments are equal according to {@link Objects#equals(Object, Object)}.
-     *
-     * @param <T> The type of arguments to the predicate.
-     * @param <X> The type of checked exception that can be thrown.
-     * @param targetRef The object reference with which to compare for equality, which may be {@code null}.
-     * @return A predicate that tests if two arguments are equal according to {@link Objects#equals(Object, Object)}.
-     */
-    static <T, X extends Exception> CheckedPredicate<T, X> isEqual(Object targetRef) {
-        return t -> Objects.equals(targetRef, t);
-    }
-
-    /**
      * Returns a predicate that is the negation of the supplied predicate.
      *
      * @param <T> The type of arguments to the predicate.

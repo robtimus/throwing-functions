@@ -21,11 +21,13 @@ import static org.mockito.Mockito.spy;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.BinaryOperator;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 final class Spied {
 
@@ -38,6 +40,10 @@ final class Spied {
 
     static <T, U, R, X extends Exception> CheckedBiFunction<T, U, R, X> checkedBiFunction(CheckedBiFunction<T, U, R, X> function) {
         return spy(new CheckedBiFunctionWrapper<>(function));
+    }
+
+    static <T, X extends Exception> CheckedBinaryOperator<T, X> checkedBinaryOperator(CheckedBinaryOperator<T, X> operator) {
+        return spy(new CheckedBinaryOperatorWrapper<>(operator));
     }
 
     static <T, U, X extends Exception> CheckedBiPredicate<T, U, X> checkedBiPredicate(CheckedBiPredicate<T, U, X> predicate) {
@@ -68,12 +74,20 @@ final class Spied {
         return spy(new CheckedSupplierWrapper<>(supplier));
     }
 
+    static <T, X extends Exception> CheckedUnaryOperator<T, X> checkedUnaryOperator(CheckedUnaryOperator<T, X> operator) {
+        return spy(new CheckedUnaryOperatorWrapper<>(operator));
+    }
+
     static <T, U> BiConsumer<T, U> biConsumer(BiConsumer<T, U> consumer) {
         return spy(new BiConsumerWrapper<>(consumer));
     }
 
     static <T, U, R> BiFunction<T, U, R> biFunction(BiFunction<T, U, R> function) {
         return spy(new BiFunctionWrapper<>(function));
+    }
+
+    static <T> BinaryOperator<T> binaryOperator(BinaryOperator<T> operator) {
+        return spy(new BinaryOperatorWrapper<>(operator));
     }
 
     static <T, U> BiPredicate<T, U> biPredicate(BiPredicate<T, U> predicate) {
@@ -104,6 +118,10 @@ final class Spied {
         return spy(new SupplierWrapper<>(supplier));
     }
 
+    static <T> UnaryOperator<T> unaryOperator(UnaryOperator<T> operator) {
+        return spy(new UnaryOperatorWrapper<>(operator));
+    }
+
     private static final class CheckedBiConsumerWrapper<T, U, X extends Exception> implements CheckedBiConsumer<T, U, X> {
 
         private CheckedBiConsumer<T, U, X> consumer;
@@ -129,6 +147,20 @@ final class Spied {
         @Override
         public R apply(T t, U u) throws X {
             return function.apply(t, u);
+        }
+    }
+
+    private static final class CheckedBinaryOperatorWrapper<T, X extends Exception> implements CheckedBinaryOperator<T, X> {
+
+        private CheckedBinaryOperator<T, X> operator;
+
+        private CheckedBinaryOperatorWrapper(CheckedBinaryOperator<T, X> operator) {
+            this.operator = operator;
+        }
+
+        @Override
+        public T apply(T t, T u) throws X {
+            return operator.apply(t, u);
         }
     }
 
@@ -230,6 +262,20 @@ final class Spied {
         }
     }
 
+    private static final class CheckedUnaryOperatorWrapper<T, X extends Exception> implements CheckedUnaryOperator<T, X> {
+
+        private CheckedUnaryOperator<T, X> operator;
+
+        private CheckedUnaryOperatorWrapper(CheckedUnaryOperator<T, X> operator) {
+            this.operator = operator;
+        }
+
+        @Override
+        public T apply(T t) throws X {
+            return operator.apply(t);
+        }
+    }
+
     private static final class BiConsumerWrapper<T, U> implements BiConsumer<T, U> {
 
         private BiConsumer<T, U> consumer;
@@ -255,6 +301,20 @@ final class Spied {
         @Override
         public R apply(T t, U u) {
             return function.apply(t, u);
+        }
+    }
+
+    private static final class BinaryOperatorWrapper<T> implements BinaryOperator<T> {
+
+        private BinaryOperator<T> operator;
+
+        private BinaryOperatorWrapper(BinaryOperator<T> operator) {
+            this.operator = operator;
+        }
+
+        @Override
+        public T apply(T t, T u) {
+            return operator.apply(t, u);
         }
     }
 
@@ -353,6 +413,20 @@ final class Spied {
         @Override
         public T get() {
             return supplier.get();
+        }
+    }
+
+    private static final class UnaryOperatorWrapper<T> implements UnaryOperator<T> {
+
+        private UnaryOperator<T> operator;
+
+        private UnaryOperatorWrapper(UnaryOperator<T> operator) {
+            this.operator = operator;
+        }
+
+        @Override
+        public T apply(T t) {
+            return operator.apply(t);
         }
     }
 }
