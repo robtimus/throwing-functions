@@ -24,9 +24,15 @@ import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
+import java.util.function.DoubleSupplier;
 import java.util.function.Function;
+import java.util.function.IntSupplier;
+import java.util.function.LongSupplier;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.function.ToDoubleFunction;
+import java.util.function.ToIntFunction;
+import java.util.function.ToLongFunction;
 import java.util.function.UnaryOperator;
 
 final class Spied {
@@ -58,8 +64,20 @@ final class Spied {
         return spy(new CheckedConsumerWrapper<>(consumer));
     }
 
+    static <X extends Exception> CheckedDoubleSupplier<X> checkedDoubleSupplier(CheckedDoubleSupplier<X> supplier) {
+        return spy(new CheckedDoubleSupplierWrapper<>(supplier));
+    }
+
     static <T, R, X extends Exception> CheckedFunction<T, R, X> checkedFunction(CheckedFunction<T, R, X> function) {
         return spy(new CheckedFunctionWrapper<>(function));
+    }
+
+    static <X extends Exception> CheckedIntSupplier<X> checkedIntSupplier(CheckedIntSupplier<X> supplier) {
+        return spy(new CheckedIntSupplierWrapper<>(supplier));
+    }
+
+    static <X extends Exception> CheckedLongSupplier<X> checkedLongSupplier(CheckedLongSupplier<X> supplier) {
+        return spy(new CheckedLongSupplierWrapper<>(supplier));
     }
 
     static <T, X extends Exception> CheckedPredicate<T, X> checkedPredicate(CheckedPredicate<T, X> predicate) {
@@ -72,6 +90,18 @@ final class Spied {
 
     static <T, X extends Exception> CheckedSupplier<T, X> checkedSupplier(CheckedSupplier<T, X> supplier) {
         return spy(new CheckedSupplierWrapper<>(supplier));
+    }
+
+    static <T, X extends Exception> CheckedToDoubleFunction<T, X> checkedToDoubleFunction(CheckedToDoubleFunction<T, X> function) {
+        return spy(new CheckedToDoubleFunctionWrapper<>(function));
+    }
+
+    static <T, X extends Exception> CheckedToIntFunction<T, X> checkedToIntFunction(CheckedToIntFunction<T, X> function) {
+        return spy(new CheckedToIntFunctionWrapper<>(function));
+    }
+
+    static <T, X extends Exception> CheckedToLongFunction<T, X> checkedToLongFunction(CheckedToLongFunction<T, X> function) {
+        return spy(new CheckedToLongFunctionWrapper<>(function));
     }
 
     static <T, X extends Exception> CheckedUnaryOperator<T, X> checkedUnaryOperator(CheckedUnaryOperator<T, X> operator) {
@@ -102,8 +132,20 @@ final class Spied {
         return spy(new ConsumerWrapper<>(consumer));
     }
 
+    static DoubleSupplier doubleSupplier(DoubleSupplier supplier) {
+        return spy(new DoubleSupplierWrapper(supplier));
+    }
+
     static <T, R> Function<T, R> function(Function<T, R> function) {
         return spy(new FunctionWrapper<>(function));
+    }
+
+    static IntSupplier intSupplier(IntSupplier supplier) {
+        return spy(new IntSupplierWrapper(supplier));
+    }
+
+    static LongSupplier longSupplier(LongSupplier supplier) {
+        return spy(new LongSupplierWrapper(supplier));
     }
 
     static <T> Predicate<T> predicate(Predicate<T> predicate) {
@@ -118,13 +160,25 @@ final class Spied {
         return spy(new SupplierWrapper<>(supplier));
     }
 
+    static <T> ToDoubleFunction<T> toDoubleFunction(ToDoubleFunction<T> function) {
+        return spy(new ToDoubleFunctionWrapper<>(function));
+    }
+
+    static <T> ToIntFunction<T> toIntFunction(ToIntFunction<T> function) {
+        return spy(new ToIntFunctionWrapper<>(function));
+    }
+
+    static <T> ToLongFunction<T> toLongFunction(ToLongFunction<T> function) {
+        return spy(new ToLongFunctionWrapper<>(function));
+    }
+
     static <T> UnaryOperator<T> unaryOperator(UnaryOperator<T> operator) {
         return spy(new UnaryOperatorWrapper<>(operator));
     }
 
     private static final class CheckedBiConsumerWrapper<T, U, X extends Exception> implements CheckedBiConsumer<T, U, X> {
 
-        private CheckedBiConsumer<T, U, X> consumer;
+        private final CheckedBiConsumer<T, U, X> consumer;
 
         private CheckedBiConsumerWrapper(CheckedBiConsumer<T, U, X> consumer) {
             this.consumer = consumer;
@@ -138,7 +192,7 @@ final class Spied {
 
     private static final class CheckedBiFunctionWrapper<T, U, R, X extends Exception> implements CheckedBiFunction<T, U, R, X> {
 
-        private CheckedBiFunction<T, U, R, X> function;
+        private final CheckedBiFunction<T, U, R, X> function;
 
         private CheckedBiFunctionWrapper(CheckedBiFunction<T, U, R, X> function) {
             this.function = function;
@@ -152,7 +206,7 @@ final class Spied {
 
     private static final class CheckedBinaryOperatorWrapper<T, X extends Exception> implements CheckedBinaryOperator<T, X> {
 
-        private CheckedBinaryOperator<T, X> operator;
+        private final CheckedBinaryOperator<T, X> operator;
 
         private CheckedBinaryOperatorWrapper(CheckedBinaryOperator<T, X> operator) {
             this.operator = operator;
@@ -166,7 +220,7 @@ final class Spied {
 
     private static final class CheckedBiPredicateWrapper<T, U, X extends Exception> implements CheckedBiPredicate<T, U, X> {
 
-        private CheckedBiPredicate<T, U, X> predicate;
+        private final CheckedBiPredicate<T, U, X> predicate;
 
         private CheckedBiPredicateWrapper(CheckedBiPredicate<T, U, X> predicate) {
             this.predicate = predicate;
@@ -180,7 +234,7 @@ final class Spied {
 
     private static final class CheckedBooleanSupplierWrapper<X extends Exception> implements CheckedBooleanSupplier<X> {
 
-        private CheckedBooleanSupplier<X> supplier;
+        private final CheckedBooleanSupplier<X> supplier;
 
         private CheckedBooleanSupplierWrapper(CheckedBooleanSupplier<X> supplier) {
             this.supplier = supplier;
@@ -194,7 +248,7 @@ final class Spied {
 
     private static final class CheckedConsumerWrapper<T, X extends Exception> implements CheckedConsumer<T, X> {
 
-        private CheckedConsumer<T, X> consumer;
+        private final CheckedConsumer<T, X> consumer;
 
         private CheckedConsumerWrapper(CheckedConsumer<T, X> consumer) {
             this.consumer = consumer;
@@ -206,9 +260,23 @@ final class Spied {
         }
     }
 
+    private static final class CheckedDoubleSupplierWrapper<X extends Exception> implements CheckedDoubleSupplier<X> {
+
+        private final CheckedDoubleSupplier<X> supplier;
+
+        private CheckedDoubleSupplierWrapper(CheckedDoubleSupplier<X> supplier) {
+            this.supplier = supplier;
+        }
+
+        @Override
+        public double getAsDouble() throws X {
+            return supplier.getAsDouble();
+        }
+    }
+
     private static final class CheckedFunctionWrapper<T, R, X extends Exception> implements CheckedFunction<T, R, X> {
 
-        private CheckedFunction<T, R, X> function;
+        private final CheckedFunction<T, R, X> function;
 
         private CheckedFunctionWrapper(CheckedFunction<T, R, X> function) {
             this.function = function;
@@ -220,9 +288,37 @@ final class Spied {
         }
     }
 
+    private static final class CheckedIntSupplierWrapper<X extends Exception> implements CheckedIntSupplier<X> {
+
+        private final CheckedIntSupplier<X> supplier;
+
+        private CheckedIntSupplierWrapper(CheckedIntSupplier<X> supplier) {
+            this.supplier = supplier;
+        }
+
+        @Override
+        public int getAsInt() throws X {
+            return supplier.getAsInt();
+        }
+    }
+
+    private static final class CheckedLongSupplierWrapper<X extends Exception> implements CheckedLongSupplier<X> {
+
+        private final CheckedLongSupplier<X> supplier;
+
+        private CheckedLongSupplierWrapper(CheckedLongSupplier<X> supplier) {
+            this.supplier = supplier;
+        }
+
+        @Override
+        public long getAsLong() throws X {
+            return supplier.getAsLong();
+        }
+    }
+
     private static final class CheckedPredicateWrapper<T, X extends Exception> implements CheckedPredicate<T, X> {
 
-        private CheckedPredicate<T, X> predicate;
+        private final CheckedPredicate<T, X> predicate;
 
         private CheckedPredicateWrapper(CheckedPredicate<T, X> predicate) {
             this.predicate = predicate;
@@ -236,7 +332,7 @@ final class Spied {
 
     private static final class CheckedRunnableWrapper<X extends Exception> implements CheckedRunnable<X> {
 
-        private CheckedRunnable<X> runnable;
+        private final CheckedRunnable<X> runnable;
 
         private CheckedRunnableWrapper(CheckedRunnable<X> runnable) {
             this.runnable = runnable;
@@ -250,7 +346,7 @@ final class Spied {
 
     private static final class CheckedSupplierWrapper<T, X extends Exception> implements CheckedSupplier<T, X> {
 
-        private CheckedSupplier<T, X> supplier;
+        private final CheckedSupplier<T, X> supplier;
 
         private CheckedSupplierWrapper(CheckedSupplier<T, X> supplier) {
             this.supplier = supplier;
@@ -262,9 +358,51 @@ final class Spied {
         }
     }
 
+    private static final class CheckedToDoubleFunctionWrapper<T, X extends Exception> implements CheckedToDoubleFunction<T, X> {
+
+        private final CheckedToDoubleFunction<T, X> function;
+
+        private CheckedToDoubleFunctionWrapper(CheckedToDoubleFunction<T, X> function) {
+            this.function = function;
+        }
+
+        @Override
+        public double applyAsDouble(T value) throws X {
+            return function.applyAsDouble(value);
+        }
+    }
+
+    private static final class CheckedToIntFunctionWrapper<T, X extends Exception> implements CheckedToIntFunction<T, X> {
+
+        private final CheckedToIntFunction<T, X> function;
+
+        private CheckedToIntFunctionWrapper(CheckedToIntFunction<T, X> function) {
+            this.function = function;
+        }
+
+        @Override
+        public int applyAsInt(T value) throws X {
+            return function.applyAsInt(value);
+        }
+    }
+
+    private static final class CheckedToLongFunctionWrapper<T, X extends Exception> implements CheckedToLongFunction<T, X> {
+
+        private final CheckedToLongFunction<T, X> function;
+
+        private CheckedToLongFunctionWrapper(CheckedToLongFunction<T, X> function) {
+            this.function = function;
+        }
+
+        @Override
+        public long applyAsLong(T value) throws X {
+            return function.applyAsLong(value);
+        }
+    }
+
     private static final class CheckedUnaryOperatorWrapper<T, X extends Exception> implements CheckedUnaryOperator<T, X> {
 
-        private CheckedUnaryOperator<T, X> operator;
+        private final CheckedUnaryOperator<T, X> operator;
 
         private CheckedUnaryOperatorWrapper(CheckedUnaryOperator<T, X> operator) {
             this.operator = operator;
@@ -278,7 +416,7 @@ final class Spied {
 
     private static final class BiConsumerWrapper<T, U> implements BiConsumer<T, U> {
 
-        private BiConsumer<T, U> consumer;
+        private final BiConsumer<T, U> consumer;
 
         private BiConsumerWrapper(BiConsumer<T, U> consumer) {
             this.consumer = consumer;
@@ -292,7 +430,7 @@ final class Spied {
 
     private static final class BiFunctionWrapper<T, U, R> implements BiFunction<T, U, R> {
 
-        private BiFunction<T, U, R> function;
+        private final BiFunction<T, U, R> function;
 
         private BiFunctionWrapper(BiFunction<T, U, R> function) {
             this.function = function;
@@ -306,7 +444,7 @@ final class Spied {
 
     private static final class BinaryOperatorWrapper<T> implements BinaryOperator<T> {
 
-        private BinaryOperator<T> operator;
+        private final BinaryOperator<T> operator;
 
         private BinaryOperatorWrapper(BinaryOperator<T> operator) {
             this.operator = operator;
@@ -320,7 +458,7 @@ final class Spied {
 
     private static final class BiPredicateWrapper<T, U> implements BiPredicate<T, U> {
 
-        private BiPredicate<T, U> predicate;
+        private final BiPredicate<T, U> predicate;
 
         private BiPredicateWrapper(BiPredicate<T, U> predicate) {
             this.predicate = predicate;
@@ -334,7 +472,7 @@ final class Spied {
 
     private static final class BooleanSupplierWrapper implements BooleanSupplier {
 
-        private BooleanSupplier supplier;
+        private final BooleanSupplier supplier;
 
         private BooleanSupplierWrapper(BooleanSupplier supplier) {
             this.supplier = supplier;
@@ -348,7 +486,7 @@ final class Spied {
 
     private static final class ConsumerWrapper<T> implements Consumer<T> {
 
-        private Consumer<T> consumer;
+        private final Consumer<T> consumer;
 
         private ConsumerWrapper(Consumer<T> consumer) {
             this.consumer = consumer;
@@ -360,9 +498,23 @@ final class Spied {
         }
     }
 
+    private static final class DoubleSupplierWrapper implements DoubleSupplier {
+
+        private final DoubleSupplier supplier;
+
+        private DoubleSupplierWrapper(DoubleSupplier supplier) {
+            this.supplier = supplier;
+        }
+
+        @Override
+        public double getAsDouble() {
+            return supplier.getAsDouble();
+        }
+    }
+
     private static final class FunctionWrapper<T, R> implements Function<T, R> {
 
-        private Function<T, R> function;
+        private final Function<T, R> function;
 
         private FunctionWrapper(Function<T, R> function) {
             this.function = function;
@@ -374,9 +526,37 @@ final class Spied {
         }
     }
 
+    private static final class IntSupplierWrapper implements IntSupplier {
+
+        private final IntSupplier supplier;
+
+        private IntSupplierWrapper(IntSupplier supplier) {
+            this.supplier = supplier;
+        }
+
+        @Override
+        public int getAsInt() {
+            return supplier.getAsInt();
+        }
+    }
+
+    private static final class LongSupplierWrapper implements LongSupplier {
+
+        private final LongSupplier supplier;
+
+        private LongSupplierWrapper(LongSupplier supplier) {
+            this.supplier = supplier;
+        }
+
+        @Override
+        public long getAsLong() {
+            return supplier.getAsLong();
+        }
+    }
+
     private static final class PredicateWrapper<T> implements Predicate<T> {
 
-        private Predicate<T> predicate;
+        private final Predicate<T> predicate;
 
         private PredicateWrapper(Predicate<T> predicate) {
             this.predicate = predicate;
@@ -390,7 +570,7 @@ final class Spied {
 
     private static final class RunnableWrapper implements Runnable {
 
-        private Runnable runnable;
+        private final Runnable runnable;
 
         private RunnableWrapper(Runnable runnable) {
             this.runnable = runnable;
@@ -404,7 +584,7 @@ final class Spied {
 
     private static final class SupplierWrapper<T> implements Supplier<T> {
 
-        private Supplier<T> supplier;
+        private final Supplier<T> supplier;
 
         private SupplierWrapper(Supplier<T> supplier) {
             this.supplier = supplier;
@@ -413,6 +593,48 @@ final class Spied {
         @Override
         public T get() {
             return supplier.get();
+        }
+    }
+
+    private static final class ToDoubleFunctionWrapper<T> implements ToDoubleFunction<T> {
+
+        private final ToDoubleFunction<T> function;
+
+        private ToDoubleFunctionWrapper(ToDoubleFunction<T> function) {
+            this.function = function;
+        }
+
+        @Override
+        public double applyAsDouble(T value) {
+            return function.applyAsDouble(value);
+        }
+    }
+
+    private static final class ToIntFunctionWrapper<T> implements ToIntFunction<T> {
+
+        private final ToIntFunction<T> function;
+
+        private ToIntFunctionWrapper(ToIntFunction<T> function) {
+            this.function = function;
+        }
+
+        @Override
+        public int applyAsInt(T value) {
+            return function.applyAsInt(value);
+        }
+    }
+
+    private static final class ToLongFunctionWrapper<T> implements ToLongFunction<T> {
+
+        private final ToLongFunction<T> function;
+
+        private ToLongFunctionWrapper(ToLongFunction<T> function) {
+            this.function = function;
+        }
+
+        @Override
+        public long applyAsLong(T value) {
+            return function.applyAsLong(value);
         }
     }
 

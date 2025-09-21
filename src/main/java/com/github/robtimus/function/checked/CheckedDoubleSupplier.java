@@ -1,5 +1,5 @@
 /*
- * CheckedBooleanSupplier.java
+ * CheckedDoubleSupplier.java
  * Copyright 2025 Rob Spoor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,18 +18,18 @@
 package com.github.robtimus.function.checked;
 
 import java.util.Objects;
-import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.function.ToDoubleFunction;
 
 /**
- * Represents a supplier of {@code boolean}-valued results.
- * This is a checked-exception throwing equivalent of {@link BooleanSupplier}.
+ * Represents a supplier of {@code double}-valued results.
+ * This is a checked-exception throwing equivalent of {@link DoubleSupplier}.
  *
  * @param <X> The type of checked exception that can be thrown.
  */
 @FunctionalInterface
-public interface CheckedBooleanSupplier<X extends Exception> {
+public interface CheckedDoubleSupplier<X extends Exception> {
 
     /**
      * Gets a result.
@@ -37,7 +37,7 @@ public interface CheckedBooleanSupplier<X extends Exception> {
      * @return A result.
      * @throws X If an error occurs.
      */
-    boolean getAsBoolean() throws X;
+    double getAsDouble() throws X;
 
     /**
      * Returns a supplier that calls this supplier. Any checked exception thrown by this supplier is transformed using the given error mapper, and
@@ -48,11 +48,11 @@ public interface CheckedBooleanSupplier<X extends Exception> {
      * @return A supplier that transforms any thrown checked exception.
      * @throws NullPointerException If {@code errorMapper} is {@code null}.
      */
-    default <E extends Exception> CheckedBooleanSupplier<E> onErrorThrowAsChecked(Function<? super X, ? extends E> errorMapper) {
+    default <E extends Exception> CheckedDoubleSupplier<E> onErrorThrowAsChecked(Function<? super X, ? extends E> errorMapper) {
         Objects.requireNonNull(errorMapper);
         return () -> {
             try {
-                return getAsBoolean();
+                return getAsDouble();
             } catch (RuntimeException e) {
                 throw e;
             } catch (Exception e) {
@@ -73,11 +73,11 @@ public interface CheckedBooleanSupplier<X extends Exception> {
      * @return A supplier that transforms any thrown checked exception.
      * @throws NullPointerException If {@code errorMapper} is {@code null}.
      */
-    default <E extends RuntimeException> BooleanSupplier onErrorThrowAsUnchecked(Function<? super X, ? extends E> errorMapper) {
+    default <E extends RuntimeException> DoubleSupplier onErrorThrowAsUnchecked(Function<? super X, ? extends E> errorMapper) {
         Objects.requireNonNull(errorMapper);
         return () -> {
             try {
-                return getAsBoolean();
+                return getAsDouble();
             } catch (RuntimeException e) {
                 throw e;
             } catch (Exception e) {
@@ -94,22 +94,22 @@ public interface CheckedBooleanSupplier<X extends Exception> {
      * the returned supplier returns the transformation result.
      *
      * @param <E> The type of checked exception that can be thrown by the given error handler.
-     * @param errorHandler The function (as a predicate) to use to transform any checked exception thrown by this supplier.
+     * @param errorHandler The function to use to transform any checked exception thrown by this supplier.
      * @return A supplier that transforms any thrown checked exception.
      * @throws NullPointerException If {@code errorHandler} is {@code null}.
      */
-    default <E extends Exception> CheckedBooleanSupplier<E> onErrorHandleChecked(CheckedPredicate<? super X, ? extends E> errorHandler) {
+    default <E extends Exception> CheckedDoubleSupplier<E> onErrorHandleChecked(CheckedToDoubleFunction<? super X, ? extends E> errorHandler) {
         Objects.requireNonNull(errorHandler);
         return () -> {
             try {
-                return getAsBoolean();
+                return getAsDouble();
             } catch (RuntimeException e) {
                 throw e;
             } catch (Exception e) {
                 // This cast is safe, because only RuntimeException (handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
                 X x = (X) e;
-                return errorHandler.test(x);
+                return errorHandler.applyAsDouble(x);
             }
         };
     }
@@ -118,22 +118,22 @@ public interface CheckedBooleanSupplier<X extends Exception> {
      * Returns a supplier that calls this supplier. Any checked exception thrown by this supplier is transformed using the given error handler, and
      * the returned supplier returns the transformation result.
      *
-     * @param errorHandler The function (as a predicate) to use to transform any checked exception thrown by this supplier.
+     * @param errorHandler The function to use to transform any checked exception thrown by this supplier.
      * @return A supplier that transforms any thrown checked exception.
      * @throws NullPointerException If {@code errorHandler} is {@code null}.
      */
-    default BooleanSupplier onErrorHandleUnchecked(Predicate<? super X> errorHandler) {
+    default DoubleSupplier onErrorHandleUnchecked(ToDoubleFunction<? super X> errorHandler) {
         Objects.requireNonNull(errorHandler);
         return () -> {
             try {
-                return getAsBoolean();
+                return getAsDouble();
             } catch (RuntimeException e) {
                 throw e;
             } catch (Exception e) {
                 // This cast is safe, because only RuntimeException (handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
                 X x = (X) e;
-                return errorHandler.test(x);
+                return errorHandler.applyAsDouble(x);
             }
         };
     }
@@ -147,15 +147,15 @@ public interface CheckedBooleanSupplier<X extends Exception> {
      * @return A supplier that invokes the {@code fallback} supplier if this supplier throws any checked exception.
      * @throws NullPointerException If {@code fallback} is {@code null}.
      */
-    default <E extends Exception> CheckedBooleanSupplier<E> onErrorGetCheckedAsBoolean(CheckedBooleanSupplier<? extends E> fallback) {
+    default <E extends Exception> CheckedDoubleSupplier<E> onErrorGetCheckedAsDouble(CheckedDoubleSupplier<? extends E> fallback) {
         Objects.requireNonNull(fallback);
         return () -> {
             try {
-                return getAsBoolean();
+                return getAsDouble();
             } catch (RuntimeException e) {
                 throw e;
             } catch (@SuppressWarnings("unused") Exception e) {
-                return fallback.getAsBoolean();
+                return fallback.getAsDouble();
             }
         };
     }
@@ -168,15 +168,15 @@ public interface CheckedBooleanSupplier<X extends Exception> {
      * @return A supplier that invokes the {@code fallback} supplier if this supplier throws any checked exception.
      * @throws NullPointerException If {@code fallback} is {@code null}.
      */
-    default BooleanSupplier onErrorGetUncheckedAsBoolean(BooleanSupplier fallback) {
+    default DoubleSupplier onErrorGetUncheckedAsDouble(DoubleSupplier fallback) {
         Objects.requireNonNull(fallback);
         return () -> {
             try {
-                return getAsBoolean();
+                return getAsDouble();
             } catch (RuntimeException e) {
                 throw e;
             } catch (@SuppressWarnings("unused") Exception e) {
-                return fallback.getAsBoolean();
+                return fallback.getAsDouble();
             }
         };
     }
@@ -188,10 +188,10 @@ public interface CheckedBooleanSupplier<X extends Exception> {
      * @param fallback The value to return if this supplier throws any checked exception.
      * @return A supplier that returns the {@code fallback} value if this supplier throws any checked exception.
      */
-    default BooleanSupplier onErrorReturn(boolean fallback) {
+    default DoubleSupplier onErrorReturn(double fallback) {
         return () -> {
             try {
-                return getAsBoolean();
+                return getAsDouble();
             } catch (RuntimeException e) {
                 throw e;
             } catch (@SuppressWarnings("unused") Exception e) {
@@ -206,19 +206,19 @@ public interface CheckedBooleanSupplier<X extends Exception> {
      *
      * @return A supplier that wraps any checked exception in an {@link UncheckedException}.
      */
-    default BooleanSupplier unchecked() {
+    default DoubleSupplier unchecked() {
         return onErrorThrowAsUnchecked(UncheckedException::new);
     }
 
     /**
-     * Factory method for turning {@code CheckedBooleanSupplier}-shaped lambdas into {@code CheckedBooleanSuppliers}.
+     * Factory method for turning {@code CheckedDoubleSupplier}-shaped lambdas into {@code CheckedDoubleSuppliers}.
      *
      * @param <X> The type of checked exception that can be thrown.
-     * @param supplier The lambda to return as {@code CheckedBooleanSupplier}.
-     * @return The given lambda as a {@code CheckedBooleanSupplier}.
+     * @param supplier The lambda to return as {@code CheckedDoubleSupplier}.
+     * @return The given lambda as a {@code CheckedDoubleSupplier}.
      * @throws NullPointerException If {@code supplier} is {@code null}.
      */
-    static <X extends Exception> CheckedBooleanSupplier<X> of(CheckedBooleanSupplier<X> supplier) {
+    static <X extends Exception> CheckedDoubleSupplier<X> of(CheckedDoubleSupplier<X> supplier) {
         Objects.requireNonNull(supplier);
         return supplier;
     }
@@ -231,11 +231,11 @@ public interface CheckedBooleanSupplier<X extends Exception> {
      * @return A supplier that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code function} is {@code null}.
      */
-    static BooleanSupplier unchecked(CheckedBooleanSupplier<?> supplier) {
+    static DoubleSupplier unchecked(CheckedDoubleSupplier<?> supplier) {
         Objects.requireNonNull(supplier);
         return () -> {
             try {
-                return supplier.getAsBoolean();
+                return supplier.getAsDouble();
             } catch (RuntimeException e) {
                 throw e;
             } catch (Exception e) {
@@ -246,16 +246,16 @@ public interface CheckedBooleanSupplier<X extends Exception> {
 
     /**
      * Returns a supplier that calls the {@code supplier} supplier. Any unchecked exception thrown by the {@code supplier} supplier is relayed to the
-     * caller. This method allows existing {@link BooleanSupplier} instances to be used where {@code CheckedBooleanSupplier} is expected.
+     * caller. This method allows existing {@link DoubleSupplier} instances to be used where {@code CheckedDoubleSupplier} is expected.
      *
      * @param <X> The type of checked exception that can be thrown.
      * @param supplier The supplier to call when the returned function is invoked.
      * @return A supplier that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code supplier} is {@code null}.
      */
-    static <X extends Exception> CheckedBooleanSupplier<X> checked(BooleanSupplier supplier) {
+    static <X extends Exception> CheckedDoubleSupplier<X> checked(DoubleSupplier supplier) {
         Objects.requireNonNull(supplier);
-        return supplier::getAsBoolean;
+        return supplier::getAsDouble;
     }
 
     /**
@@ -268,7 +268,7 @@ public interface CheckedBooleanSupplier<X extends Exception> {
      * @return A supplier that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code supplier} or {@code errorType} is {@code null}.
      */
-    static <X extends Exception> CheckedBooleanSupplier<X> checked(BooleanSupplier supplier, Class<X> errorType) {
+    static <X extends Exception> CheckedDoubleSupplier<X> checked(DoubleSupplier supplier, Class<X> errorType) {
         Objects.requireNonNull(supplier);
         Objects.requireNonNull(errorType);
         return () -> invokeAndUnwrap(supplier, errorType);
@@ -284,10 +284,10 @@ public interface CheckedBooleanSupplier<X extends Exception> {
      * @throws NullPointerException If {@code supplier} or {@code errorType} is {@code null}.
      * @throws X If {@code supplier} throws an {@link UncheckedException} that wraps an instance of {@code errorType}.
      */
-    static <X extends Exception> boolean invokeAndUnwrap(BooleanSupplier supplier, Class<X> errorType) throws X {
+    static <X extends Exception> double invokeAndUnwrap(DoubleSupplier supplier, Class<X> errorType) throws X {
         Objects.requireNonNull(errorType);
         try {
-            return supplier.getAsBoolean();
+            return supplier.getAsDouble();
         } catch (UncheckedException e) {
             Exception cause = e.getCause();
             if (errorType.isInstance(cause)) {
