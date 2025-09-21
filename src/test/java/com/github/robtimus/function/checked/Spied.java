@@ -30,8 +30,11 @@ import java.util.function.IntSupplier;
 import java.util.function.LongSupplier;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.function.ToDoubleBiFunction;
 import java.util.function.ToDoubleFunction;
+import java.util.function.ToIntBiFunction;
 import java.util.function.ToIntFunction;
+import java.util.function.ToLongBiFunction;
 import java.util.function.ToLongFunction;
 import java.util.function.UnaryOperator;
 
@@ -92,12 +95,24 @@ final class Spied {
         return spy(new CheckedSupplierWrapper<>(supplier));
     }
 
+    static <T, U, X extends Exception> CheckedToDoubleBiFunction<T, U, X> checkedToDoubleBiFunction(CheckedToDoubleBiFunction<T, U, X> function) {
+        return spy(new CheckedToDoubleBiFunctionWrapper<>(function));
+    }
+
     static <T, X extends Exception> CheckedToDoubleFunction<T, X> checkedToDoubleFunction(CheckedToDoubleFunction<T, X> function) {
         return spy(new CheckedToDoubleFunctionWrapper<>(function));
     }
 
+    static <T, U, X extends Exception> CheckedToIntBiFunction<T, U, X> checkedToIntBiFunction(CheckedToIntBiFunction<T, U, X> function) {
+        return spy(new CheckedToIntBiFunctionWrapper<>(function));
+    }
+
     static <T, X extends Exception> CheckedToIntFunction<T, X> checkedToIntFunction(CheckedToIntFunction<T, X> function) {
         return spy(new CheckedToIntFunctionWrapper<>(function));
+    }
+
+    static <T, U, X extends Exception> CheckedToLongBiFunction<T, U, X> checkedToLongBiFunction(CheckedToLongBiFunction<T, U, X> function) {
+        return spy(new CheckedToLongBiFunctionWrapper<>(function));
     }
 
     static <T, X extends Exception> CheckedToLongFunction<T, X> checkedToLongFunction(CheckedToLongFunction<T, X> function) {
@@ -160,12 +175,24 @@ final class Spied {
         return spy(new SupplierWrapper<>(supplier));
     }
 
+    static <T, U> ToDoubleBiFunction<T, U> toDoubleBiFunction(ToDoubleBiFunction<T, U> function) {
+        return spy(new ToDoubleBiFunctionWrapper<>(function));
+    }
+
     static <T> ToDoubleFunction<T> toDoubleFunction(ToDoubleFunction<T> function) {
         return spy(new ToDoubleFunctionWrapper<>(function));
     }
 
+    static <T, U> ToIntBiFunction<T, U> toIntBiFunction(ToIntBiFunction<T, U> function) {
+        return spy(new ToIntBiFunctionWrapper<>(function));
+    }
+
     static <T> ToIntFunction<T> toIntFunction(ToIntFunction<T> function) {
         return spy(new ToIntFunctionWrapper<>(function));
+    }
+
+    static <T, U> ToLongBiFunction<T, U> toLongBiFunction(ToLongBiFunction<T, U> function) {
+        return spy(new ToLongBiFunctionWrapper<>(function));
     }
 
     static <T> ToLongFunction<T> toLongFunction(ToLongFunction<T> function) {
@@ -358,6 +385,20 @@ final class Spied {
         }
     }
 
+    private static final class CheckedToDoubleBiFunctionWrapper<T, U, X extends Exception> implements CheckedToDoubleBiFunction<T, U, X> {
+
+        private final CheckedToDoubleBiFunction<T, U, X> function;
+
+        private CheckedToDoubleBiFunctionWrapper(CheckedToDoubleBiFunction<T, U, X> function) {
+            this.function = function;
+        }
+
+        @Override
+        public double applyAsDouble(T t, U u) throws X {
+            return function.applyAsDouble(t, u);
+        }
+    }
+
     private static final class CheckedToDoubleFunctionWrapper<T, X extends Exception> implements CheckedToDoubleFunction<T, X> {
 
         private final CheckedToDoubleFunction<T, X> function;
@@ -372,6 +413,20 @@ final class Spied {
         }
     }
 
+    private static final class CheckedToIntBiFunctionWrapper<T, U, X extends Exception> implements CheckedToIntBiFunction<T, U, X> {
+
+        private final CheckedToIntBiFunction<T, U, X> function;
+
+        private CheckedToIntBiFunctionWrapper(CheckedToIntBiFunction<T, U, X> function) {
+            this.function = function;
+        }
+
+        @Override
+        public int applyAsInt(T t, U u) throws X {
+            return function.applyAsInt(t, u);
+        }
+    }
+
     private static final class CheckedToIntFunctionWrapper<T, X extends Exception> implements CheckedToIntFunction<T, X> {
 
         private final CheckedToIntFunction<T, X> function;
@@ -383,6 +438,20 @@ final class Spied {
         @Override
         public int applyAsInt(T value) throws X {
             return function.applyAsInt(value);
+        }
+    }
+
+    private static final class CheckedToLongBiFunctionWrapper<T, U, X extends Exception> implements CheckedToLongBiFunction<T, U, X> {
+
+        private final CheckedToLongBiFunction<T, U, X> function;
+
+        private CheckedToLongBiFunctionWrapper(CheckedToLongBiFunction<T, U, X> function) {
+            this.function = function;
+        }
+
+        @Override
+        public long applyAsLong(T t, U u) throws X {
+            return function.applyAsLong(t, u);
         }
     }
 
@@ -596,6 +665,20 @@ final class Spied {
         }
     }
 
+    private static final class ToDoubleBiFunctionWrapper<T, U> implements ToDoubleBiFunction<T, U> {
+
+        private final ToDoubleBiFunction<T, U> function;
+
+        private ToDoubleBiFunctionWrapper(ToDoubleBiFunction<T, U> function) {
+            this.function = function;
+        }
+
+        @Override
+        public double applyAsDouble(T t, U u) {
+            return function.applyAsDouble(t, u);
+        }
+    }
+
     private static final class ToDoubleFunctionWrapper<T> implements ToDoubleFunction<T> {
 
         private final ToDoubleFunction<T> function;
@@ -610,6 +693,20 @@ final class Spied {
         }
     }
 
+    private static final class ToIntBiFunctionWrapper<T, U> implements ToIntBiFunction<T, U> {
+
+        private final ToIntBiFunction<T, U> function;
+
+        private ToIntBiFunctionWrapper(ToIntBiFunction<T, U> function) {
+            this.function = function;
+        }
+
+        @Override
+        public int applyAsInt(T t, U u) {
+            return function.applyAsInt(t, u);
+        }
+    }
+
     private static final class ToIntFunctionWrapper<T> implements ToIntFunction<T> {
 
         private final ToIntFunction<T> function;
@@ -621,6 +718,20 @@ final class Spied {
         @Override
         public int applyAsInt(T value) {
             return function.applyAsInt(value);
+        }
+    }
+
+    private static final class ToLongBiFunctionWrapper<T, U> implements ToLongBiFunction<T, U> {
+
+        private final ToLongBiFunction<T, U> function;
+
+        private ToLongBiFunctionWrapper(ToLongBiFunction<T, U> function) {
+            this.function = function;
+        }
+
+        @Override
+        public long applyAsLong(T t, U u) {
+            return function.applyAsLong(t, u);
         }
     }
 
