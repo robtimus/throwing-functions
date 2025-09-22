@@ -24,10 +24,16 @@ import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
+import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleSupplier;
+import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
+import java.util.function.IntBinaryOperator;
 import java.util.function.IntSupplier;
+import java.util.function.IntUnaryOperator;
+import java.util.function.LongBinaryOperator;
 import java.util.function.LongSupplier;
+import java.util.function.LongUnaryOperator;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.ToDoubleBiFunction;
@@ -67,20 +73,44 @@ final class Spied {
         return spy(new CheckedConsumerWrapper<>(consumer));
     }
 
+    static <X extends Exception> CheckedDoubleBinaryOperator<X> checkedDoubleBinaryOperator(CheckedDoubleBinaryOperator<X> operator) {
+        return spy(new CheckedDoubleBinaryOperatorWrapper<>(operator));
+    }
+
     static <X extends Exception> CheckedDoubleSupplier<X> checkedDoubleSupplier(CheckedDoubleSupplier<X> supplier) {
         return spy(new CheckedDoubleSupplierWrapper<>(supplier));
+    }
+
+    static <X extends Exception> CheckedDoubleUnaryOperator<X> checkedDoubleUnaryOperator(CheckedDoubleUnaryOperator<X> operator) {
+        return spy(new CheckedDoubleUnaryOperatorWrapper<>(operator));
     }
 
     static <T, R, X extends Exception> CheckedFunction<T, R, X> checkedFunction(CheckedFunction<T, R, X> function) {
         return spy(new CheckedFunctionWrapper<>(function));
     }
 
+    static <X extends Exception> CheckedIntBinaryOperator<X> checkedIntBinaryOperator(CheckedIntBinaryOperator<X> operator) {
+        return spy(new CheckedIntBinaryOperatorWrapper<>(operator));
+    }
+
     static <X extends Exception> CheckedIntSupplier<X> checkedIntSupplier(CheckedIntSupplier<X> supplier) {
         return spy(new CheckedIntSupplierWrapper<>(supplier));
     }
 
+    static <X extends Exception> CheckedIntUnaryOperator<X> checkedIntUnaryOperator(CheckedIntUnaryOperator<X> operator) {
+        return spy(new CheckedIntUnaryOperatorWrapper<>(operator));
+    }
+
+    static <X extends Exception> CheckedLongBinaryOperator<X> checkedLongBinaryOperator(CheckedLongBinaryOperator<X> operator) {
+        return spy(new CheckedLongBinaryOperatorWrapper<>(operator));
+    }
+
     static <X extends Exception> CheckedLongSupplier<X> checkedLongSupplier(CheckedLongSupplier<X> supplier) {
         return spy(new CheckedLongSupplierWrapper<>(supplier));
+    }
+
+    static <X extends Exception> CheckedLongUnaryOperator<X> checkedLongUnaryOperator(CheckedLongUnaryOperator<X> operator) {
+        return spy(new CheckedLongUnaryOperatorWrapper<>(operator));
     }
 
     static <T, X extends Exception> CheckedPredicate<T, X> checkedPredicate(CheckedPredicate<T, X> predicate) {
@@ -147,20 +177,44 @@ final class Spied {
         return spy(new ConsumerWrapper<>(consumer));
     }
 
+    static DoubleBinaryOperator doubleBinaryOperator(DoubleBinaryOperator operator) {
+        return spy(new DoubleBinaryOperatorWrapper(operator));
+    }
+
     static DoubleSupplier doubleSupplier(DoubleSupplier supplier) {
         return spy(new DoubleSupplierWrapper(supplier));
+    }
+
+    static DoubleUnaryOperator doubleUnaryOperator(DoubleUnaryOperator operator) {
+        return spy(new DoubleUnaryOperatorWrapper(operator));
     }
 
     static <T, R> Function<T, R> function(Function<T, R> function) {
         return spy(new FunctionWrapper<>(function));
     }
 
+    static IntBinaryOperator intBinaryOperator(IntBinaryOperator operator) {
+        return spy(new IntBinaryOperatorWrapper(operator));
+    }
+
     static IntSupplier intSupplier(IntSupplier supplier) {
         return spy(new IntSupplierWrapper(supplier));
     }
 
+    static IntUnaryOperator intUnaryOperator(IntUnaryOperator operator) {
+        return spy(new IntUnaryOperatorWrapper(operator));
+    }
+
+    static LongBinaryOperator longBinaryOperator(LongBinaryOperator operator) {
+        return spy(new LongBinaryOperatorWrapper(operator));
+    }
+
     static LongSupplier longSupplier(LongSupplier supplier) {
         return spy(new LongSupplierWrapper(supplier));
+    }
+
+    static LongUnaryOperator longUnaryOperator(LongUnaryOperator operator) {
+        return spy(new LongUnaryOperatorWrapper(operator));
     }
 
     static <T> Predicate<T> predicate(Predicate<T> predicate) {
@@ -287,6 +341,20 @@ final class Spied {
         }
     }
 
+    private static final class CheckedDoubleBinaryOperatorWrapper<X extends Exception> implements CheckedDoubleBinaryOperator<X> {
+
+        private final CheckedDoubleBinaryOperator<X> operator;
+
+        private CheckedDoubleBinaryOperatorWrapper(CheckedDoubleBinaryOperator<X> operator) {
+            this.operator = operator;
+        }
+
+        @Override
+        public double applyAsDouble(double t, double u) throws X {
+            return operator.applyAsDouble(t, u);
+        }
+    }
+
     private static final class CheckedDoubleSupplierWrapper<X extends Exception> implements CheckedDoubleSupplier<X> {
 
         private final CheckedDoubleSupplier<X> supplier;
@@ -298,6 +366,20 @@ final class Spied {
         @Override
         public double getAsDouble() throws X {
             return supplier.getAsDouble();
+        }
+    }
+
+    private static final class CheckedDoubleUnaryOperatorWrapper<X extends Exception> implements CheckedDoubleUnaryOperator<X> {
+
+        private final CheckedDoubleUnaryOperator<X> operator;
+
+        private CheckedDoubleUnaryOperatorWrapper(CheckedDoubleUnaryOperator<X> operator) {
+            this.operator = operator;
+        }
+
+        @Override
+        public double applyAsDouble(double t) throws X {
+            return operator.applyAsDouble(t);
         }
     }
 
@@ -315,6 +397,20 @@ final class Spied {
         }
     }
 
+    private static final class CheckedIntBinaryOperatorWrapper<X extends Exception> implements CheckedIntBinaryOperator<X> {
+
+        private final CheckedIntBinaryOperator<X> operator;
+
+        private CheckedIntBinaryOperatorWrapper(CheckedIntBinaryOperator<X> operator) {
+            this.operator = operator;
+        }
+
+        @Override
+        public int applyAsInt(int t, int u) throws X {
+            return operator.applyAsInt(t, u);
+        }
+    }
+
     private static final class CheckedIntSupplierWrapper<X extends Exception> implements CheckedIntSupplier<X> {
 
         private final CheckedIntSupplier<X> supplier;
@@ -329,6 +425,34 @@ final class Spied {
         }
     }
 
+    private static final class CheckedIntUnaryOperatorWrapper<X extends Exception> implements CheckedIntUnaryOperator<X> {
+
+        private final CheckedIntUnaryOperator<X> operator;
+
+        private CheckedIntUnaryOperatorWrapper(CheckedIntUnaryOperator<X> operator) {
+            this.operator = operator;
+        }
+
+        @Override
+        public int applyAsInt(int t) throws X {
+            return operator.applyAsInt(t);
+        }
+    }
+
+    private static final class CheckedLongBinaryOperatorWrapper<X extends Exception> implements CheckedLongBinaryOperator<X> {
+
+        private final CheckedLongBinaryOperator<X> operator;
+
+        private CheckedLongBinaryOperatorWrapper(CheckedLongBinaryOperator<X> operator) {
+            this.operator = operator;
+        }
+
+        @Override
+        public long applyAsLong(long t, long u) throws X {
+            return operator.applyAsLong(t, u);
+        }
+    }
+
     private static final class CheckedLongSupplierWrapper<X extends Exception> implements CheckedLongSupplier<X> {
 
         private final CheckedLongSupplier<X> supplier;
@@ -340,6 +464,20 @@ final class Spied {
         @Override
         public long getAsLong() throws X {
             return supplier.getAsLong();
+        }
+    }
+
+    private static final class CheckedLongUnaryOperatorWrapper<X extends Exception> implements CheckedLongUnaryOperator<X> {
+
+        private final CheckedLongUnaryOperator<X> operator;
+
+        private CheckedLongUnaryOperatorWrapper(CheckedLongUnaryOperator<X> operator) {
+            this.operator = operator;
+        }
+
+        @Override
+        public long applyAsLong(long t) throws X {
+            return operator.applyAsLong(t);
         }
     }
 
@@ -567,6 +705,20 @@ final class Spied {
         }
     }
 
+    private static final class DoubleBinaryOperatorWrapper implements DoubleBinaryOperator {
+
+        private final DoubleBinaryOperator operator;
+
+        private DoubleBinaryOperatorWrapper(DoubleBinaryOperator operator) {
+            this.operator = operator;
+        }
+
+        @Override
+        public double applyAsDouble(double t, double u) {
+            return operator.applyAsDouble(t, u);
+        }
+    }
+
     private static final class DoubleSupplierWrapper implements DoubleSupplier {
 
         private final DoubleSupplier supplier;
@@ -578,6 +730,20 @@ final class Spied {
         @Override
         public double getAsDouble() {
             return supplier.getAsDouble();
+        }
+    }
+
+    private static final class DoubleUnaryOperatorWrapper implements DoubleUnaryOperator {
+
+        private final DoubleUnaryOperator operator;
+
+        private DoubleUnaryOperatorWrapper(DoubleUnaryOperator operator) {
+            this.operator = operator;
+        }
+
+        @Override
+        public double applyAsDouble(double t) {
+            return operator.applyAsDouble(t);
         }
     }
 
@@ -595,6 +761,20 @@ final class Spied {
         }
     }
 
+    private static final class IntBinaryOperatorWrapper implements IntBinaryOperator {
+
+        private final IntBinaryOperator operator;
+
+        private IntBinaryOperatorWrapper(IntBinaryOperator operator) {
+            this.operator = operator;
+        }
+
+        @Override
+        public int applyAsInt(int t, int u) {
+            return operator.applyAsInt(t, u);
+        }
+    }
+
     private static final class IntSupplierWrapper implements IntSupplier {
 
         private final IntSupplier supplier;
@@ -609,6 +789,34 @@ final class Spied {
         }
     }
 
+    private static final class IntUnaryOperatorWrapper implements IntUnaryOperator {
+
+        private final IntUnaryOperator operator;
+
+        private IntUnaryOperatorWrapper(IntUnaryOperator operator) {
+            this.operator = operator;
+        }
+
+        @Override
+        public int applyAsInt(int t) {
+            return operator.applyAsInt(t);
+        }
+    }
+
+    private static final class LongBinaryOperatorWrapper implements LongBinaryOperator {
+
+        private final LongBinaryOperator operator;
+
+        private LongBinaryOperatorWrapper(LongBinaryOperator operator) {
+            this.operator = operator;
+        }
+
+        @Override
+        public long applyAsLong(long t, long u) {
+            return operator.applyAsLong(t, u);
+        }
+    }
+
     private static final class LongSupplierWrapper implements LongSupplier {
 
         private final LongSupplier supplier;
@@ -620,6 +828,20 @@ final class Spied {
         @Override
         public long getAsLong() {
             return supplier.getAsLong();
+        }
+    }
+
+    private static final class LongUnaryOperatorWrapper implements LongUnaryOperator {
+
+        private final LongUnaryOperator operator;
+
+        private LongUnaryOperatorWrapper(LongUnaryOperator operator) {
+            this.operator = operator;
+        }
+
+        @Override
+        public long applyAsLong(long t) {
+            return operator.applyAsLong(t);
         }
     }
 
