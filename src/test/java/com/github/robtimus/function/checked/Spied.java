@@ -25,13 +25,16 @@ import java.util.function.BinaryOperator;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.DoubleBinaryOperator;
+import java.util.function.DoubleConsumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
 import java.util.function.IntBinaryOperator;
+import java.util.function.IntConsumer;
 import java.util.function.IntSupplier;
 import java.util.function.IntUnaryOperator;
 import java.util.function.LongBinaryOperator;
+import java.util.function.LongConsumer;
 import java.util.function.LongSupplier;
 import java.util.function.LongUnaryOperator;
 import java.util.function.Predicate;
@@ -77,6 +80,10 @@ final class Spied {
         return spy(new CheckedDoubleBinaryOperatorWrapper<>(operator));
     }
 
+    static <X extends Exception> CheckedDoubleConsumer<X> checkedDoubleConsumer(CheckedDoubleConsumer<X> consumer) {
+        return spy(new CheckedDoubleConsumerWrapper<>(consumer));
+    }
+
     static <X extends Exception> CheckedDoubleSupplier<X> checkedDoubleSupplier(CheckedDoubleSupplier<X> supplier) {
         return spy(new CheckedDoubleSupplierWrapper<>(supplier));
     }
@@ -93,6 +100,10 @@ final class Spied {
         return spy(new CheckedIntBinaryOperatorWrapper<>(operator));
     }
 
+    static <X extends Exception> CheckedIntConsumer<X> checkedIntConsumer(CheckedIntConsumer<X> consumer) {
+        return spy(new CheckedIntConsumerWrapper<>(consumer));
+    }
+
     static <X extends Exception> CheckedIntSupplier<X> checkedIntSupplier(CheckedIntSupplier<X> supplier) {
         return spy(new CheckedIntSupplierWrapper<>(supplier));
     }
@@ -103,6 +114,10 @@ final class Spied {
 
     static <X extends Exception> CheckedLongBinaryOperator<X> checkedLongBinaryOperator(CheckedLongBinaryOperator<X> operator) {
         return spy(new CheckedLongBinaryOperatorWrapper<>(operator));
+    }
+
+    static <X extends Exception> CheckedLongConsumer<X> checkedLongConsumer(CheckedLongConsumer<X> consumer) {
+        return spy(new CheckedLongConsumerWrapper<>(consumer));
     }
 
     static <X extends Exception> CheckedLongSupplier<X> checkedLongSupplier(CheckedLongSupplier<X> supplier) {
@@ -181,6 +196,10 @@ final class Spied {
         return spy(new DoubleBinaryOperatorWrapper(operator));
     }
 
+    static DoubleConsumer doubleConsumer(DoubleConsumer consumer) {
+        return spy(new DoubleConsumerWrapper(consumer));
+    }
+
     static DoubleSupplier doubleSupplier(DoubleSupplier supplier) {
         return spy(new DoubleSupplierWrapper(supplier));
     }
@@ -197,6 +216,10 @@ final class Spied {
         return spy(new IntBinaryOperatorWrapper(operator));
     }
 
+    static IntConsumer intConsumer(IntConsumer consumer) {
+        return spy(new IntConsumerWrapper(consumer));
+    }
+
     static IntSupplier intSupplier(IntSupplier supplier) {
         return spy(new IntSupplierWrapper(supplier));
     }
@@ -207,6 +230,10 @@ final class Spied {
 
     static LongBinaryOperator longBinaryOperator(LongBinaryOperator operator) {
         return spy(new LongBinaryOperatorWrapper(operator));
+    }
+
+    static LongConsumer longConsumer(LongConsumer consumer) {
+        return spy(new LongConsumerWrapper(consumer));
     }
 
     static LongSupplier longSupplier(LongSupplier supplier) {
@@ -355,6 +382,20 @@ final class Spied {
         }
     }
 
+    private static final class CheckedDoubleConsumerWrapper<X extends Exception> implements CheckedDoubleConsumer<X> {
+
+        private final CheckedDoubleConsumer<X> consumer;
+
+        private CheckedDoubleConsumerWrapper(CheckedDoubleConsumer<X> consumer) {
+            this.consumer = consumer;
+        }
+
+        @Override
+        public void accept(double t) throws X {
+            consumer.accept(t);
+        }
+    }
+
     private static final class CheckedDoubleSupplierWrapper<X extends Exception> implements CheckedDoubleSupplier<X> {
 
         private final CheckedDoubleSupplier<X> supplier;
@@ -411,6 +452,20 @@ final class Spied {
         }
     }
 
+    private static final class CheckedIntConsumerWrapper<X extends Exception> implements CheckedIntConsumer<X> {
+
+        private final CheckedIntConsumer<X> consumer;
+
+        private CheckedIntConsumerWrapper(CheckedIntConsumer<X> consumer) {
+            this.consumer = consumer;
+        }
+
+        @Override
+        public void accept(int t) throws X {
+            consumer.accept(t);
+        }
+    }
+
     private static final class CheckedIntSupplierWrapper<X extends Exception> implements CheckedIntSupplier<X> {
 
         private final CheckedIntSupplier<X> supplier;
@@ -450,6 +505,20 @@ final class Spied {
         @Override
         public long applyAsLong(long t, long u) throws X {
             return operator.applyAsLong(t, u);
+        }
+    }
+
+    private static final class CheckedLongConsumerWrapper<X extends Exception> implements CheckedLongConsumer<X> {
+
+        private final CheckedLongConsumer<X> consumer;
+
+        private CheckedLongConsumerWrapper(CheckedLongConsumer<X> consumer) {
+            this.consumer = consumer;
+        }
+
+        @Override
+        public void accept(long t) throws X {
+            consumer.accept(t);
         }
     }
 
@@ -719,6 +788,20 @@ final class Spied {
         }
     }
 
+    private static final class DoubleConsumerWrapper implements DoubleConsumer {
+
+        private final DoubleConsumer consumer;
+
+        private DoubleConsumerWrapper(DoubleConsumer consumer) {
+            this.consumer = consumer;
+        }
+
+        @Override
+        public void accept(double t) {
+            consumer.accept(t);
+        }
+    }
+
     private static final class DoubleSupplierWrapper implements DoubleSupplier {
 
         private final DoubleSupplier supplier;
@@ -775,6 +858,20 @@ final class Spied {
         }
     }
 
+    private static final class IntConsumerWrapper implements IntConsumer {
+
+        private final IntConsumer consumer;
+
+        private IntConsumerWrapper(IntConsumer consumer) {
+            this.consumer = consumer;
+        }
+
+        @Override
+        public void accept(int t) {
+            consumer.accept(t);
+        }
+    }
+
     private static final class IntSupplierWrapper implements IntSupplier {
 
         private final IntSupplier supplier;
@@ -814,6 +911,20 @@ final class Spied {
         @Override
         public long applyAsLong(long t, long u) {
             return operator.applyAsLong(t, u);
+        }
+    }
+
+    private static final class LongConsumerWrapper implements LongConsumer {
+
+        private final LongConsumer consumer;
+
+        private LongConsumerWrapper(LongConsumer consumer) {
+            this.consumer = consumer;
+        }
+
+        @Override
+        public void accept(long t) {
+            consumer.accept(t);
         }
     }
 
