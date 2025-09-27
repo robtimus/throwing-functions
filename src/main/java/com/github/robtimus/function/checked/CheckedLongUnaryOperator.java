@@ -24,7 +24,7 @@ import java.util.function.LongUnaryOperator;
 import java.util.function.ToLongFunction;
 
 /**
- * Represents an operation on a single {@code long}-valued operand that produces an {@code long}-valued result.
+ * Represents an operation on a single {@code long}-valued operand that produces a {@code long}-valued result.
  * This is a checked-exception throwing equivalent of {@link LongUnaryOperator}.
  *
  * @param <X> The type of checked exception that can be thrown.

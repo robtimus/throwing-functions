@@ -1,5 +1,5 @@
 /*
- * CheckedToDoubleFunction.java
+ * CheckedLongToDoubleFunction.java
  * Copyright 2025 Rob Spoor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,17 +20,17 @@ package com.github.robtimus.function.checked;
 import java.util.Objects;
 import java.util.function.DoubleSupplier;
 import java.util.function.Function;
+import java.util.function.LongToDoubleFunction;
 import java.util.function.ToDoubleFunction;
 
 /**
- * Represents a function that produces a {@code double}-valued result.
- * This is a checked-exception throwing equivalent of {@link ToDoubleFunction}.
+ * Represents a function that accepts a {@code long}-valued argument and produces a {@code double}-valued result.
+ * This is a checked-exception throwing equivalent of {@link LongToDoubleFunction}.
  *
- * @param <T> The type of the input to the function.
  * @param <X> The type of checked exception that can be thrown.
  */
 @FunctionalInterface
-public interface CheckedToDoubleFunction<T, X extends Exception> {
+public interface CheckedLongToDoubleFunction<X extends Exception> {
 
     /**
      * Applies this function to the given argument.
@@ -39,7 +39,7 @@ public interface CheckedToDoubleFunction<T, X extends Exception> {
      * @return The function result.
      * @throws X If an error occurs.
      */
-    double applyAsDouble(T value) throws X;
+    double applyAsDouble(long value) throws X;
 
     /**
      * Returns a function that applies this function to its input. Any checked exception thrown by this function is transformed using the given error
@@ -50,7 +50,7 @@ public interface CheckedToDoubleFunction<T, X extends Exception> {
      * @return A function that transforms any thrown checked exception.
      * @throws NullPointerException If {@code errorMapper} is {@code null}.
      */
-    default <E extends Exception> CheckedToDoubleFunction<T, E> onErrorThrowAsChecked(Function<? super X, ? extends E> errorMapper) {
+    default <E extends Exception> CheckedLongToDoubleFunction<E> onErrorThrowAsChecked(Function<? super X, ? extends E> errorMapper) {
         Objects.requireNonNull(errorMapper);
         return t -> {
             try {
@@ -75,7 +75,7 @@ public interface CheckedToDoubleFunction<T, X extends Exception> {
      * @return A function that transforms any thrown checked exception.
      * @throws NullPointerException If {@code errorMapper} is {@code null}.
      */
-    default <E extends RuntimeException> ToDoubleFunction<T> onErrorThrowAsUnchecked(Function<? super X, ? extends E> errorMapper) {
+    default <E extends RuntimeException> LongToDoubleFunction onErrorThrowAsUnchecked(Function<? super X, ? extends E> errorMapper) {
         Objects.requireNonNull(errorMapper);
         return t -> {
             try {
@@ -100,7 +100,7 @@ public interface CheckedToDoubleFunction<T, X extends Exception> {
      * @return A function that transforms any thrown checked exception.
      * @throws NullPointerException If {@code errorHandler} is {@code null}.
      */
-    default <E extends Exception> CheckedToDoubleFunction<T, E> onErrorHandleChecked(CheckedToDoubleFunction<? super X, ? extends E> errorHandler) {
+    default <E extends Exception> CheckedLongToDoubleFunction<E> onErrorHandleChecked(CheckedToDoubleFunction<? super X, ? extends E> errorHandler) {
         Objects.requireNonNull(errorHandler);
         return t -> {
             try {
@@ -124,7 +124,7 @@ public interface CheckedToDoubleFunction<T, X extends Exception> {
      * @return A function that transforms any thrown checked exception.
      * @throws NullPointerException If {@code errorHandler} is {@code null}.
      */
-    default ToDoubleFunction<T> onErrorHandleUnchecked(ToDoubleFunction<? super X> errorHandler) {
+    default LongToDoubleFunction onErrorHandleUnchecked(ToDoubleFunction<? super X> errorHandler) {
         Objects.requireNonNull(errorHandler);
         return t -> {
             try {
@@ -149,7 +149,7 @@ public interface CheckedToDoubleFunction<T, X extends Exception> {
      * @return A function that invokes the {@code fallback} function if this function throws any checked exception.
      * @throws NullPointerException If {@code fallback} is {@code null}.
      */
-    default <E extends Exception> CheckedToDoubleFunction<T, E> onErrorApplyChecked(CheckedToDoubleFunction<? super T, ? extends E> fallback) {
+    default <E extends Exception> CheckedLongToDoubleFunction<E> onErrorApplyChecked(CheckedLongToDoubleFunction<? extends E> fallback) {
         Objects.requireNonNull(fallback);
         return t -> {
             try {
@@ -170,7 +170,7 @@ public interface CheckedToDoubleFunction<T, X extends Exception> {
      * @return A function that invokes the {@code fallback} function if this function throws any checked exception.
      * @throws NullPointerException If {@code fallback} is {@code null}.
      */
-    default ToDoubleFunction<T> onErrorApplyUnchecked(ToDoubleFunction<? super T> fallback) {
+    default LongToDoubleFunction onErrorApplyUnchecked(LongToDoubleFunction fallback) {
         Objects.requireNonNull(fallback);
         return t -> {
             try {
@@ -192,7 +192,7 @@ public interface CheckedToDoubleFunction<T, X extends Exception> {
      * @return A function that invokes the {@code fallback} supplier if this function throws any checked exception.
      * @throws NullPointerException If {@code fallback} is {@code null}.
      */
-    default <E extends Exception> CheckedToDoubleFunction<T, E> onErrorGetChecked(CheckedDoubleSupplier<? extends E> fallback) {
+    default <E extends Exception> CheckedLongToDoubleFunction<E> onErrorGetChecked(CheckedDoubleSupplier<? extends E> fallback) {
         Objects.requireNonNull(fallback);
         return t -> {
             try {
@@ -213,7 +213,7 @@ public interface CheckedToDoubleFunction<T, X extends Exception> {
      * @return A function that invokes the {@code fallback} supplier if this function throws any checked exception.
      * @throws NullPointerException If {@code fallback} is {@code null}.
      */
-    default ToDoubleFunction<T> onErrorGetUnchecked(DoubleSupplier fallback) {
+    default LongToDoubleFunction onErrorGetUnchecked(DoubleSupplier fallback) {
         Objects.requireNonNull(fallback);
         return t -> {
             try {
@@ -233,7 +233,7 @@ public interface CheckedToDoubleFunction<T, X extends Exception> {
      * @param fallback The value to return if this function throws any checked exception.
      * @return A function that returns the {@code fallback} value if this function throws any checked exception.
      */
-    default ToDoubleFunction<T> onErrorReturn(double fallback) {
+    default LongToDoubleFunction onErrorReturn(double fallback) {
         return t -> {
             try {
                 return applyAsDouble(t);
@@ -251,20 +251,19 @@ public interface CheckedToDoubleFunction<T, X extends Exception> {
      *
      * @return A function that wraps any checked exception in an {@link UncheckedException}.
      */
-    default ToDoubleFunction<T> unchecked() {
+    default LongToDoubleFunction unchecked() {
         return onErrorThrowAsUnchecked(UncheckedException::new);
     }
 
     /**
-     * Factory method for turning {@code CheckedToDoubleFunction}-shaped lambdas into {@code CheckedToDoubleFunctions}.
+     * Factory method for turning {@code CheckedLongToDoubleFunction}-shaped lambdas longo {@code CheckedLongToDoubleFunctions}.
      *
-     * @param <T> The type of the input to the function.
      * @param <X> The type of checked exception that can be thrown.
-     * @param function The lambda to return as {@code CheckedToDoubleFunction}.
-     * @return The given lambda as a {@code CheckedToDoubleFunction}.
+     * @param function The lambda to return as {@code CheckedLongToDoubleFunction}.
+     * @return The given lambda as a {@code CheckedLongToDoubleFunction}.
      * @throws NullPointerException If {@code function} is {@code null}.
      */
-    static <T, X extends Exception> CheckedToDoubleFunction<T, X> of(CheckedToDoubleFunction<T, X> function) {
+    static <X extends Exception> CheckedLongToDoubleFunction<X> of(CheckedLongToDoubleFunction<X> function) {
         Objects.requireNonNull(function);
         return function;
     }
@@ -273,29 +272,26 @@ public interface CheckedToDoubleFunction<T, X extends Exception> {
      * Returns a function that applies the {@code function} function to its input. Any checked exception thrown by the {@code function} function is
      * wrapped in an {@link UncheckedException}.
      *
-     * @param <T> The type of the input to the function.
      * @param function The function to apply when the returned function is applied.
      * @return A function that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code function} is {@code null}.
      */
-    @SuppressWarnings("unchecked")
-    static <T> ToDoubleFunction<T> unchecked(CheckedToDoubleFunction<? super T, ?> function) {
+    static LongToDoubleFunction unchecked(CheckedLongToDoubleFunction<?> function) {
         Objects.requireNonNull(function);
-        return (ToDoubleFunction<T>) function.unchecked();
+        return function.unchecked();
     }
 
     /**
      * Returns a function that applies the {@code function} function to its input. Any unchecked exception thrown by the {@code function} function is
-     * relayed to the caller. This method allows existing {@link ToDoubleFunction} instances to be used where {@code CheckedToDoubleFunction} is
-     * expected.
+     * relayed to the caller. This method allows existing {@link LongToDoubleFunction} instances to be used where {@code CheckedLongToDoubleFunction}
+     * is expected.
      *
-     * @param <T> The type of the input to the function.
      * @param <X> The type of checked exception that can be thrown.
      * @param function The function to apply when the returned function is applied.
      * @return A function that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code function} is {@code null}.
      */
-    static <T, X extends Exception> CheckedToDoubleFunction<T, X> checked(ToDoubleFunction<? super T> function) {
+    static <X extends Exception> CheckedLongToDoubleFunction<X> checked(LongToDoubleFunction function) {
         Objects.requireNonNull(function);
         return function::applyAsDouble;
     }
@@ -304,14 +300,13 @@ public interface CheckedToDoubleFunction<T, X extends Exception> {
      * Returns a function that applies the {@code function} function to its input. Any {@link UncheckedException} thrown by the {@code function}
      * function is unwrapped if its cause is an instance of {@code errorType}, otherwise it is relayed to the caller.
      *
-     * @param <T> The type of the input to the function.
      * @param <X> The type of checked exception that can be thrown.
      * @param function The function to apply when the returned function is applied.
      * @param errorType The type of checked exception that can be thrown.
      * @return A function that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code function} or {@code errorType} is {@code null}.
      */
-    static <T, X extends Exception> CheckedToDoubleFunction<T, X> checked(ToDoubleFunction<? super T> function, Class<X> errorType) {
+    static <X extends Exception> CheckedLongToDoubleFunction<X> checked(LongToDoubleFunction function, Class<X> errorType) {
         Objects.requireNonNull(function);
         Objects.requireNonNull(errorType);
         return t -> invokeAndUnwrap(function, t, errorType);
@@ -320,7 +315,6 @@ public interface CheckedToDoubleFunction<T, X extends Exception> {
     /**
      * Invokes a function, unwrapping any {@link UncheckedException} that is thrown if its cause if an instance of {@code errorType}.
      *
-     * @param <T> The type of the input to the function.
      * @param <X> The type of checked exception that can be thrown.
      * @param function The function to invoke.
      * @param input The input to the function.
@@ -329,7 +323,7 @@ public interface CheckedToDoubleFunction<T, X extends Exception> {
      * @throws NullPointerException If {@code function} or {@code errorType} is {@code null}.
      * @throws X If {@code function} throws an {@link UncheckedException} that wraps an instance of {@code errorType}.
      */
-    static <T, X extends Exception> double invokeAndUnwrap(ToDoubleFunction<? super T> function, T input, Class<X> errorType) throws X {
+    static <X extends Exception> double invokeAndUnwrap(LongToDoubleFunction function, long input, Class<X> errorType) throws X {
         Objects.requireNonNull(errorType);
         try {
             return function.applyAsDouble(input);

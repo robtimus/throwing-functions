@@ -23,7 +23,7 @@ import java.util.function.LongSupplier;
 import java.util.function.ToLongFunction;
 
 /**
- * Represents a function that produces an {@code long}-valued result.
+ * Represents a function that produces a {@code long}-valued result.
  * This is a checked-exception throwing equivalent of {@link ToLongFunction}.
  *
  * @param <T> The type of the input to the function.

@@ -29,6 +29,8 @@ import java.util.function.DoubleConsumer;
 import java.util.function.DoubleFunction;
 import java.util.function.DoublePredicate;
 import java.util.function.DoubleSupplier;
+import java.util.function.DoubleToIntFunction;
+import java.util.function.DoubleToLongFunction;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
 import java.util.function.IntBinaryOperator;
@@ -36,12 +38,16 @@ import java.util.function.IntConsumer;
 import java.util.function.IntFunction;
 import java.util.function.IntPredicate;
 import java.util.function.IntSupplier;
+import java.util.function.IntToDoubleFunction;
+import java.util.function.IntToLongFunction;
 import java.util.function.IntUnaryOperator;
 import java.util.function.LongBinaryOperator;
 import java.util.function.LongConsumer;
 import java.util.function.LongFunction;
 import java.util.function.LongPredicate;
 import java.util.function.LongSupplier;
+import java.util.function.LongToDoubleFunction;
+import java.util.function.LongToIntFunction;
 import java.util.function.LongUnaryOperator;
 import java.util.function.ObjDoubleConsumer;
 import java.util.function.ObjIntConsumer;
@@ -105,6 +111,14 @@ final class Spied {
         return spy(new CheckedDoubleSupplierWrapper<>(supplier));
     }
 
+    static <X extends Exception> CheckedDoubleToIntFunction<X> checkedDoubleToIntFunction(CheckedDoubleToIntFunction<X> function) {
+        return spy(new CheckedDoubleToIntFunctionWrapper<>(function));
+    }
+
+    static <X extends Exception> CheckedDoubleToLongFunction<X> checkedDoubleToLongFunction(CheckedDoubleToLongFunction<X> function) {
+        return spy(new CheckedDoubleToLongFunctionWrapper<>(function));
+    }
+
     static <X extends Exception> CheckedDoubleUnaryOperator<X> checkedDoubleUnaryOperator(CheckedDoubleUnaryOperator<X> operator) {
         return spy(new CheckedDoubleUnaryOperatorWrapper<>(operator));
     }
@@ -133,6 +147,14 @@ final class Spied {
         return spy(new CheckedIntSupplierWrapper<>(supplier));
     }
 
+    static <X extends Exception> CheckedIntToDoubleFunction<X> checkedIntToDoubleFunction(CheckedIntToDoubleFunction<X> function) {
+        return spy(new CheckedIntToDoubleFunctionWrapper<>(function));
+    }
+
+    static <X extends Exception> CheckedIntToLongFunction<X> checkedIntToLongFunction(CheckedIntToLongFunction<X> function) {
+        return spy(new CheckedIntToLongFunctionWrapper<>(function));
+    }
+
     static <X extends Exception> CheckedIntUnaryOperator<X> checkedIntUnaryOperator(CheckedIntUnaryOperator<X> operator) {
         return spy(new CheckedIntUnaryOperatorWrapper<>(operator));
     }
@@ -155,6 +177,14 @@ final class Spied {
 
     static <X extends Exception> CheckedLongSupplier<X> checkedLongSupplier(CheckedLongSupplier<X> supplier) {
         return spy(new CheckedLongSupplierWrapper<>(supplier));
+    }
+
+    static <X extends Exception> CheckedLongToDoubleFunction<X> checkedLongToDoubleFunction(CheckedLongToDoubleFunction<X> function) {
+        return spy(new CheckedLongToDoubleFunctionWrapper<>(function));
+    }
+
+    static <X extends Exception> CheckedLongToIntFunction<X> checkedLongToIntFunction(CheckedLongToIntFunction<X> function) {
+        return spy(new CheckedLongToIntFunctionWrapper<>(function));
     }
 
     static <X extends Exception> CheckedLongUnaryOperator<X> checkedLongUnaryOperator(CheckedLongUnaryOperator<X> operator) {
@@ -257,6 +287,14 @@ final class Spied {
         return spy(new DoubleSupplierWrapper(supplier));
     }
 
+    static DoubleToIntFunction doubleToIntFunction(DoubleToIntFunction function) {
+        return spy(new DoubleToIntFunctionWrapper(function));
+    }
+
+    static DoubleToLongFunction doubleToLongFunction(DoubleToLongFunction function) {
+        return spy(new DoubleToLongFunctionWrapper(function));
+    }
+
     static DoubleUnaryOperator doubleUnaryOperator(DoubleUnaryOperator operator) {
         return spy(new DoubleUnaryOperatorWrapper(operator));
     }
@@ -285,6 +323,14 @@ final class Spied {
         return spy(new IntSupplierWrapper(supplier));
     }
 
+    static IntToDoubleFunction intToDoubleFunction(IntToDoubleFunction function) {
+        return spy(new IntToDoubleFunctionWrapper(function));
+    }
+
+    static IntToLongFunction intToLongFunction(IntToLongFunction function) {
+        return spy(new IntToLongFunctionWrapper(function));
+    }
+
     static IntUnaryOperator intUnaryOperator(IntUnaryOperator operator) {
         return spy(new IntUnaryOperatorWrapper(operator));
     }
@@ -307,6 +353,14 @@ final class Spied {
 
     static LongSupplier longSupplier(LongSupplier supplier) {
         return spy(new LongSupplierWrapper(supplier));
+    }
+
+    static LongToDoubleFunction longToDoubleFunction(LongToDoubleFunction function) {
+        return spy(new LongToDoubleFunctionWrapper(function));
+    }
+
+    static LongToIntFunction longToIntFunction(LongToIntFunction function) {
+        return spy(new LongToIntFunctionWrapper(function));
     }
 
     static LongUnaryOperator longUnaryOperator(LongUnaryOperator operator) {
@@ -519,6 +573,34 @@ final class Spied {
         }
     }
 
+    private static final class CheckedDoubleToIntFunctionWrapper<X extends Exception> implements CheckedDoubleToIntFunction<X> {
+
+        private final CheckedDoubleToIntFunction<X> function;
+
+        private CheckedDoubleToIntFunctionWrapper(CheckedDoubleToIntFunction<X> function) {
+            this.function = function;
+        }
+
+        @Override
+        public int applyAsInt(double value) throws X {
+            return function.applyAsInt(value);
+        }
+    }
+
+    private static final class CheckedDoubleToLongFunctionWrapper<X extends Exception> implements CheckedDoubleToLongFunction<X> {
+
+        private final CheckedDoubleToLongFunction<X> function;
+
+        private CheckedDoubleToLongFunctionWrapper(CheckedDoubleToLongFunction<X> function) {
+            this.function = function;
+        }
+
+        @Override
+        public long applyAsLong(double value) throws X {
+            return function.applyAsLong(value);
+        }
+    }
+
     private static final class CheckedDoubleUnaryOperatorWrapper<X extends Exception> implements CheckedDoubleUnaryOperator<X> {
 
         private final CheckedDoubleUnaryOperator<X> operator;
@@ -617,6 +699,34 @@ final class Spied {
         }
     }
 
+    private static final class CheckedIntToDoubleFunctionWrapper<X extends Exception> implements CheckedIntToDoubleFunction<X> {
+
+        private final CheckedIntToDoubleFunction<X> function;
+
+        private CheckedIntToDoubleFunctionWrapper(CheckedIntToDoubleFunction<X> function) {
+            this.function = function;
+        }
+
+        @Override
+        public double applyAsDouble(int value) throws X {
+            return function.applyAsDouble(value);
+        }
+    }
+
+    private static final class CheckedIntToLongFunctionWrapper<X extends Exception> implements CheckedIntToLongFunction<X> {
+
+        private final CheckedIntToLongFunction<X> function;
+
+        private CheckedIntToLongFunctionWrapper(CheckedIntToLongFunction<X> function) {
+            this.function = function;
+        }
+
+        @Override
+        public long applyAsLong(int value) throws X {
+            return function.applyAsLong(value);
+        }
+    }
+
     private static final class CheckedIntUnaryOperatorWrapper<X extends Exception> implements CheckedIntUnaryOperator<X> {
 
         private final CheckedIntUnaryOperator<X> operator;
@@ -698,6 +808,34 @@ final class Spied {
         @Override
         public long getAsLong() throws X {
             return supplier.getAsLong();
+        }
+    }
+
+    private static final class CheckedLongToDoubleFunctionWrapper<X extends Exception> implements CheckedLongToDoubleFunction<X> {
+
+        private final CheckedLongToDoubleFunction<X> function;
+
+        private CheckedLongToDoubleFunctionWrapper(CheckedLongToDoubleFunction<X> function) {
+            this.function = function;
+        }
+
+        @Override
+        public double applyAsDouble(long value) throws X {
+            return function.applyAsDouble(value);
+        }
+    }
+
+    private static final class CheckedLongToIntFunctionWrapper<X extends Exception> implements CheckedLongToIntFunction<X> {
+
+        private final CheckedLongToIntFunction<X> function;
+
+        private CheckedLongToIntFunctionWrapper(CheckedLongToIntFunction<X> function) {
+            this.function = function;
+        }
+
+        @Override
+        public int applyAsInt(long value) throws X {
+            return function.applyAsInt(value);
         }
     }
 
@@ -1051,6 +1189,34 @@ final class Spied {
         }
     }
 
+    private static final class DoubleToIntFunctionWrapper implements DoubleToIntFunction {
+
+        private final DoubleToIntFunction function;
+
+        private DoubleToIntFunctionWrapper(DoubleToIntFunction function) {
+            this.function = function;
+        }
+
+        @Override
+        public int applyAsInt(double value) {
+            return function.applyAsInt(value);
+        }
+    }
+
+    private static final class DoubleToLongFunctionWrapper implements DoubleToLongFunction {
+
+        private final DoubleToLongFunction function;
+
+        private DoubleToLongFunctionWrapper(DoubleToLongFunction function) {
+            this.function = function;
+        }
+
+        @Override
+        public long applyAsLong(double value) {
+            return function.applyAsLong(value);
+        }
+    }
+
     private static final class DoubleUnaryOperatorWrapper implements DoubleUnaryOperator {
 
         private final DoubleUnaryOperator operator;
@@ -1149,6 +1315,34 @@ final class Spied {
         }
     }
 
+    private static final class IntToDoubleFunctionWrapper implements IntToDoubleFunction {
+
+        private final IntToDoubleFunction function;
+
+        private IntToDoubleFunctionWrapper(IntToDoubleFunction function) {
+            this.function = function;
+        }
+
+        @Override
+        public double applyAsDouble(int value) {
+            return function.applyAsDouble(value);
+        }
+    }
+
+    private static final class IntToLongFunctionWrapper implements IntToLongFunction {
+
+        private final IntToLongFunction function;
+
+        private IntToLongFunctionWrapper(IntToLongFunction function) {
+            this.function = function;
+        }
+
+        @Override
+        public long applyAsLong(int value) {
+            return function.applyAsLong(value);
+        }
+    }
+
     private static final class IntUnaryOperatorWrapper implements IntUnaryOperator {
 
         private final IntUnaryOperator operator;
@@ -1230,6 +1424,34 @@ final class Spied {
         @Override
         public long getAsLong() {
             return supplier.getAsLong();
+        }
+    }
+
+    private static final class LongToDoubleFunctionWrapper implements LongToDoubleFunction {
+
+        private final LongToDoubleFunction function;
+
+        private LongToDoubleFunctionWrapper(LongToDoubleFunction function) {
+            this.function = function;
+        }
+
+        @Override
+        public double applyAsDouble(long value) {
+            return function.applyAsDouble(value);
+        }
+    }
+
+    private static final class LongToIntFunctionWrapper implements LongToIntFunction {
+
+        private final LongToIntFunction function;
+
+        private LongToIntFunctionWrapper(LongToIntFunction function) {
+            this.function = function;
+        }
+
+        @Override
+        public int applyAsInt(long value) {
+            return function.applyAsInt(value);
         }
     }
 

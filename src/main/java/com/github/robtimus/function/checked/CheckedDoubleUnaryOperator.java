@@ -24,7 +24,7 @@ import java.util.function.Function;
 import java.util.function.ToDoubleFunction;
 
 /**
- * Represents an operation on a single {@code double}-valued operand that produces an {@code double}-valued result.
+ * Represents an operation on a single {@code double}-valued operand that produces a {@code double}-valued result.
  * This is a checked-exception throwing equivalent of {@link DoubleUnaryOperator}.
  *
  * @param <X> The type of checked exception that can be thrown.
