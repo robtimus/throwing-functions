@@ -46,7 +46,7 @@ class CheckedIntPredicateTest {
 
         @Test
         void testNullArgument() {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
             assertThrows(NullPointerException.class, () -> predicate.and(null));
         }
@@ -56,8 +56,8 @@ class CheckedIntPredicateTest {
 
             @Test
             void testThisMatches() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
-                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(d -> d % 2 == 0);
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
+                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> i % 2 == 0);
 
                 CheckedIntPredicate<IOException> composed = predicate.and(other);
 
@@ -71,8 +71,8 @@ class CheckedIntPredicateTest {
 
             @Test
             void testOtherMatches() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 == 0);
-                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(d -> d % 2 != 0);
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 == 0);
+                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
                 CheckedIntPredicate<IOException> composed = predicate.and(other);
 
@@ -85,8 +85,8 @@ class CheckedIntPredicateTest {
 
             @Test
             void testBothMatch() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
-                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(d -> d > 0);
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
+                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> i > 0);
 
                 CheckedIntPredicate<IOException> composed = predicate.and(other);
 
@@ -100,8 +100,8 @@ class CheckedIntPredicateTest {
 
             @Test
             void testNeitherMatches() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
-                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(d -> d > 0);
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
+                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> i > 0);
 
                 CheckedIntPredicate<IOException> composed = predicate.and(other);
 
@@ -118,10 +118,10 @@ class CheckedIntPredicateTest {
 
             @Test
             void testOtherMatches() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
-                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(d -> d % 2 != 0);
+                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
                 CheckedIntPredicate<IOException> composed = predicate.and(other);
 
@@ -135,10 +135,10 @@ class CheckedIntPredicateTest {
 
             @Test
             void testOtherDoesNotMatch() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
-                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(d -> d % 2 == 0);
+                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> i % 2 == 0);
 
                 CheckedIntPredicate<IOException> composed = predicate.and(other);
 
@@ -156,10 +156,10 @@ class CheckedIntPredicateTest {
 
             @Test
             void testOtherMatches() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                    throw new IllegalStateException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                    throw new IllegalStateException(Integer.toString(i));
                 });
-                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(d -> d % 2 != 0);
+                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
                 CheckedIntPredicate<IOException> composed = predicate.and(other);
 
@@ -173,10 +173,10 @@ class CheckedIntPredicateTest {
 
             @Test
             void testOtherDoesNotMatch() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                    throw new IllegalStateException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                    throw new IllegalStateException(Integer.toString(i));
                 });
-                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(d -> d % 2 == 0);
+                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> i % 2 == 0);
 
                 CheckedIntPredicate<IOException> composed = predicate.and(other);
 
@@ -194,9 +194,9 @@ class CheckedIntPredicateTest {
 
             @Test
             void testThisMatches() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
-                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
+                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 CheckedIntPredicate<IOException> composed = predicate.and(other);
@@ -212,9 +212,9 @@ class CheckedIntPredicateTest {
 
             @Test
             void testThisDoesNotMatch() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 == 0);
-                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 == 0);
+                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 CheckedIntPredicate<IOException> composed = predicate.and(other);
@@ -232,9 +232,9 @@ class CheckedIntPredicateTest {
 
             @Test
             void testThisMatches() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
-                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(d -> {
-                    throw new IllegalStateException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
+                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> {
+                    throw new IllegalStateException(Integer.toString(i));
                 });
 
                 CheckedIntPredicate<IOException> composed = predicate.and(other);
@@ -250,9 +250,9 @@ class CheckedIntPredicateTest {
 
             @Test
             void testThisDoesNotMatch() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 == 0);
-                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 == 0);
+                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 CheckedIntPredicate<IOException> composed = predicate.and(other);
@@ -271,7 +271,7 @@ class CheckedIntPredicateTest {
 
         @Test
         void testThisThrowsNothing() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
             CheckedIntPredicate<IOException> negated = predicate.negate();
 
@@ -286,8 +286,8 @@ class CheckedIntPredicateTest {
 
         @Test
         void testThisThrowsChecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                throw new IOException(Integer.toString(d));
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                throw new IOException(Integer.toString(i));
             });
 
             CheckedIntPredicate<IOException> negated = predicate.negate();
@@ -302,8 +302,8 @@ class CheckedIntPredicateTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                throw new IllegalStateException(Integer.toString(i));
             });
 
             CheckedIntPredicate<IOException> negated = predicate.negate();
@@ -322,7 +322,7 @@ class CheckedIntPredicateTest {
 
         @Test
         void testNullArgument() {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
             assertThrows(NullPointerException.class, () -> predicate.or(null));
         }
@@ -332,8 +332,8 @@ class CheckedIntPredicateTest {
 
             @Test
             void testThisMatches() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
-                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(d -> d % 2 == 0);
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
+                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> i % 2 == 0);
 
                 CheckedIntPredicate<IOException> composed = predicate.or(other);
 
@@ -346,8 +346,8 @@ class CheckedIntPredicateTest {
 
             @Test
             void testOtherMatches() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 == 0);
-                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(d -> d % 2 != 0);
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 == 0);
+                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
                 CheckedIntPredicate<IOException> composed = predicate.or(other);
 
@@ -361,8 +361,8 @@ class CheckedIntPredicateTest {
 
             @Test
             void testBothMatch() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
-                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(d -> d > 0);
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
+                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> i > 0);
 
                 CheckedIntPredicate<IOException> composed = predicate.or(other);
 
@@ -375,8 +375,8 @@ class CheckedIntPredicateTest {
 
             @Test
             void testNeitherMatches() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
-                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(d -> d > 0);
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
+                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> i > 0);
 
                 CheckedIntPredicate<IOException> composed = predicate.or(other);
 
@@ -394,10 +394,10 @@ class CheckedIntPredicateTest {
 
             @Test
             void testOtherMatches() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
-                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(d -> d % 2 != 0);
+                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
                 CheckedIntPredicate<IOException> composed = predicate.or(other);
 
@@ -411,10 +411,10 @@ class CheckedIntPredicateTest {
 
             @Test
             void testOtherDoesNotMatch() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
-                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(d -> d % 2 == 0);
+                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> i % 2 == 0);
 
                 CheckedIntPredicate<IOException> composed = predicate.or(other);
 
@@ -432,10 +432,10 @@ class CheckedIntPredicateTest {
 
             @Test
             void testOtherMatches() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                    throw new IllegalStateException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                    throw new IllegalStateException(Integer.toString(i));
                 });
-                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(d -> d % 2 != 0);
+                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
                 CheckedIntPredicate<IOException> composed = predicate.or(other);
 
@@ -449,10 +449,10 @@ class CheckedIntPredicateTest {
 
             @Test
             void testOtherDoesNotMatch() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                    throw new IllegalStateException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                    throw new IllegalStateException(Integer.toString(i));
                 });
-                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(d -> d % 2 == 0);
+                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> i % 2 == 0);
 
                 CheckedIntPredicate<IOException> composed = predicate.or(other);
 
@@ -470,9 +470,9 @@ class CheckedIntPredicateTest {
 
             @Test
             void testThisMatches() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
-                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
+                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 CheckedIntPredicate<IOException> composed = predicate.or(other);
@@ -486,9 +486,9 @@ class CheckedIntPredicateTest {
 
             @Test
             void testThisDoesNotMatch() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 == 0);
-                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 == 0);
+                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 CheckedIntPredicate<IOException> composed = predicate.or(other);
@@ -508,9 +508,9 @@ class CheckedIntPredicateTest {
 
             @Test
             void testThisMatches() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
-                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(d -> {
-                    throw new IllegalStateException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
+                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> {
+                    throw new IllegalStateException(Integer.toString(i));
                 });
 
                 CheckedIntPredicate<IOException> composed = predicate.or(other);
@@ -524,9 +524,9 @@ class CheckedIntPredicateTest {
 
             @Test
             void testThisDoesNotMatch() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 == 0);
-                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(d -> {
-                    throw new IllegalStateException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 == 0);
+                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> {
+                    throw new IllegalStateException(Integer.toString(i));
                 });
 
                 CheckedIntPredicate<IOException> composed = predicate.or(other);
@@ -547,14 +547,14 @@ class CheckedIntPredicateTest {
 
         @Test
         void testNullArgument() {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
             assertThrows(NullPointerException.class, () -> predicate.onErrorThrowAsChecked(null));
         }
 
         @Test
         void testThisThrowsNothing() throws IOException, ExecutionException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
             Function<IOException, ExecutionException> errorMapper = Spied.function(ExecutionException::new);
 
@@ -569,8 +569,8 @@ class CheckedIntPredicateTest {
 
         @Test
         void testThisThrowsChecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                throw new IOException(Integer.toString(d));
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                throw new IOException(Integer.toString(i));
             });
 
             Function<IOException, ExecutionException> errorMapper = Spied.function(ExecutionException::new);
@@ -589,8 +589,8 @@ class CheckedIntPredicateTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                throw new IllegalStateException(Integer.toString(i));
             });
 
             Function<IOException, ExecutionException> errorMapper = Spied.function(ExecutionException::new);
@@ -611,14 +611,14 @@ class CheckedIntPredicateTest {
 
         @Test
         void testNullArgument() {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
             assertThrows(NullPointerException.class, () -> predicate.onErrorThrowAsUnchecked(null));
         }
 
         @Test
         void testThisThrowsNothing() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
             Function<IOException, IllegalStateException> errorMapper = Spied.function(IllegalStateException::new);
 
@@ -633,8 +633,8 @@ class CheckedIntPredicateTest {
 
         @Test
         void testThisThrowsChecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                throw new IOException(Integer.toString(d));
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                throw new IOException(Integer.toString(i));
             });
 
             Function<IOException, IllegalStateException> errorMapper = Spied.function(IllegalStateException::new);
@@ -653,8 +653,8 @@ class CheckedIntPredicateTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                throw new IllegalArgumentException(Integer.toString(d));
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                throw new IllegalArgumentException(Integer.toString(i));
             });
 
             Function<IOException, IllegalStateException> errorMapper = Spied.function(IllegalStateException::new);
@@ -675,14 +675,14 @@ class CheckedIntPredicateTest {
 
         @Test
         void testNullArgument() {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
             assertThrows(NullPointerException.class, () -> predicate.onErrorHandleChecked(null));
         }
 
         @Test
         void testThisThrowsNothing() throws IOException, ExecutionException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
             CheckedPredicate<IOException, ExecutionException> errorHandler = Spied.checkedPredicate(e -> e.getMessage() == null);
 
@@ -700,8 +700,8 @@ class CheckedIntPredicateTest {
 
             @Test
             void testHandlerThrowsNothing() throws IOException, ExecutionException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 CheckedPredicate<IOException, ExecutionException> errorHandler = Spied.checkedPredicate(e -> e.getMessage() == null);
@@ -718,8 +718,8 @@ class CheckedIntPredicateTest {
 
             @Test
             void testHandlerThrowsChecked() throws IOException, ExecutionException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 CheckedPredicate<IOException, ExecutionException> errorHandler = Spied.checkedPredicate(e -> {
@@ -740,8 +740,8 @@ class CheckedIntPredicateTest {
 
             @Test
             void testHandlerThrowsUnchecked() throws IOException, ExecutionException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 CheckedPredicate<IOException, ExecutionException> errorHandler = Spied.checkedPredicate(e -> {
@@ -763,8 +763,8 @@ class CheckedIntPredicateTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                throw new IllegalStateException(Integer.toString(i));
             });
 
             CheckedPredicate<IOException, ExecutionException> errorHandler = Spied.checkedPredicate(e -> e.getMessage() == null);
@@ -785,14 +785,14 @@ class CheckedIntPredicateTest {
 
         @Test
         void testNullArgument() {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
             assertThrows(NullPointerException.class, () -> predicate.onErrorHandleUnchecked(null));
         }
 
         @Test
         void testThisThrowsNothing() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
             Predicate<IOException> errorHandler = Spied.predicate(e -> e.getMessage() == null);
 
@@ -810,8 +810,8 @@ class CheckedIntPredicateTest {
 
             @Test
             void testHandlerThrowsNothing() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 Predicate<IOException> errorHandler = Spied.predicate(e -> e.getMessage() == null);
@@ -828,8 +828,8 @@ class CheckedIntPredicateTest {
 
             @Test
             void testHandlerThrowsUnchecked() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 Predicate<IOException> errorHandler = Spied.predicate(e -> {
@@ -851,8 +851,8 @@ class CheckedIntPredicateTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                throw new IllegalStateException(Integer.toString(i));
             });
 
             Predicate<IOException> errorHandler = Spied.predicate(e -> e.getMessage() == null);
@@ -873,16 +873,16 @@ class CheckedIntPredicateTest {
 
         @Test
         void testNullArgument() {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
             assertThrows(NullPointerException.class, () -> predicate.onErrorTestChecked(null));
         }
 
         @Test
         void testThisThrowsNothing() throws IOException, ExecutionException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
-            CheckedIntPredicate<ExecutionException> fallback = Spied.checkedIntPredicate(d -> d % 2 == 0);
+            CheckedIntPredicate<ExecutionException> fallback = Spied.checkedIntPredicate(i -> i % 2 == 0);
 
             CheckedIntPredicate<ExecutionException> testing = predicate.onErrorTestChecked(fallback);
 
@@ -898,11 +898,11 @@ class CheckedIntPredicateTest {
 
             @Test
             void testFallbackThrowsNothing() throws IOException, ParseException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
-                CheckedIntPredicate<ParseException> fallback = Spied.checkedIntPredicate(d -> d % 2 == 0);
+                CheckedIntPredicate<ParseException> fallback = Spied.checkedIntPredicate(i -> i % 2 == 0);
 
                 CheckedIntPredicate<ParseException> testing = predicate.onErrorTestChecked(fallback);
 
@@ -916,12 +916,12 @@ class CheckedIntPredicateTest {
 
             @Test
             void testFallbackThrowsChecked() throws IOException, ParseException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
-                CheckedIntPredicate<ParseException> fallback = Spied.checkedIntPredicate(d -> {
-                    throw new ParseException(Integer.toString(d), 0);
+                CheckedIntPredicate<ParseException> fallback = Spied.checkedIntPredicate(i -> {
+                    throw new ParseException(Integer.toString(i), 0);
                 });
 
                 CheckedIntPredicate<ParseException> testing = predicate.onErrorTestChecked(fallback);
@@ -938,12 +938,12 @@ class CheckedIntPredicateTest {
 
             @Test
             void testFallbackThrowsUnchecked() throws IOException, ParseException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
-                CheckedIntPredicate<ParseException> fallback = Spied.checkedIntPredicate(d -> {
-                    throw new IllegalStateException(Integer.toString(d));
+                CheckedIntPredicate<ParseException> fallback = Spied.checkedIntPredicate(i -> {
+                    throw new IllegalStateException(Integer.toString(i));
                 });
 
                 CheckedIntPredicate<ParseException> testing = predicate.onErrorTestChecked(fallback);
@@ -960,11 +960,11 @@ class CheckedIntPredicateTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                throw new IllegalStateException(Integer.toString(i));
             });
 
-            CheckedIntPredicate<ParseException> fallback = Spied.checkedIntPredicate(d -> d % 2 == 0);
+            CheckedIntPredicate<ParseException> fallback = Spied.checkedIntPredicate(i -> i % 2 == 0);
 
             CheckedIntPredicate<ParseException> testing = predicate.onErrorTestChecked(fallback);
 
@@ -982,16 +982,16 @@ class CheckedIntPredicateTest {
 
         @Test
         void testNullArgument() {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
             assertThrows(NullPointerException.class, () -> predicate.onErrorTestUnchecked(null));
         }
 
         @Test
         void testThisThrowsNothing() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
-            IntPredicate fallback = Spied.intPredicate(d -> d % 2 == 0);
+            IntPredicate fallback = Spied.intPredicate(i -> i % 2 == 0);
 
             IntPredicate testing = predicate.onErrorTestUnchecked(fallback);
 
@@ -1007,11 +1007,11 @@ class CheckedIntPredicateTest {
 
             @Test
             void testFallbackThrowsNothing() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
-                IntPredicate fallback = Spied.intPredicate(d -> d % 2 == 0);
+                IntPredicate fallback = Spied.intPredicate(i -> i % 2 == 0);
 
                 IntPredicate testing = predicate.onErrorTestUnchecked(fallback);
 
@@ -1025,12 +1025,12 @@ class CheckedIntPredicateTest {
 
             @Test
             void testFallbackThrowsUnchecked() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
-                IntPredicate fallback = Spied.intPredicate(d -> {
-                    throw new IllegalStateException(Integer.toString(d));
+                IntPredicate fallback = Spied.intPredicate(i -> {
+                    throw new IllegalStateException(Integer.toString(i));
                 });
 
                 IntPredicate testing = predicate.onErrorTestUnchecked(fallback);
@@ -1047,11 +1047,11 @@ class CheckedIntPredicateTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                throw new IllegalStateException(Integer.toString(i));
             });
 
-            IntPredicate fallback = Spied.intPredicate(d -> d % 2 == 0);
+            IntPredicate fallback = Spied.intPredicate(i -> i % 2 == 0);
 
             IntPredicate testing = predicate.onErrorTestUnchecked(fallback);
 
@@ -1069,14 +1069,14 @@ class CheckedIntPredicateTest {
 
         @Test
         void testNullArgument() {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
             assertThrows(NullPointerException.class, () -> predicate.onErrorGetCheckedAsBoolean(null));
         }
 
         @Test
         void testThisThrowsNothing() throws IOException, ExecutionException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
             CheckedBooleanSupplier<ExecutionException> fallback = Spied.checkedBooleanSupplier(() -> false);
 
@@ -1094,8 +1094,8 @@ class CheckedIntPredicateTest {
 
             @Test
             void testFallbackThrowsNothing() throws IOException, ParseException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 CheckedBooleanSupplier<ParseException> fallback = Spied.checkedBooleanSupplier(() -> false);
@@ -1112,8 +1112,8 @@ class CheckedIntPredicateTest {
 
             @Test
             void testFallbackThrowsChecked() throws IOException, ParseException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 CheckedBooleanSupplier<ParseException> fallback = Spied.checkedBooleanSupplier(() -> {
@@ -1134,8 +1134,8 @@ class CheckedIntPredicateTest {
 
             @Test
             void testFallbackThrowsUnchecked() throws IOException, ParseException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 CheckedBooleanSupplier<ParseException> fallback = Spied.checkedBooleanSupplier(() -> {
@@ -1156,8 +1156,8 @@ class CheckedIntPredicateTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                throw new IllegalStateException(Integer.toString(i));
             });
 
             CheckedBooleanSupplier<ParseException> fallback = Spied.checkedBooleanSupplier(() -> false);
@@ -1178,14 +1178,14 @@ class CheckedIntPredicateTest {
 
         @Test
         void testNullArgument() {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
             assertThrows(NullPointerException.class, () -> predicate.onErrorGetUncheckedAsBoolean(null));
         }
 
         @Test
         void testThisThrowsNothing() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
             BooleanSupplier fallback = Spied.booleanSupplier(() -> false);
 
@@ -1203,8 +1203,8 @@ class CheckedIntPredicateTest {
 
             @Test
             void testFallbackThrowsNothing() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 BooleanSupplier fallback = Spied.booleanSupplier(() -> false);
@@ -1221,8 +1221,8 @@ class CheckedIntPredicateTest {
 
             @Test
             void testFallbackThrowsUnchecked() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 BooleanSupplier fallback = Spied.booleanSupplier(() -> {
@@ -1243,8 +1243,8 @@ class CheckedIntPredicateTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                throw new IllegalStateException(Integer.toString(i));
             });
 
             BooleanSupplier fallback = Spied.booleanSupplier(() -> false);
@@ -1265,7 +1265,7 @@ class CheckedIntPredicateTest {
 
         @Test
         void testThisThrowsNothing() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
             IntPredicate returning = predicate.onErrorReturn(false);
 
@@ -1278,8 +1278,8 @@ class CheckedIntPredicateTest {
 
         @Test
         void testThisThrowsChecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                throw new IOException(Integer.toString(d));
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                throw new IOException(Integer.toString(i));
             });
 
             IntPredicate returning = predicate.onErrorReturn(false);
@@ -1293,8 +1293,8 @@ class CheckedIntPredicateTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                throw new IllegalStateException(Integer.toString(i));
             });
 
             IntPredicate returning = predicate.onErrorReturn(false);
@@ -1313,7 +1313,7 @@ class CheckedIntPredicateTest {
 
         @Test
         void testThisThrowsNothing() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
             IntPredicate unchecked = predicate.unchecked();
 
@@ -1327,8 +1327,8 @@ class CheckedIntPredicateTest {
 
         @Test
         void testThisThrowsChecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                throw new IOException(Integer.toString(d));
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                throw new IOException(Integer.toString(i));
             });
 
             IntPredicate unchecked = predicate.unchecked();
@@ -1345,8 +1345,8 @@ class CheckedIntPredicateTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                throw new IllegalArgumentException(Integer.toString(d));
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                throw new IllegalArgumentException(Integer.toString(i));
             });
 
             IntPredicate unchecked = predicate.unchecked();
@@ -1371,7 +1371,7 @@ class CheckedIntPredicateTest {
 
         @Test
         void testNonNullArgument() throws IOException {
-            CheckedIntPredicate<IOException> predicate = CheckedIntPredicate.of(d -> d % 2 != 0);
+            CheckedIntPredicate<IOException> predicate = CheckedIntPredicate.of(i -> i % 2 != 0);
 
             assertTrue(predicate.test(1));
         }
@@ -1387,7 +1387,7 @@ class CheckedIntPredicateTest {
 
         @Test
         void testArgumentThrowsNothing() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
             CheckedIntPredicate<IOException> negated = CheckedIntPredicate.not(predicate);
 
@@ -1402,8 +1402,8 @@ class CheckedIntPredicateTest {
 
         @Test
         void testArgumentThrowsChecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                throw new IOException(Integer.toString(d));
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                throw new IOException(Integer.toString(i));
             });
 
             CheckedIntPredicate<IOException> negated = CheckedIntPredicate.not(predicate);
@@ -1418,8 +1418,8 @@ class CheckedIntPredicateTest {
 
         @Test
         void testArgumentThrowsUnchecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                throw new IllegalStateException(Integer.toString(i));
             });
 
             CheckedIntPredicate<IOException> negated = CheckedIntPredicate.not(predicate);
@@ -1443,7 +1443,7 @@ class CheckedIntPredicateTest {
 
         @Test
         void testArgumentThrowsNothing() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> d % 2 != 0);
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
             IntPredicate unchecked = CheckedIntPredicate.unchecked(predicate);
 
@@ -1457,8 +1457,8 @@ class CheckedIntPredicateTest {
 
         @Test
         void testArgumentThrowsChecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                throw new IOException(Integer.toString(d));
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                throw new IOException(Integer.toString(i));
             });
 
             IntPredicate unchecked = CheckedIntPredicate.unchecked(predicate);
@@ -1475,8 +1475,8 @@ class CheckedIntPredicateTest {
 
         @Test
         void testArgumentThrowsUnchecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(d -> {
-                throw new IllegalArgumentException(Integer.toString(d));
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
+                throw new IllegalArgumentException(Integer.toString(i));
             });
 
             IntPredicate unchecked = CheckedIntPredicate.unchecked(predicate);
@@ -1501,15 +1501,15 @@ class CheckedIntPredicateTest {
 
         @Test
         void testArgumentThrowsNothing() throws IOException {
-            CheckedIntPredicate<IOException> predicate = CheckedIntPredicate.checked(d -> d % 2 != 0);
+            CheckedIntPredicate<IOException> predicate = CheckedIntPredicate.checked(i -> i % 2 != 0);
 
             assertTrue(predicate.test(1));
         }
 
         @Test
         void testArgumentThrowsUnchecked() {
-            CheckedIntPredicate<IOException> predicate = CheckedIntPredicate.checked(d -> {
-                throw new UncheckedException(Integer.toString(d), new IOException());
+            CheckedIntPredicate<IOException> predicate = CheckedIntPredicate.checked(i -> {
+                throw new UncheckedException(Integer.toString(i), new IOException());
             });
 
             UncheckedException thrown = assertThrows(UncheckedException.class, () -> predicate.test(1));
@@ -1524,7 +1524,7 @@ class CheckedIntPredicateTest {
 
         @Test
         void testNullArguments() {
-            IntPredicate predicate = d -> d % 2 != 0;
+            IntPredicate predicate = i -> i % 2 != 0;
 
             assertThrows(NullPointerException.class, () -> CheckedIntPredicate.checked(null, IOException.class));
             assertThrows(NullPointerException.class, () -> CheckedIntPredicate.checked(predicate, null));
@@ -1532,7 +1532,7 @@ class CheckedIntPredicateTest {
 
         @Test
         void testArgumentThrowsNothing() throws IOException {
-            CheckedIntPredicate<IOException> predicate = CheckedIntPredicate.checked(d -> d % 2 != 0, IOException.class);
+            CheckedIntPredicate<IOException> predicate = CheckedIntPredicate.checked(i -> i % 2 != 0, IOException.class);
 
             assertTrue(predicate.test(1));
         }
@@ -1542,8 +1542,8 @@ class CheckedIntPredicateTest {
 
             @Test
             void testWrappingExactType() {
-                CheckedIntPredicate<IOException> predicate = CheckedIntPredicate.checked(d -> {
-                    throw new UncheckedException(new IOException(Integer.toString(d)));
+                CheckedIntPredicate<IOException> predicate = CheckedIntPredicate.checked(i -> {
+                    throw new UncheckedException(new IOException(Integer.toString(i)));
                 }, IOException.class);
 
                 IOException thrown = assertThrows(IOException.class, () -> predicate.test(1));
@@ -1552,8 +1552,8 @@ class CheckedIntPredicateTest {
 
             @Test
             void testWrappingSubType() {
-                CheckedIntPredicate<IOException> predicate = CheckedIntPredicate.checked(d -> {
-                    throw new UncheckedException(new FileNotFoundException(Integer.toString(d)));
+                CheckedIntPredicate<IOException> predicate = CheckedIntPredicate.checked(i -> {
+                    throw new UncheckedException(new FileNotFoundException(Integer.toString(i)));
                 }, IOException.class);
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class, () -> predicate.test(1));
@@ -1562,8 +1562,8 @@ class CheckedIntPredicateTest {
 
             @Test
             void testWrappingOther() {
-                CheckedIntPredicate<IOException> predicate = CheckedIntPredicate.checked(d -> {
-                    throw new UncheckedException(new ParseException(Integer.toString(d), 0));
+                CheckedIntPredicate<IOException> predicate = CheckedIntPredicate.checked(i -> {
+                    throw new UncheckedException(new ParseException(Integer.toString(i), 0));
                 }, IOException.class);
 
                 UncheckedException thrown = assertThrows(UncheckedException.class, () -> predicate.test(1));
@@ -1575,8 +1575,8 @@ class CheckedIntPredicateTest {
 
         @Test
         void testArgumentThrowsOther() {
-            CheckedIntPredicate<IOException> predicate = CheckedIntPredicate.checked(d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            CheckedIntPredicate<IOException> predicate = CheckedIntPredicate.checked(i -> {
+                throw new IllegalStateException(Integer.toString(i));
             }, IOException.class);
 
             IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> predicate.test(1));
@@ -1597,7 +1597,7 @@ class CheckedIntPredicateTest {
 
         @Test
         void testArgumentThrowsNothing() throws IOException {
-            IntPredicate predicate = d -> d % 2 != 0;
+            IntPredicate predicate = i -> i % 2 != 0;
 
             assertTrue(CheckedIntPredicate.invokeAndUnwrap(predicate, 1, IOException.class));
         }
@@ -1607,8 +1607,8 @@ class CheckedIntPredicateTest {
 
             @Test
             void testWrappingExactType() {
-                IntPredicate predicate = d -> {
-                    throw new UncheckedException(new IOException(Integer.toString(d)));
+                IntPredicate predicate = i -> {
+                    throw new UncheckedException(new IOException(Integer.toString(i)));
                 };
 
                 IOException thrown = assertThrows(IOException.class, () -> CheckedIntPredicate.invokeAndUnwrap(predicate, 1, IOException.class));
@@ -1617,8 +1617,8 @@ class CheckedIntPredicateTest {
 
             @Test
             void testWrappingSubType() {
-                IntPredicate predicate = d -> {
-                    throw new UncheckedException(new FileNotFoundException(Integer.toString(d)));
+                IntPredicate predicate = i -> {
+                    throw new UncheckedException(new FileNotFoundException(Integer.toString(i)));
                 };
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
@@ -1628,8 +1628,8 @@ class CheckedIntPredicateTest {
 
             @Test
             void testWrappingOther() {
-                IntPredicate predicate = d -> {
-                    throw new UncheckedException(new ParseException(Integer.toString(d), 0));
+                IntPredicate predicate = i -> {
+                    throw new UncheckedException(new ParseException(Integer.toString(i), 0));
                 };
 
                 UncheckedException thrown = assertThrows(UncheckedException.class,
@@ -1642,8 +1642,8 @@ class CheckedIntPredicateTest {
 
         @Test
         void testArgumentThrowsOther() {
-            IntPredicate predicate = d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            IntPredicate predicate = i -> {
+                throw new IllegalStateException(Integer.toString(i));
             };
 
             IllegalStateException thrown = assertThrows(IllegalStateException.class,

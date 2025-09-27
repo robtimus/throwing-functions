@@ -64,8 +64,8 @@ class CheckedIntConsumerTest {
 
         @Test
         void testThisThrowsChecked() throws IOException {
-            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(d -> {
-                throw new IOException(Integer.toString(d));
+            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(i -> {
+                throw new IOException(Integer.toString(i));
             });
             CheckedIntConsumer<IOException> after = Spied.checkedIntConsumer(Integer::reverse);
 
@@ -81,8 +81,8 @@ class CheckedIntConsumerTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(i -> {
+                throw new IllegalStateException(Integer.toString(i));
             });
             CheckedIntConsumer<IOException> after = Spied.checkedIntConsumer(Integer::reverse);
 
@@ -99,8 +99,8 @@ class CheckedIntConsumerTest {
         @Test
         void testAfterThrowsChecked() throws IOException {
             CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(Integer::toString);
-            CheckedIntConsumer<IOException> after = Spied.checkedIntConsumer(d -> {
-                throw new IOException(Integer.toString(d));
+            CheckedIntConsumer<IOException> after = Spied.checkedIntConsumer(i -> {
+                throw new IOException(Integer.toString(i));
             });
 
             CheckedIntConsumer<IOException> composed = consumer.andThen(after);
@@ -117,8 +117,8 @@ class CheckedIntConsumerTest {
         @Test
         void testAfterThrowsUnchecked() throws IOException {
             CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(Integer::toString);
-            CheckedIntConsumer<IOException> after = Spied.checkedIntConsumer(d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            CheckedIntConsumer<IOException> after = Spied.checkedIntConsumer(i -> {
+                throw new IllegalStateException(Integer.toString(i));
             });
 
             CheckedIntConsumer<IOException> composed = consumer.andThen(after);
@@ -160,8 +160,8 @@ class CheckedIntConsumerTest {
 
         @Test
         void testThisThrowsChecked() throws IOException {
-            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(d -> {
-                throw new IOException(Integer.toString(d));
+            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(i -> {
+                throw new IOException(Integer.toString(i));
             });
 
             Function<IOException, ExecutionException> errorMapper = Spied.function(ExecutionException::new);
@@ -180,8 +180,8 @@ class CheckedIntConsumerTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(i -> {
+                throw new IllegalStateException(Integer.toString(i));
             });
 
             Function<IOException, ExecutionException> errorMapper = Spied.function(ExecutionException::new);
@@ -224,8 +224,8 @@ class CheckedIntConsumerTest {
 
         @Test
         void testThisThrowsChecked() throws IOException {
-            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(d -> {
-                throw new IOException(Integer.toString(d));
+            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(i -> {
+                throw new IOException(Integer.toString(i));
             });
 
             Function<IOException, IllegalStateException> errorMapper = Spied.function(IllegalStateException::new);
@@ -244,8 +244,8 @@ class CheckedIntConsumerTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(d -> {
-                throw new IllegalArgumentException(Integer.toString(d));
+            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(i -> {
+                throw new IllegalArgumentException(Integer.toString(i));
             });
 
             Function<IOException, IllegalStateException> errorMapper = Spied.function(IllegalStateException::new);
@@ -291,8 +291,8 @@ class CheckedIntConsumerTest {
 
             @Test
             void testHandlerThrowsNothing() throws IOException, ExecutionException {
-                CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 CheckedConsumer<IOException, ExecutionException> errorHandler = Spied.checkedConsumer(Exception::getMessage);
@@ -309,8 +309,8 @@ class CheckedIntConsumerTest {
 
             @Test
             void testHandlerThrowsChecked() throws IOException, ExecutionException {
-                CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 CheckedConsumer<IOException, ExecutionException> errorHandler = Spied.checkedConsumer(e -> {
@@ -331,8 +331,8 @@ class CheckedIntConsumerTest {
 
             @Test
             void testHandlerThrowsUnchecked() throws IOException, ExecutionException {
-                CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 CheckedConsumer<IOException, ExecutionException> errorHandler = Spied.checkedConsumer(e -> {
@@ -354,8 +354,8 @@ class CheckedIntConsumerTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(i -> {
+                throw new IllegalStateException(Integer.toString(i));
             });
 
             CheckedConsumer<IOException, ExecutionException> errorHandler = Spied.checkedConsumer(Exception::getMessage);
@@ -401,8 +401,8 @@ class CheckedIntConsumerTest {
 
             @Test
             void testHandlerThrowsNothing() throws IOException {
-                CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 Consumer<IOException> errorHandler = Spied.consumer(Exception::getMessage);
@@ -419,8 +419,8 @@ class CheckedIntConsumerTest {
 
             @Test
             void testHandlerThrowsUnchecked() throws IOException {
-                CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 Consumer<IOException> errorHandler = Spied.consumer(e -> {
@@ -442,8 +442,8 @@ class CheckedIntConsumerTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(i -> {
+                throw new IllegalStateException(Integer.toString(i));
             });
 
             Consumer<IOException> errorHandler = Spied.consumer(Exception::getMessage);
@@ -489,8 +489,8 @@ class CheckedIntConsumerTest {
 
             @Test
             void testFallbackThrowsNothing() throws IOException, ParseException {
-                CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 CheckedIntConsumer<ParseException> fallback = Spied.checkedIntConsumer(Integer::reverse);
@@ -507,12 +507,12 @@ class CheckedIntConsumerTest {
 
             @Test
             void testFallbackThrowsChecked() throws IOException, ParseException {
-                CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
-                CheckedIntConsumer<ParseException> fallback = Spied.checkedIntConsumer(d -> {
-                    throw new ParseException(Integer.toString(d), 0);
+                CheckedIntConsumer<ParseException> fallback = Spied.checkedIntConsumer(i -> {
+                    throw new ParseException(Integer.toString(i), 0);
                 });
 
                 CheckedIntConsumer<ParseException> applying = consumer.onErrorAcceptChecked(fallback);
@@ -529,12 +529,12 @@ class CheckedIntConsumerTest {
 
             @Test
             void testFallbackThrowsUnchecked() throws IOException, ParseException {
-                CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
-                CheckedIntConsumer<ParseException> fallback = Spied.checkedIntConsumer(d -> {
-                    throw new IllegalStateException(Integer.toString(d));
+                CheckedIntConsumer<ParseException> fallback = Spied.checkedIntConsumer(i -> {
+                    throw new IllegalStateException(Integer.toString(i));
                 });
 
                 CheckedIntConsumer<ParseException> applying = consumer.onErrorAcceptChecked(fallback);
@@ -551,8 +551,8 @@ class CheckedIntConsumerTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(i -> {
+                throw new IllegalStateException(Integer.toString(i));
             });
 
             CheckedIntConsumer<ParseException> fallback = Spied.checkedIntConsumer(Integer::reverse);
@@ -598,8 +598,8 @@ class CheckedIntConsumerTest {
 
             @Test
             void testFallbackThrowsNothing() throws IOException {
-                CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 IntConsumer fallback = Spied.intConsumer(Integer::reverse);
@@ -616,12 +616,12 @@ class CheckedIntConsumerTest {
 
             @Test
             void testFallbackThrowsUnchecked() throws IOException {
-                CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
-                IntConsumer fallback = Spied.intConsumer(d -> {
-                    throw new IllegalStateException(Integer.toString(d));
+                IntConsumer fallback = Spied.intConsumer(i -> {
+                    throw new IllegalStateException(Integer.toString(i));
                 });
 
                 IntConsumer applying = consumer.onErrorAcceptUnchecked(fallback);
@@ -638,8 +638,8 @@ class CheckedIntConsumerTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(i -> {
+                throw new IllegalStateException(Integer.toString(i));
             });
 
             IntConsumer fallback = Spied.intConsumer(Integer::reverse);
@@ -673,8 +673,8 @@ class CheckedIntConsumerTest {
 
         @Test
         void testThisThrowsChecked() throws IOException {
-            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(d -> {
-                throw new IOException(Integer.toString(d));
+            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(i -> {
+                throw new IOException(Integer.toString(i));
             });
 
             IntConsumer discarding = consumer.onErrorDiscard();
@@ -688,8 +688,8 @@ class CheckedIntConsumerTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(i -> {
+                throw new IllegalStateException(Integer.toString(i));
             });
 
             IntConsumer discarding = consumer.onErrorDiscard();
@@ -722,8 +722,8 @@ class CheckedIntConsumerTest {
 
         @Test
         void testThisThrowsChecked() throws IOException {
-            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(d -> {
-                throw new IOException(Integer.toString(d));
+            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(i -> {
+                throw new IOException(Integer.toString(i));
             });
 
             IntConsumer unchecked = consumer.unchecked();
@@ -740,8 +740,8 @@ class CheckedIntConsumerTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(d -> {
-                throw new IllegalArgumentException(Integer.toString(d));
+            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(i -> {
+                throw new IllegalArgumentException(Integer.toString(i));
             });
 
             IntConsumer unchecked = consumer.unchecked();
@@ -801,8 +801,8 @@ class CheckedIntConsumerTest {
 
         @Test
         void testArgumentThrowsChecked() throws IOException {
-            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(d -> {
-                throw new IOException(Integer.toString(d));
+            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(i -> {
+                throw new IOException(Integer.toString(i));
             });
 
             IntConsumer unchecked = CheckedIntConsumer.unchecked(consumer);
@@ -819,8 +819,8 @@ class CheckedIntConsumerTest {
 
         @Test
         void testArgumentThrowsUnchecked() throws IOException {
-            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(d -> {
-                throw new IllegalArgumentException(Integer.toString(d));
+            CheckedIntConsumer<IOException> consumer = Spied.checkedIntConsumer(i -> {
+                throw new IllegalArgumentException(Integer.toString(i));
             });
 
             IntConsumer unchecked = CheckedIntConsumer.unchecked(consumer);
@@ -857,8 +857,8 @@ class CheckedIntConsumerTest {
 
         @Test
         void testArgumentThrowsUnchecked() {
-            CheckedIntConsumer<IOException> consumer = CheckedIntConsumer.checked(d -> {
-                throw new UncheckedException(Integer.toString(d), new IOException());
+            CheckedIntConsumer<IOException> consumer = CheckedIntConsumer.checked(i -> {
+                throw new UncheckedException(Integer.toString(i), new IOException());
             });
 
             UncheckedException thrown = assertThrows(UncheckedException.class, () -> consumer.accept(1));
@@ -896,8 +896,8 @@ class CheckedIntConsumerTest {
 
             @Test
             void testWrappingExactType() {
-                CheckedIntConsumer<IOException> consumer = CheckedIntConsumer.checked(d -> {
-                    throw new UncheckedException(new IOException(Integer.toString(d)));
+                CheckedIntConsumer<IOException> consumer = CheckedIntConsumer.checked(i -> {
+                    throw new UncheckedException(new IOException(Integer.toString(i)));
                 }, IOException.class);
 
                 IOException thrown = assertThrows(IOException.class, () -> consumer.accept(1));
@@ -906,8 +906,8 @@ class CheckedIntConsumerTest {
 
             @Test
             void testWrappingSubType() {
-                CheckedIntConsumer<IOException> consumer = CheckedIntConsumer.checked(d -> {
-                    throw new UncheckedException(new FileNotFoundException(Integer.toString(d)));
+                CheckedIntConsumer<IOException> consumer = CheckedIntConsumer.checked(i -> {
+                    throw new UncheckedException(new FileNotFoundException(Integer.toString(i)));
                 }, IOException.class);
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class, () -> consumer.accept(1));
@@ -916,8 +916,8 @@ class CheckedIntConsumerTest {
 
             @Test
             void testWrappingOther() {
-                CheckedIntConsumer<IOException> consumer = CheckedIntConsumer.checked(d -> {
-                    throw new UncheckedException(new ParseException(Integer.toString(d), 0));
+                CheckedIntConsumer<IOException> consumer = CheckedIntConsumer.checked(i -> {
+                    throw new UncheckedException(new ParseException(Integer.toString(i), 0));
                 }, IOException.class);
 
                 UncheckedException thrown = assertThrows(UncheckedException.class, () -> consumer.accept(1));
@@ -929,8 +929,8 @@ class CheckedIntConsumerTest {
 
         @Test
         void testArgumentThrowsOther() {
-            CheckedIntConsumer<IOException> consumer = CheckedIntConsumer.checked(d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            CheckedIntConsumer<IOException> consumer = CheckedIntConsumer.checked(i -> {
+                throw new IllegalStateException(Integer.toString(i));
             }, IOException.class);
 
             IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> consumer.accept(1));
@@ -964,8 +964,8 @@ class CheckedIntConsumerTest {
 
             @Test
             void testWrappingExactType() {
-                IntConsumer consumer = d -> {
-                    throw new UncheckedException(new IOException(Integer.toString(d)));
+                IntConsumer consumer = i -> {
+                    throw new UncheckedException(new IOException(Integer.toString(i)));
                 };
 
                 IOException thrown = assertThrows(IOException.class, () -> CheckedIntConsumer.invokeAndUnwrap(consumer, 1, IOException.class));
@@ -974,8 +974,8 @@ class CheckedIntConsumerTest {
 
             @Test
             void testWrappingSubType() {
-                IntConsumer consumer = d -> {
-                    throw new UncheckedException(new FileNotFoundException(Integer.toString(d)));
+                IntConsumer consumer = i -> {
+                    throw new UncheckedException(new FileNotFoundException(Integer.toString(i)));
                 };
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
@@ -985,8 +985,8 @@ class CheckedIntConsumerTest {
 
             @Test
             void testWrappingOther() {
-                IntConsumer consumer = d -> {
-                    throw new UncheckedException(new ParseException(Integer.toString(d), 0));
+                IntConsumer consumer = i -> {
+                    throw new UncheckedException(new ParseException(Integer.toString(i), 0));
                 };
 
                 UncheckedException thrown = assertThrows(UncheckedException.class,
@@ -999,8 +999,8 @@ class CheckedIntConsumerTest {
 
         @Test
         void testArgumentThrowsOther() {
-            IntConsumer consumer = d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            IntConsumer consumer = i -> {
+                throw new IllegalStateException(Integer.toString(i));
             };
 
             IllegalStateException thrown = assertThrows(IllegalStateException.class,

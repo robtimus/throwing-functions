@@ -43,6 +43,9 @@ import java.util.function.LongFunction;
 import java.util.function.LongPredicate;
 import java.util.function.LongSupplier;
 import java.util.function.LongUnaryOperator;
+import java.util.function.ObjDoubleConsumer;
+import java.util.function.ObjIntConsumer;
+import java.util.function.ObjLongConsumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.ToDoubleBiFunction;
@@ -156,6 +159,18 @@ final class Spied {
 
     static <X extends Exception> CheckedLongUnaryOperator<X> checkedLongUnaryOperator(CheckedLongUnaryOperator<X> operator) {
         return spy(new CheckedLongUnaryOperatorWrapper<>(operator));
+    }
+
+    static <T, X extends Exception> CheckedObjDoubleConsumer<T, X> checkedObjDoubleConsumer(CheckedObjDoubleConsumer<T, X> consumer) {
+        return spy(new CheckedObjDoubleConsumerWrapper<>(consumer));
+    }
+
+    static <T, X extends Exception> CheckedObjIntConsumer<T, X> checkedObjIntConsumer(CheckedObjIntConsumer<T, X> consumer) {
+        return spy(new CheckedObjIntConsumerWrapper<>(consumer));
+    }
+
+    static <T, X extends Exception> CheckedObjLongConsumer<T, X> checkedObjLongConsumer(CheckedObjLongConsumer<T, X> consumer) {
+        return spy(new CheckedObjLongConsumerWrapper<>(consumer));
     }
 
     static <T, X extends Exception> CheckedPredicate<T, X> checkedPredicate(CheckedPredicate<T, X> predicate) {
@@ -296,6 +311,18 @@ final class Spied {
 
     static LongUnaryOperator longUnaryOperator(LongUnaryOperator operator) {
         return spy(new LongUnaryOperatorWrapper(operator));
+    }
+
+    static <T> ObjDoubleConsumer<T> objDoubleConsumer(ObjDoubleConsumer<T> consumer) {
+        return spy(new ObjDoubleConsumerWrapper<>(consumer));
+    }
+
+    static <T> ObjIntConsumer<T> objIntConsumer(ObjIntConsumer<T> consumer) {
+        return spy(new ObjIntConsumerWrapper<>(consumer));
+    }
+
+    static <T> ObjLongConsumer<T> objLongConsumer(ObjLongConsumer<T> consumer) {
+        return spy(new ObjLongConsumerWrapper<>(consumer));
     }
 
     static <T> Predicate<T> predicate(Predicate<T> predicate) {
@@ -685,6 +712,48 @@ final class Spied {
         @Override
         public long applyAsLong(long t) throws X {
             return operator.applyAsLong(t);
+        }
+    }
+
+    private static final class CheckedObjDoubleConsumerWrapper<T, X extends Exception> implements CheckedObjDoubleConsumer<T, X> {
+
+        private final CheckedObjDoubleConsumer<T, X> consumer;
+
+        private CheckedObjDoubleConsumerWrapper(CheckedObjDoubleConsumer<T, X> consumer) {
+            this.consumer = consumer;
+        }
+
+        @Override
+        public void accept(T t, double u) throws X {
+            consumer.accept(t, u);
+        }
+    }
+
+    private static final class CheckedObjIntConsumerWrapper<T, X extends Exception> implements CheckedObjIntConsumer<T, X> {
+
+        private final CheckedObjIntConsumer<T, X> consumer;
+
+        private CheckedObjIntConsumerWrapper(CheckedObjIntConsumer<T, X> consumer) {
+            this.consumer = consumer;
+        }
+
+        @Override
+        public void accept(T t, int u) throws X {
+            consumer.accept(t, u);
+        }
+    }
+
+    private static final class CheckedObjLongConsumerWrapper<T, X extends Exception> implements CheckedObjLongConsumer<T, X> {
+
+        private final CheckedObjLongConsumer<T, X> consumer;
+
+        private CheckedObjLongConsumerWrapper(CheckedObjLongConsumer<T, X> consumer) {
+            this.consumer = consumer;
+        }
+
+        @Override
+        public void accept(T t, long u) throws X {
+            consumer.accept(t, u);
         }
     }
 
@@ -1175,6 +1244,48 @@ final class Spied {
         @Override
         public long applyAsLong(long t) {
             return operator.applyAsLong(t);
+        }
+    }
+
+    private static final class ObjDoubleConsumerWrapper<T> implements ObjDoubleConsumer<T> {
+
+        private final ObjDoubleConsumer<T> consumer;
+
+        private ObjDoubleConsumerWrapper(ObjDoubleConsumer<T> consumer) {
+            this.consumer = consumer;
+        }
+
+        @Override
+        public void accept(T t, double u) {
+            consumer.accept(t, u);
+        }
+    }
+
+    private static final class ObjIntConsumerWrapper<T> implements ObjIntConsumer<T> {
+
+        private final ObjIntConsumer<T> consumer;
+
+        private ObjIntConsumerWrapper(ObjIntConsumer<T> consumer) {
+            this.consumer = consumer;
+        }
+
+        @Override
+        public void accept(T t, int u) {
+            consumer.accept(t, u);
+        }
+    }
+
+    private static final class ObjLongConsumerWrapper<T> implements ObjLongConsumer<T> {
+
+        private final ObjLongConsumer<T> consumer;
+
+        private ObjLongConsumerWrapper(ObjLongConsumer<T> consumer) {
+            this.consumer = consumer;
+        }
+
+        @Override
+        public void accept(T t, long u) {
+            consumer.accept(t, u);
         }
     }
 

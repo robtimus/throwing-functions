@@ -64,8 +64,8 @@ class CheckedIntFunctionTest {
 
         @Test
         void testThisThrowsChecked() throws IOException {
-            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                throw new IOException(Integer.toString(d));
+            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                throw new IOException(Integer.toString(i));
             });
 
             Function<IOException, ExecutionException> errorMapper = Spied.function(ExecutionException::new);
@@ -84,8 +84,8 @@ class CheckedIntFunctionTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                throw new IllegalStateException(Integer.toString(i));
             });
 
             Function<IOException, ExecutionException> errorMapper = Spied.function(ExecutionException::new);
@@ -128,8 +128,8 @@ class CheckedIntFunctionTest {
 
         @Test
         void testThisThrowsChecked() throws IOException {
-            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                throw new IOException(Integer.toString(d));
+            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                throw new IOException(Integer.toString(i));
             });
 
             Function<IOException, IllegalStateException> errorMapper = Spied.function(IllegalStateException::new);
@@ -148,8 +148,8 @@ class CheckedIntFunctionTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                throw new IllegalArgumentException(Integer.toString(d));
+            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                throw new IllegalArgumentException(Integer.toString(i));
             });
 
             Function<IOException, IllegalStateException> errorMapper = Spied.function(IllegalStateException::new);
@@ -195,8 +195,8 @@ class CheckedIntFunctionTest {
 
             @Test
             void testHandlerThrowsNothing() throws IOException, ExecutionException {
-                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 CheckedFunction<IOException, String, ExecutionException> errorHandler = Spied.checkedFunction(Exception::getMessage);
@@ -213,8 +213,8 @@ class CheckedIntFunctionTest {
 
             @Test
             void testHandlerThrowsChecked() throws IOException, ExecutionException {
-                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 CheckedFunction<IOException, String, ExecutionException> errorHandler = Spied.checkedFunction(e -> {
@@ -235,8 +235,8 @@ class CheckedIntFunctionTest {
 
             @Test
             void testHandlerThrowsUnchecked() throws IOException, ExecutionException {
-                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 CheckedFunction<IOException, String, ExecutionException> errorHandler = Spied.checkedFunction(e -> {
@@ -258,8 +258,8 @@ class CheckedIntFunctionTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                throw new IllegalStateException(Integer.toString(i));
             });
 
             CheckedFunction<IOException, String, ExecutionException> errorHandler = Spied.checkedFunction(Exception::getMessage);
@@ -305,8 +305,8 @@ class CheckedIntFunctionTest {
 
             @Test
             void testHandlerThrowsNothing() throws IOException {
-                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 Function<IOException, String> errorHandler = Spied.function(Exception::getMessage);
@@ -323,8 +323,8 @@ class CheckedIntFunctionTest {
 
             @Test
             void testHandlerThrowsUnchecked() throws IOException {
-                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 Function<IOException, String> errorHandler = Spied.function(e -> {
@@ -346,8 +346,8 @@ class CheckedIntFunctionTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                throw new IllegalStateException(Integer.toString(i));
             });
 
             Function<IOException, String> errorHandler = Spied.function(Exception::getMessage);
@@ -377,7 +377,7 @@ class CheckedIntFunctionTest {
         void testThisThrowsNothing() throws IOException, ExecutionException {
             CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(Integer::toString);
 
-            CheckedIntFunction<String, ExecutionException> fallback = Spied.checkedIntFunction(d -> Integer.toString(d + d));
+            CheckedIntFunction<String, ExecutionException> fallback = Spied.checkedIntFunction(i -> Integer.toString(i + i));
 
             CheckedIntFunction<String, ExecutionException> applying = function.onErrorApplyChecked(fallback);
 
@@ -393,11 +393,11 @@ class CheckedIntFunctionTest {
 
             @Test
             void testFallbackThrowsNothing() throws IOException, ParseException {
-                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
-                CheckedIntFunction<String, ParseException> fallback = Spied.checkedIntFunction(d -> Integer.toString(d + d));
+                CheckedIntFunction<String, ParseException> fallback = Spied.checkedIntFunction(i -> Integer.toString(i + i));
 
                 CheckedIntFunction<String, ParseException> applying = function.onErrorApplyChecked(fallback);
 
@@ -411,12 +411,12 @@ class CheckedIntFunctionTest {
 
             @Test
             void testFallbackThrowsChecked() throws IOException, ParseException {
-                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
-                CheckedIntFunction<String, ParseException> fallback = Spied.checkedIntFunction(d -> {
-                    throw new ParseException(Integer.toString(d), 0);
+                CheckedIntFunction<String, ParseException> fallback = Spied.checkedIntFunction(i -> {
+                    throw new ParseException(Integer.toString(i), 0);
                 });
 
                 CheckedIntFunction<String, ParseException> applying = function.onErrorApplyChecked(fallback);
@@ -433,12 +433,12 @@ class CheckedIntFunctionTest {
 
             @Test
             void testFallbackThrowsUnchecked() throws IOException, ParseException {
-                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
-                CheckedIntFunction<String, ParseException> fallback = Spied.checkedIntFunction(d -> {
-                    throw new IllegalStateException(Integer.toString(d));
+                CheckedIntFunction<String, ParseException> fallback = Spied.checkedIntFunction(i -> {
+                    throw new IllegalStateException(Integer.toString(i));
                 });
 
                 CheckedIntFunction<String, ParseException> applying = function.onErrorApplyChecked(fallback);
@@ -455,11 +455,11 @@ class CheckedIntFunctionTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                throw new IllegalStateException(Integer.toString(i));
             });
 
-            CheckedIntFunction<String, ParseException> fallback = Spied.checkedIntFunction(d -> Integer.toString(d + d));
+            CheckedIntFunction<String, ParseException> fallback = Spied.checkedIntFunction(i -> Integer.toString(i + i));
 
             CheckedIntFunction<String, ParseException> applying = function.onErrorApplyChecked(fallback);
 
@@ -486,7 +486,7 @@ class CheckedIntFunctionTest {
         void testThisThrowsNothing() throws IOException {
             CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(Integer::toString);
 
-            IntFunction<String> fallback = Spied.intFunction(d -> Integer.toString(d + d));
+            IntFunction<String> fallback = Spied.intFunction(i -> Integer.toString(i + i));
 
             IntFunction<String> applying = function.onErrorApplyUnchecked(fallback);
 
@@ -502,11 +502,11 @@ class CheckedIntFunctionTest {
 
             @Test
             void testFallbackThrowsNothing() throws IOException {
-                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
-                IntFunction<String> fallback = Spied.intFunction(d -> Integer.toString(d + d));
+                IntFunction<String> fallback = Spied.intFunction(i -> Integer.toString(i + i));
 
                 IntFunction<String> applying = function.onErrorApplyUnchecked(fallback);
 
@@ -520,12 +520,12 @@ class CheckedIntFunctionTest {
 
             @Test
             void testFallbackThrowsUnchecked() throws IOException {
-                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
-                IntFunction<String> fallback = Spied.intFunction(d -> {
-                    throw new IllegalStateException(Integer.toString(d));
+                IntFunction<String> fallback = Spied.intFunction(i -> {
+                    throw new IllegalStateException(Integer.toString(i));
                 });
 
                 IntFunction<String> applying = function.onErrorApplyUnchecked(fallback);
@@ -542,11 +542,11 @@ class CheckedIntFunctionTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                throw new IllegalStateException(Integer.toString(i));
             });
 
-            IntFunction<String> fallback = Spied.intFunction(d -> Integer.toString(d + d));
+            IntFunction<String> fallback = Spied.intFunction(i -> Integer.toString(i + i));
 
             IntFunction<String> applying = function.onErrorApplyUnchecked(fallback);
 
@@ -589,8 +589,8 @@ class CheckedIntFunctionTest {
 
             @Test
             void testFallbackThrowsNothing() throws IOException, ParseException {
-                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 CheckedSupplier<String, ParseException> fallback = Spied.checkedSupplier(() -> "bar");
@@ -607,8 +607,8 @@ class CheckedIntFunctionTest {
 
             @Test
             void testFallbackThrowsChecked() throws IOException, ParseException {
-                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 CheckedSupplier<String, ParseException> fallback = Spied.checkedSupplier(() -> {
@@ -629,8 +629,8 @@ class CheckedIntFunctionTest {
 
             @Test
             void testFallbackThrowsUnchecked() throws IOException, ParseException {
-                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 CheckedSupplier<String, ParseException> fallback = Spied.checkedSupplier(() -> {
@@ -651,8 +651,8 @@ class CheckedIntFunctionTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                throw new IllegalStateException(Integer.toString(i));
             });
 
             CheckedSupplier<String, ParseException> fallback = Spied.checkedSupplier(() -> "bar");
@@ -698,8 +698,8 @@ class CheckedIntFunctionTest {
 
             @Test
             void testFallbackThrowsNothing() throws IOException {
-                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 Supplier<String> fallback = Spied.supplier(() -> "bar");
@@ -716,8 +716,8 @@ class CheckedIntFunctionTest {
 
             @Test
             void testFallbackThrowsUnchecked() throws IOException {
-                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                    throw new IOException(Integer.toString(d));
+                CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                    throw new IOException(Integer.toString(i));
                 });
 
                 Supplier<String> fallback = Spied.supplier(() -> {
@@ -738,8 +738,8 @@ class CheckedIntFunctionTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                throw new IllegalStateException(Integer.toString(i));
             });
 
             Supplier<String> fallback = Spied.supplier(() -> "bar");
@@ -773,8 +773,8 @@ class CheckedIntFunctionTest {
 
         @Test
         void testThisThrowsChecked() throws IOException {
-            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                throw new IOException(Integer.toString(d));
+            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                throw new IOException(Integer.toString(i));
             });
 
             IntFunction<String> returning = function.onErrorReturn("bar");
@@ -788,8 +788,8 @@ class CheckedIntFunctionTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                throw new IllegalStateException(Integer.toString(i));
             });
 
             IntFunction<String> returning = function.onErrorReturn("bar");
@@ -822,8 +822,8 @@ class CheckedIntFunctionTest {
 
         @Test
         void testThisThrowsChecked() throws IOException {
-            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                throw new IOException(Integer.toString(d));
+            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                throw new IOException(Integer.toString(i));
             });
 
             IntFunction<String> unchecked = function.unchecked();
@@ -840,8 +840,8 @@ class CheckedIntFunctionTest {
 
         @Test
         void testThisThrowsUnchecked() throws IOException {
-            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                throw new IllegalArgumentException(Integer.toString(d));
+            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                throw new IllegalArgumentException(Integer.toString(i));
             });
 
             IntFunction<String> unchecked = function.unchecked();
@@ -896,8 +896,8 @@ class CheckedIntFunctionTest {
 
         @Test
         void testArgumentThrowsChecked() throws IOException {
-            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                throw new IOException(Integer.toString(d));
+            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                throw new IOException(Integer.toString(i));
             });
 
             IntFunction<String> unchecked = CheckedIntFunction.unchecked(function);
@@ -914,8 +914,8 @@ class CheckedIntFunctionTest {
 
         @Test
         void testArgumentThrowsUnchecked() throws IOException {
-            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(d -> {
-                throw new IllegalArgumentException(Integer.toString(d));
+            CheckedIntFunction<String, IOException> function = Spied.checkedIntFunction(i -> {
+                throw new IllegalArgumentException(Integer.toString(i));
             });
 
             IntFunction<String> unchecked = CheckedIntFunction.unchecked(function);
@@ -947,8 +947,8 @@ class CheckedIntFunctionTest {
 
         @Test
         void testArgumentThrowsUnchecked() {
-            CheckedIntFunction<String, IOException> function = CheckedIntFunction.checked(d -> {
-                throw new UncheckedException(Integer.toString(d), new IOException());
+            CheckedIntFunction<String, IOException> function = CheckedIntFunction.checked(i -> {
+                throw new UncheckedException(Integer.toString(i), new IOException());
             });
 
             UncheckedException thrown = assertThrows(UncheckedException.class, () -> function.apply(1));
@@ -981,8 +981,8 @@ class CheckedIntFunctionTest {
 
             @Test
             void testWrappingExactType() {
-                CheckedIntFunction<String, IOException> function = CheckedIntFunction.checked(d -> {
-                    throw new UncheckedException(new IOException(Integer.toString(d)));
+                CheckedIntFunction<String, IOException> function = CheckedIntFunction.checked(i -> {
+                    throw new UncheckedException(new IOException(Integer.toString(i)));
                 }, IOException.class);
 
                 IOException thrown = assertThrows(IOException.class, () -> function.apply(1));
@@ -991,8 +991,8 @@ class CheckedIntFunctionTest {
 
             @Test
             void testWrappingSubType() {
-                CheckedIntFunction<String, IOException> function = CheckedIntFunction.checked(d -> {
-                    throw new UncheckedException(new FileNotFoundException(Integer.toString(d)));
+                CheckedIntFunction<String, IOException> function = CheckedIntFunction.checked(i -> {
+                    throw new UncheckedException(new FileNotFoundException(Integer.toString(i)));
                 }, IOException.class);
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class, () -> function.apply(1));
@@ -1001,8 +1001,8 @@ class CheckedIntFunctionTest {
 
             @Test
             void testWrappingOther() {
-                CheckedIntFunction<String, IOException> function = CheckedIntFunction.checked(d -> {
-                    throw new UncheckedException(new ParseException(Integer.toString(d), 0));
+                CheckedIntFunction<String, IOException> function = CheckedIntFunction.checked(i -> {
+                    throw new UncheckedException(new ParseException(Integer.toString(i), 0));
                 }, IOException.class);
 
                 UncheckedException thrown = assertThrows(UncheckedException.class, () -> function.apply(1));
@@ -1014,8 +1014,8 @@ class CheckedIntFunctionTest {
 
         @Test
         void testArgumentThrowsOther() {
-            CheckedIntFunction<String, IOException> function = CheckedIntFunction.checked(d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            CheckedIntFunction<String, IOException> function = CheckedIntFunction.checked(i -> {
+                throw new IllegalStateException(Integer.toString(i));
             }, IOException.class);
 
             IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> function.apply(1));
@@ -1028,7 +1028,7 @@ class CheckedIntFunctionTest {
 
         @Test
         void testNullArguments() {
-            IntFunction<String> function = d -> String.valueOf(Integer.toString(d)).toUpperCase();
+            IntFunction<String> function = i -> String.valueOf(Integer.toString(i)).toUpperCase();
 
             assertThrows(NullPointerException.class, () -> CheckedIntFunction.invokeAndUnwrap(null, 1, IOException.class));
             assertThrows(NullPointerException.class, () -> CheckedIntFunction.invokeAndUnwrap(function, 1, null));
@@ -1046,8 +1046,8 @@ class CheckedIntFunctionTest {
 
             @Test
             void testWrappingExactType() {
-                IntFunction<String> function = d -> {
-                    throw new UncheckedException(new IOException(Integer.toString(d)));
+                IntFunction<String> function = i -> {
+                    throw new UncheckedException(new IOException(Integer.toString(i)));
                 };
 
                 IOException thrown = assertThrows(IOException.class, () -> CheckedIntFunction.invokeAndUnwrap(function, 1, IOException.class));
@@ -1056,8 +1056,8 @@ class CheckedIntFunctionTest {
 
             @Test
             void testWrappingSubType() {
-                IntFunction<String> function = d -> {
-                    throw new UncheckedException(new FileNotFoundException(Integer.toString(d)));
+                IntFunction<String> function = i -> {
+                    throw new UncheckedException(new FileNotFoundException(Integer.toString(i)));
                 };
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
@@ -1067,8 +1067,8 @@ class CheckedIntFunctionTest {
 
             @Test
             void testWrappingOther() {
-                IntFunction<String> function = d -> {
-                    throw new UncheckedException(new ParseException(Integer.toString(d), 0));
+                IntFunction<String> function = i -> {
+                    throw new UncheckedException(new ParseException(Integer.toString(i), 0));
                 };
 
                 UncheckedException thrown = assertThrows(UncheckedException.class,
@@ -1081,8 +1081,8 @@ class CheckedIntFunctionTest {
 
         @Test
         void testArgumentThrowsOther() {
-            IntFunction<String> function = d -> {
-                throw new IllegalStateException(Integer.toString(d));
+            IntFunction<String> function = i -> {
+                throw new IllegalStateException(Integer.toString(i));
             };
 
             IllegalStateException thrown = assertThrows(IllegalStateException.class,
