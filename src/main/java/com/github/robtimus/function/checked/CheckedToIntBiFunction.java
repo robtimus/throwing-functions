@@ -285,17 +285,10 @@ public interface CheckedToIntBiFunction<T, U, X extends Exception> {
      * @return A function that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code function} is {@code null}.
      */
+    @SuppressWarnings("unchecked")
     static <T, U> ToIntBiFunction<T, U> unchecked(CheckedToIntBiFunction<? super T, ? super U, ?> function) {
         Objects.requireNonNull(function);
-        return (t, u) -> {
-            try {
-                return function.applyAsInt(t, u);
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new UncheckedException(e);
-            }
-        };
+        return (ToIntBiFunction<T, U>) function.unchecked();
     }
 
     /**

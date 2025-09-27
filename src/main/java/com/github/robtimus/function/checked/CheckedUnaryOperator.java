@@ -210,15 +210,7 @@ public interface CheckedUnaryOperator<T, X extends Exception> extends CheckedFun
      */
     static <T> UnaryOperator<T> unchecked(CheckedUnaryOperator<T, ?> operator) {
         Objects.requireNonNull(operator);
-        return t -> {
-            try {
-                return operator.apply(t);
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new UncheckedException(e);
-            }
-        };
+        return operator.unchecked();
     }
 
     /**

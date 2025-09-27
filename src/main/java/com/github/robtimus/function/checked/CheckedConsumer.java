@@ -248,17 +248,10 @@ public interface CheckedConsumer<T, X extends Exception> {
      * @return An operation that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code operation} is {@code null}.
      */
+    @SuppressWarnings("unchecked")
     static <T> Consumer<T> unchecked(CheckedConsumer<? super T, ?> operation) {
         Objects.requireNonNull(operation);
-        return t -> {
-            try {
-                operation.accept(t);
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new UncheckedException(e);
-            }
-        };
+        return (Consumer<T>) operation.unchecked();
     }
 
     /**

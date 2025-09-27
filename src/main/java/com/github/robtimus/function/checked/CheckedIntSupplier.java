@@ -233,15 +233,7 @@ public interface CheckedIntSupplier<X extends Exception> {
      */
     static IntSupplier unchecked(CheckedIntSupplier<?> supplier) {
         Objects.requireNonNull(supplier);
-        return () -> {
-            try {
-                return supplier.getAsInt();
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new UncheckedException(e);
-            }
-        };
+        return supplier.unchecked();
     }
 
     /**

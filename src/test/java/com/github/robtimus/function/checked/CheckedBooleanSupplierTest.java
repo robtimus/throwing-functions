@@ -694,6 +694,8 @@ class CheckedBooleanSupplierTest {
 
             assertTrue(unchecked.getAsBoolean());
 
+            verify(supplier).unchecked();
+            verify(supplier).onErrorThrowAsUnchecked(any());
             verify(supplier).getAsBoolean();
             verifyNoMoreInteractions(supplier);
         }
@@ -710,6 +712,8 @@ class CheckedBooleanSupplierTest {
             IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
             assertEquals("foo", cause.getMessage());
 
+            verify(supplier).unchecked();
+            verify(supplier).onErrorThrowAsUnchecked(any());
             verify(supplier).getAsBoolean();
             verifyNoMoreInteractions(supplier);
         }
@@ -725,6 +729,8 @@ class CheckedBooleanSupplierTest {
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, unchecked::getAsBoolean);
             assertEquals("foo", thrown.getMessage());
 
+            verify(supplier).unchecked();
+            verify(supplier).onErrorThrowAsUnchecked(any());
             verify(supplier).getAsBoolean();
             verifyNoMoreInteractions(supplier);
         }

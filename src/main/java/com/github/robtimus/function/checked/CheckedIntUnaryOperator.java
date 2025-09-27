@@ -288,15 +288,7 @@ public interface CheckedIntUnaryOperator<X extends Exception> {
      */
     static IntUnaryOperator unchecked(CheckedIntUnaryOperator<?> operator) {
         Objects.requireNonNull(operator);
-        return t -> {
-            try {
-                return operator.applyAsInt(t);
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new UncheckedException(e);
-            }
-        };
+        return operator.unchecked();
     }
 
     /**

@@ -224,15 +224,7 @@ public interface CheckedRunnable<X extends Exception> {
      */
     static Runnable unchecked(CheckedRunnable<?> task) {
         Objects.requireNonNull(task);
-        return () -> {
-            try {
-                task.run();
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new UncheckedException(e);
-            }
-        };
+        return task.unchecked();
     }
 
     /**

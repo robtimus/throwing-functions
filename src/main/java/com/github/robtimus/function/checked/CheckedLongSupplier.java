@@ -233,15 +233,7 @@ public interface CheckedLongSupplier<X extends Exception> {
      */
     static LongSupplier unchecked(CheckedLongSupplier<?> supplier) {
         Objects.requireNonNull(supplier);
-        return () -> {
-            try {
-                return supplier.getAsLong();
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new UncheckedException(e);
-            }
-        };
+        return supplier.unchecked();
     }
 
     /**

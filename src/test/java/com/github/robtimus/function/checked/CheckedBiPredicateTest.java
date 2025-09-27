@@ -1394,6 +1394,7 @@ class CheckedBiPredicateTest {
             assertFalse(negated.test("foo", "FOO"));
             assertTrue(negated.test("foo", "bar"));
 
+            verify(predicate).negate();
             verify(predicate).test("foo", "FOO");
             verify(predicate).test("foo", "bar");
             verifyNoMoreInteractions(predicate);
@@ -1410,6 +1411,7 @@ class CheckedBiPredicateTest {
             IOException thrown = assertThrows(IOException.class, () -> negated.test("foo", "foo"));
             assertEquals("foofoo", thrown.getMessage());
 
+            verify(predicate).negate();
             verify(predicate).test("foo", "foo");
             verifyNoMoreInteractions(predicate);
         }
@@ -1425,6 +1427,7 @@ class CheckedBiPredicateTest {
             IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> negated.test("foo", "foo"));
             assertEquals("foofoo", thrown.getMessage());
 
+            verify(predicate).negate();
             verify(predicate).test("foo", "foo");
             verifyNoMoreInteractions(predicate);
         }
@@ -1446,6 +1449,8 @@ class CheckedBiPredicateTest {
 
             assertTrue(unchecked.test("foo", "FOO"));
 
+            verify(predicate).unchecked();
+            verify(predicate).onErrorThrowAsUnchecked(any());
             verify(predicate).test("foo", "FOO");
             verifyNoMoreInteractions(predicate);
         }
@@ -1462,6 +1467,8 @@ class CheckedBiPredicateTest {
             IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
             assertEquals("fooFOO", cause.getMessage());
 
+            verify(predicate).unchecked();
+            verify(predicate).onErrorThrowAsUnchecked(any());
             verify(predicate).test("foo", "FOO");
             verifyNoMoreInteractions(predicate);
         }
@@ -1477,6 +1484,8 @@ class CheckedBiPredicateTest {
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.test("foo", "FOO"));
             assertEquals("fooFOO", thrown.getMessage());
 
+            verify(predicate).unchecked();
+            verify(predicate).onErrorThrowAsUnchecked(any());
             verify(predicate).test("foo", "FOO");
             verifyNoMoreInteractions(predicate);
         }

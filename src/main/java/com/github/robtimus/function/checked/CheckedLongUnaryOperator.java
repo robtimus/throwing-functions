@@ -288,15 +288,7 @@ public interface CheckedLongUnaryOperator<X extends Exception> {
      */
     static LongUnaryOperator unchecked(CheckedLongUnaryOperator<?> operator) {
         Objects.requireNonNull(operator);
-        return t -> {
-            try {
-                return operator.applyAsLong(t);
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new UncheckedException(e);
-            }
-        };
+        return operator.unchecked();
     }
 
     /**

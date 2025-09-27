@@ -204,15 +204,7 @@ public interface CheckedBinaryOperator<T, X extends Exception> extends CheckedBi
      */
     static <T> BinaryOperator<T> unchecked(CheckedBinaryOperator<T, ?> operator) {
         Objects.requireNonNull(operator);
-        return (t, u) -> {
-            try {
-                return operator.apply(t, u);
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new UncheckedException(e);
-            }
-        };
+        return operator.unchecked();
     }
 
     /**

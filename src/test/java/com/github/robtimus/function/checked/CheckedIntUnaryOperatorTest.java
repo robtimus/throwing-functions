@@ -896,6 +896,8 @@ class CheckedIntUnaryOperatorTest {
 
             assertEquals(2, unchecked.applyAsInt(1));
 
+            verify(operator).unchecked();
+            verify(operator).onErrorThrowAsUnchecked(any());
             verify(operator).applyAsInt(1);
             verifyNoMoreInteractions(operator);
         }
@@ -912,6 +914,8 @@ class CheckedIntUnaryOperatorTest {
             IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
             assertEquals("1", cause.getMessage());
 
+            verify(operator).unchecked();
+            verify(operator).onErrorThrowAsUnchecked(any());
             verify(operator).applyAsInt(1);
             verifyNoMoreInteractions(operator);
         }
@@ -927,6 +931,8 @@ class CheckedIntUnaryOperatorTest {
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.applyAsInt(1));
             assertEquals("1", thrown.getMessage());
 
+            verify(operator).unchecked();
+            verify(operator).onErrorThrowAsUnchecked(any());
             verify(operator).applyAsInt(1);
             verifyNoMoreInteractions(operator);
         }

@@ -891,6 +891,8 @@ class CheckedToLongBiFunctionTest {
 
             assertEquals(6L, unchecked.applyAsLong("foo", "bar"));
 
+            verify(function).unchecked();
+            verify(function).onErrorThrowAsUnchecked(any());
             verify(function).applyAsLong("foo", "bar");
             verifyNoMoreInteractions(function);
         }
@@ -907,6 +909,8 @@ class CheckedToLongBiFunctionTest {
             IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
             assertEquals("foobar", cause.getMessage());
 
+            verify(function).unchecked();
+            verify(function).onErrorThrowAsUnchecked(any());
             verify(function).applyAsLong("foo", "bar");
             verifyNoMoreInteractions(function);
         }
@@ -922,6 +926,8 @@ class CheckedToLongBiFunctionTest {
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.applyAsLong("foo", "bar"));
             assertEquals("foobar", thrown.getMessage());
 
+            verify(function).unchecked();
+            verify(function).onErrorThrowAsUnchecked(any());
             verify(function).applyAsLong("foo", "bar");
             verifyNoMoreInteractions(function);
         }

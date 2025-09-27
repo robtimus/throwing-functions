@@ -896,6 +896,8 @@ class CheckedLongUnaryOperatorTest {
 
             assertEquals(2L, unchecked.applyAsLong(1L));
 
+            verify(operator).unchecked();
+            verify(operator).onErrorThrowAsUnchecked(any());
             verify(operator).applyAsLong(1L);
             verifyNoMoreInteractions(operator);
         }
@@ -912,6 +914,8 @@ class CheckedLongUnaryOperatorTest {
             IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
             assertEquals("1", cause.getMessage());
 
+            verify(operator).unchecked();
+            verify(operator).onErrorThrowAsUnchecked(any());
             verify(operator).applyAsLong(1L);
             verifyNoMoreInteractions(operator);
         }
@@ -927,6 +931,8 @@ class CheckedLongUnaryOperatorTest {
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.applyAsLong(1L));
             assertEquals("1", thrown.getMessage());
 
+            verify(operator).unchecked();
+            verify(operator).onErrorThrowAsUnchecked(any());
             verify(operator).applyAsLong(1L);
             verifyNoMoreInteractions(operator);
         }

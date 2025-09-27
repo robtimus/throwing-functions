@@ -279,15 +279,7 @@ public interface CheckedIntBinaryOperator<X extends Exception> {
      */
     static IntBinaryOperator unchecked(CheckedIntBinaryOperator<?> operator) {
         Objects.requireNonNull(operator);
-        return (t, u) -> {
-            try {
-                return operator.applyAsInt(t, u);
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new UncheckedException(e);
-            }
-        };
+        return operator.unchecked();
     }
 
     /**

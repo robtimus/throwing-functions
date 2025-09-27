@@ -253,17 +253,10 @@ public interface CheckedBiConsumer<T, U, X extends Exception> {
      * @return An operation that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code operation} is {@code null}.
      */
+    @SuppressWarnings("unchecked")
     static <T, U> BiConsumer<T, U> unchecked(CheckedBiConsumer<? super T, ? super U, ?> operation) {
         Objects.requireNonNull(operation);
-        return (t, u) -> {
-            try {
-                operation.accept(t, u);
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new UncheckedException(e);
-            }
-        };
+        return (BiConsumer<T, U>) operation.unchecked();
     }
 
     /**

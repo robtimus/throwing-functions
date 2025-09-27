@@ -319,9 +319,10 @@ public interface CheckedPredicate<T, X extends Exception> {
      * @return A predicate that negates the results of {@code predicate}.
      * @throws NullPointerException If {@code predicate} is {@code null}.
      */
+    @SuppressWarnings("unchecked")
     static <T, X extends Exception> CheckedPredicate<T, X> not(CheckedPredicate<? super T, ? extends X> predicate) {
         Objects.requireNonNull(predicate);
-        return t -> !predicate.test(t);
+        return (CheckedPredicate<T, X>) predicate.negate();
     }
 
     /**
@@ -333,17 +334,10 @@ public interface CheckedPredicate<T, X extends Exception> {
      * @return A predicate that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code predicate} is {@code null}.
      */
+    @SuppressWarnings("unchecked")
     static <T> Predicate<T> unchecked(CheckedPredicate<? super T, ?> predicate) {
         Objects.requireNonNull(predicate);
-        return t -> {
-            try {
-                return predicate.test(t);
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new UncheckedException(e);
-            }
-        };
+        return (Predicate<T>) predicate.unchecked();
     }
 
     /**

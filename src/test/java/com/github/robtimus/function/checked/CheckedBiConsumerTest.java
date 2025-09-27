@@ -794,6 +794,8 @@ class CheckedBiConsumerTest {
 
             unchecked.accept("foo", "bar");
 
+            verify(consumer).unchecked();
+            verify(consumer).onErrorThrowAsUnchecked(any());
             verify(consumer).accept("foo", "bar");
             verifyNoMoreInteractions(consumer);
         }
@@ -810,6 +812,8 @@ class CheckedBiConsumerTest {
             IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
             assertEquals("foobar", cause.getMessage());
 
+            verify(consumer).unchecked();
+            verify(consumer).onErrorThrowAsUnchecked(any());
             verify(consumer).accept("foo", "bar");
             verifyNoMoreInteractions(consumer);
         }
@@ -825,6 +829,8 @@ class CheckedBiConsumerTest {
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.accept("foo", "bar"));
             assertEquals("foobar", thrown.getMessage());
 
+            verify(consumer).unchecked();
+            verify(consumer).onErrorThrowAsUnchecked(any());
             verify(consumer).accept("foo", "bar");
             verifyNoMoreInteractions(consumer);
         }

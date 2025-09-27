@@ -692,6 +692,8 @@ class CheckedLongSupplierTest {
 
             assertEquals(1L, unchecked.getAsLong());
 
+            verify(supplier).unchecked();
+            verify(supplier).onErrorThrowAsUnchecked(any());
             verify(supplier).getAsLong();
             verifyNoMoreInteractions(supplier);
         }
@@ -708,6 +710,8 @@ class CheckedLongSupplierTest {
             IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
             assertEquals("foo", cause.getMessage());
 
+            verify(supplier).unchecked();
+            verify(supplier).onErrorThrowAsUnchecked(any());
             verify(supplier).getAsLong();
             verifyNoMoreInteractions(supplier);
         }
@@ -723,6 +727,8 @@ class CheckedLongSupplierTest {
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, unchecked::getAsLong);
             assertEquals("foo", thrown.getMessage());
 
+            verify(supplier).unchecked();
+            verify(supplier).onErrorThrowAsUnchecked(any());
             verify(supplier).getAsLong();
             verifyNoMoreInteractions(supplier);
         }

@@ -888,6 +888,8 @@ class CheckedToLongFunctionTest {
 
             assertEquals(3L, unchecked.applyAsLong("foo"));
 
+            verify(function).unchecked();
+            verify(function).onErrorThrowAsUnchecked(any());
             verify(function).applyAsLong("foo");
             verifyNoMoreInteractions(function);
         }
@@ -904,6 +906,8 @@ class CheckedToLongFunctionTest {
             IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
             assertEquals("foo", cause.getMessage());
 
+            verify(function).unchecked();
+            verify(function).onErrorThrowAsUnchecked(any());
             verify(function).applyAsLong("foo");
             verifyNoMoreInteractions(function);
         }
@@ -919,6 +923,8 @@ class CheckedToLongFunctionTest {
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.applyAsLong("foo"));
             assertEquals("foo", thrown.getMessage());
 
+            verify(function).unchecked();
+            verify(function).onErrorThrowAsUnchecked(any());
             verify(function).applyAsLong("foo");
             verifyNoMoreInteractions(function);
         }

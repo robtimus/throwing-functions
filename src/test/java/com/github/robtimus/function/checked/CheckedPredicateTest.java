@@ -1393,6 +1393,7 @@ class CheckedPredicateTest {
             assertFalse(negated.test(" "));
             assertTrue(negated.test("foo"));
 
+            verify(predicate).negate();
             verify(predicate).test(" ");
             verify(predicate).test("foo");
             verifyNoMoreInteractions(predicate);
@@ -1409,6 +1410,7 @@ class CheckedPredicateTest {
             IOException thrown = assertThrows(IOException.class, () -> negated.test("foo"));
             assertEquals("foo", thrown.getMessage());
 
+            verify(predicate).negate();
             verify(predicate).test("foo");
             verifyNoMoreInteractions(predicate);
         }
@@ -1424,6 +1426,7 @@ class CheckedPredicateTest {
             IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> negated.test("foo"));
             assertEquals("foo", thrown.getMessage());
 
+            verify(predicate).negate();
             verify(predicate).test("foo");
             verifyNoMoreInteractions(predicate);
         }
@@ -1445,6 +1448,8 @@ class CheckedPredicateTest {
 
             assertTrue(unchecked.test(" "));
 
+            verify(predicate).unchecked();
+            verify(predicate).onErrorThrowAsUnchecked(any());
             verify(predicate).test(" ");
             verifyNoMoreInteractions(predicate);
         }
@@ -1461,6 +1466,8 @@ class CheckedPredicateTest {
             IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
             assertEquals("foo", cause.getMessage());
 
+            verify(predicate).unchecked();
+            verify(predicate).onErrorThrowAsUnchecked(any());
             verify(predicate).test("foo");
             verifyNoMoreInteractions(predicate);
         }
@@ -1476,6 +1483,8 @@ class CheckedPredicateTest {
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.test("foo"));
             assertEquals("foo", thrown.getMessage());
 
+            verify(predicate).unchecked();
+            verify(predicate).onErrorThrowAsUnchecked(any());
             verify(predicate).test("foo");
             verifyNoMoreInteractions(predicate);
         }

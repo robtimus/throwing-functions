@@ -906,6 +906,8 @@ class CheckedUnaryOperatorTest {
 
             assertEquals("FOO", unchecked.apply("foo"));
 
+            verify(operator).unchecked();
+            verify(operator).onErrorThrowAsUnchecked(any());
             verify(operator).apply("foo");
             verifyNoMoreInteractions(operator);
         }
@@ -922,6 +924,8 @@ class CheckedUnaryOperatorTest {
             IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
             assertEquals("foo", cause.getMessage());
 
+            verify(operator).unchecked();
+            verify(operator).onErrorThrowAsUnchecked(any());
             verify(operator).apply("foo");
             verifyNoMoreInteractions(operator);
         }
@@ -937,6 +941,8 @@ class CheckedUnaryOperatorTest {
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.apply("foo"));
             assertEquals("foo", thrown.getMessage());
 
+            verify(operator).unchecked();
+            verify(operator).onErrorThrowAsUnchecked(any());
             verify(operator).apply("foo");
             verifyNoMoreInteractions(operator);
         }

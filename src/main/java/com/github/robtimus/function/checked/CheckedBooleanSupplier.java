@@ -233,15 +233,7 @@ public interface CheckedBooleanSupplier<X extends Exception> {
      */
     static BooleanSupplier unchecked(CheckedBooleanSupplier<?> supplier) {
         Objects.requireNonNull(supplier);
-        return () -> {
-            try {
-                return supplier.getAsBoolean();
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new UncheckedException(e);
-            }
-        };
+        return supplier.unchecked();
     }
 
     /**

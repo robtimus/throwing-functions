@@ -889,6 +889,8 @@ class CheckedDoubleBinaryOperatorTest {
 
             assertEquals(2D, unchecked.applyAsDouble(1D, 2D));
 
+            verify(operator).unchecked();
+            verify(operator).onErrorThrowAsUnchecked(any());
             verify(operator).applyAsDouble(1D, 2D);
             verifyNoMoreInteractions(operator);
         }
@@ -905,6 +907,8 @@ class CheckedDoubleBinaryOperatorTest {
             IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
             assertEquals("3.0", cause.getMessage());
 
+            verify(operator).unchecked();
+            verify(operator).onErrorThrowAsUnchecked(any());
             verify(operator).applyAsDouble(1D, 2D);
             verifyNoMoreInteractions(operator);
         }
@@ -920,6 +924,8 @@ class CheckedDoubleBinaryOperatorTest {
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.applyAsDouble(1D, 2D));
             assertEquals("3.0", thrown.getMessage());
 
+            verify(operator).unchecked();
+            verify(operator).onErrorThrowAsUnchecked(any());
             verify(operator).applyAsDouble(1D, 2D);
             verifyNoMoreInteractions(operator);
         }

@@ -233,15 +233,7 @@ public interface CheckedDoubleSupplier<X extends Exception> {
      */
     static DoubleSupplier unchecked(CheckedDoubleSupplier<?> supplier) {
         Objects.requireNonNull(supplier);
-        return () -> {
-            try {
-                return supplier.getAsDouble();
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new UncheckedException(e);
-            }
-        };
+        return supplier.unchecked();
     }
 
     /**

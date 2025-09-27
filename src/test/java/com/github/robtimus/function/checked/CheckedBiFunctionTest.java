@@ -984,6 +984,8 @@ class CheckedBiFunctionTest {
 
             assertEquals("foobar", unchecked.apply("foo", "bar"));
 
+            verify(function).unchecked();
+            verify(function).onErrorThrowAsUnchecked(any());
             verify(function).apply("foo", "bar");
             verifyNoMoreInteractions(function);
         }
@@ -1000,6 +1002,8 @@ class CheckedBiFunctionTest {
             IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
             assertEquals("foobar", cause.getMessage());
 
+            verify(function).unchecked();
+            verify(function).onErrorThrowAsUnchecked(any());
             verify(function).apply("foo", "bar");
             verifyNoMoreInteractions(function);
         }
@@ -1015,6 +1019,8 @@ class CheckedBiFunctionTest {
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.apply("foo", "bar"));
             assertEquals("foobar", thrown.getMessage());
 
+            verify(function).unchecked();
+            verify(function).onErrorThrowAsUnchecked(any());
             verify(function).apply("foo", "bar");
             verifyNoMoreInteractions(function);
         }

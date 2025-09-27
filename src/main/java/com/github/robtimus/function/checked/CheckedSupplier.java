@@ -233,17 +233,10 @@ public interface CheckedSupplier<T, X extends Exception> {
      * @return A supplier that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code function} is {@code null}.
      */
+    @SuppressWarnings("unchecked")
     static <T> Supplier<T> unchecked(CheckedSupplier<? extends T, ?> supplier) {
         Objects.requireNonNull(supplier);
-        return () -> {
-            try {
-                return supplier.get();
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new UncheckedException(e);
-            }
-        };
+        return (Supplier<T>) supplier.unchecked();
     }
 
     /**

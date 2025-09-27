@@ -278,17 +278,10 @@ public interface CheckedToLongFunction<T, X extends Exception> {
      * @return A function that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code function} is {@code null}.
      */
+    @SuppressWarnings("unchecked")
     static <T> ToLongFunction<T> unchecked(CheckedToLongFunction<? super T, ?> function) {
         Objects.requireNonNull(function);
-        return t -> {
-            try {
-                return function.applyAsLong(t);
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new UncheckedException(e);
-            }
-        };
+        return (ToLongFunction<T>) function.unchecked();
     }
 
     /**

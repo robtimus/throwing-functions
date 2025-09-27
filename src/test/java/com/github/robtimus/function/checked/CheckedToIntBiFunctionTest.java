@@ -891,6 +891,8 @@ class CheckedToIntBiFunctionTest {
 
             assertEquals(6, unchecked.applyAsInt("foo", "bar"));
 
+            verify(function).unchecked();
+            verify(function).onErrorThrowAsUnchecked(any());
             verify(function).applyAsInt("foo", "bar");
             verifyNoMoreInteractions(function);
         }
@@ -907,6 +909,8 @@ class CheckedToIntBiFunctionTest {
             IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
             assertEquals("foobar", cause.getMessage());
 
+            verify(function).unchecked();
+            verify(function).onErrorThrowAsUnchecked(any());
             verify(function).applyAsInt("foo", "bar");
             verifyNoMoreInteractions(function);
         }
@@ -922,6 +926,8 @@ class CheckedToIntBiFunctionTest {
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.applyAsInt("foo", "bar"));
             assertEquals("foobar", thrown.getMessage());
 
+            verify(function).unchecked();
+            verify(function).onErrorThrowAsUnchecked(any());
             verify(function).applyAsInt("foo", "bar");
             verifyNoMoreInteractions(function);
         }

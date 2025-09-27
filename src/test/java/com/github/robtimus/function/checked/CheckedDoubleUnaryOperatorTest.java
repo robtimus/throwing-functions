@@ -896,6 +896,8 @@ class CheckedDoubleUnaryOperatorTest {
 
             assertEquals(2D, unchecked.applyAsDouble(1D));
 
+            verify(operator).unchecked();
+            verify(operator).onErrorThrowAsUnchecked(any());
             verify(operator).applyAsDouble(1D);
             verifyNoMoreInteractions(operator);
         }
@@ -912,6 +914,8 @@ class CheckedDoubleUnaryOperatorTest {
             IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
             assertEquals("1.0", cause.getMessage());
 
+            verify(operator).unchecked();
+            verify(operator).onErrorThrowAsUnchecked(any());
             verify(operator).applyAsDouble(1D);
             verifyNoMoreInteractions(operator);
         }
@@ -927,6 +931,8 @@ class CheckedDoubleUnaryOperatorTest {
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.applyAsDouble(1D));
             assertEquals("1.0", thrown.getMessage());
 
+            verify(operator).unchecked();
+            verify(operator).onErrorThrowAsUnchecked(any());
             verify(operator).applyAsDouble(1D);
             verifyNoMoreInteractions(operator);
         }

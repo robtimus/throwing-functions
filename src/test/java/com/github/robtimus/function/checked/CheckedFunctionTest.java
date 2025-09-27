@@ -1097,6 +1097,8 @@ class CheckedFunctionTest {
 
             assertEquals("FOO", unchecked.apply("foo"));
 
+            verify(function).unchecked();
+            verify(function).onErrorThrowAsUnchecked(any());
             verify(function).apply("foo");
             verifyNoMoreInteractions(function);
         }
@@ -1113,6 +1115,8 @@ class CheckedFunctionTest {
             IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
             assertEquals("foo", cause.getMessage());
 
+            verify(function).unchecked();
+            verify(function).onErrorThrowAsUnchecked(any());
             verify(function).apply("foo");
             verifyNoMoreInteractions(function);
         }
@@ -1128,6 +1132,8 @@ class CheckedFunctionTest {
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.apply("foo"));
             assertEquals("foo", thrown.getMessage());
 
+            verify(function).unchecked();
+            verify(function).onErrorThrowAsUnchecked(any());
             verify(function).apply("foo");
             verifyNoMoreInteractions(function);
         }

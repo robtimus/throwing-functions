@@ -248,15 +248,7 @@ public interface CheckedIntConsumer<X extends Exception> {
      */
     static IntConsumer unchecked(CheckedIntConsumer<?> operation) {
         Objects.requireNonNull(operation);
-        return t -> {
-            try {
-                operation.accept(t);
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new UncheckedException(e);
-            }
-        };
+        return operation.unchecked();
     }
 
     /**

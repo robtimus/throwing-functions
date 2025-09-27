@@ -793,6 +793,8 @@ class CheckedIntConsumerTest {
 
             unchecked.accept(1);
 
+            verify(consumer).unchecked();
+            verify(consumer).onErrorThrowAsUnchecked(any());
             verify(consumer).accept(1);
             verifyNoMoreInteractions(consumer);
         }
@@ -809,6 +811,8 @@ class CheckedIntConsumerTest {
             IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
             assertEquals("1", cause.getMessage());
 
+            verify(consumer).unchecked();
+            verify(consumer).onErrorThrowAsUnchecked(any());
             verify(consumer).accept(1);
             verifyNoMoreInteractions(consumer);
         }
@@ -824,6 +828,8 @@ class CheckedIntConsumerTest {
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.accept(1));
             assertEquals("1", thrown.getMessage());
 
+            verify(consumer).unchecked();
+            verify(consumer).onErrorThrowAsUnchecked(any());
             verify(consumer).accept(1);
             verifyNoMoreInteractions(consumer);
         }

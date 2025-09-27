@@ -889,6 +889,8 @@ class CheckedIntBinaryOperatorTest {
 
             assertEquals(2, unchecked.applyAsInt(1, 2));
 
+            verify(operator).unchecked();
+            verify(operator).onErrorThrowAsUnchecked(any());
             verify(operator).applyAsInt(1, 2);
             verifyNoMoreInteractions(operator);
         }
@@ -905,6 +907,8 @@ class CheckedIntBinaryOperatorTest {
             IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
             assertEquals("3", cause.getMessage());
 
+            verify(operator).unchecked();
+            verify(operator).onErrorThrowAsUnchecked(any());
             verify(operator).applyAsInt(1, 2);
             verifyNoMoreInteractions(operator);
         }
@@ -920,6 +924,8 @@ class CheckedIntBinaryOperatorTest {
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.applyAsInt(1, 2));
             assertEquals("3", thrown.getMessage());
 
+            verify(operator).unchecked();
+            verify(operator).onErrorThrowAsUnchecked(any());
             verify(operator).applyAsInt(1, 2);
             verifyNoMoreInteractions(operator);
         }

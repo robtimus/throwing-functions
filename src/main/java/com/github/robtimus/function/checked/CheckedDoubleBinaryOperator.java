@@ -279,15 +279,7 @@ public interface CheckedDoubleBinaryOperator<X extends Exception> {
      */
     static DoubleBinaryOperator unchecked(CheckedDoubleBinaryOperator<?> operator) {
         Objects.requireNonNull(operator);
-        return (t, u) -> {
-            try {
-                return operator.applyAsDouble(t, u);
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new UncheckedException(e);
-            }
-        };
+        return operator.unchecked();
     }
 
     /**

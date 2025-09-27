@@ -287,17 +287,10 @@ public interface CheckedToDoubleBiFunction<T, U, X extends Exception> {
      * @return A function that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code function} is {@code null}.
      */
+    @SuppressWarnings("unchecked")
     static <T, U> ToDoubleBiFunction<T, U> unchecked(CheckedToDoubleBiFunction<? super T, ? super U, ?> function) {
         Objects.requireNonNull(function);
-        return (t, u) -> {
-            try {
-                return function.applyAsDouble(t, u);
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new UncheckedException(e);
-            }
-        };
+        return (ToDoubleBiFunction<T, U>) function.unchecked();
     }
 
     /**

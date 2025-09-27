@@ -696,6 +696,8 @@ class CheckedRunnableTest {
 
             unchecked.run();
 
+            verify(runnable).unchecked();
+            verify(runnable).onErrorThrowAsUnchecked(any());
             verify(runnable).run();
             verifyNoMoreInteractions(runnable);
         }
@@ -712,6 +714,8 @@ class CheckedRunnableTest {
             IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
             assertEquals("foo", cause.getMessage());
 
+            verify(runnable).unchecked();
+            verify(runnable).onErrorThrowAsUnchecked(any());
             verify(runnable).run();
             verifyNoMoreInteractions(runnable);
         }
@@ -727,6 +731,8 @@ class CheckedRunnableTest {
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, unchecked::run);
             assertEquals("foo", thrown.getMessage());
 
+            verify(runnable).unchecked();
+            verify(runnable).onErrorThrowAsUnchecked(any());
             verify(runnable).run();
             verifyNoMoreInteractions(runnable);
         }

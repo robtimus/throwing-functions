@@ -793,6 +793,8 @@ class CheckedDoubleConsumerTest {
 
             unchecked.accept(1D);
 
+            verify(consumer).unchecked();
+            verify(consumer).onErrorThrowAsUnchecked(any());
             verify(consumer).accept(1D);
             verifyNoMoreInteractions(consumer);
         }
@@ -809,6 +811,8 @@ class CheckedDoubleConsumerTest {
             IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
             assertEquals("1.0", cause.getMessage());
 
+            verify(consumer).unchecked();
+            verify(consumer).onErrorThrowAsUnchecked(any());
             verify(consumer).accept(1D);
             verifyNoMoreInteractions(consumer);
         }
@@ -824,6 +828,8 @@ class CheckedDoubleConsumerTest {
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.accept(1D));
             assertEquals("1.0", thrown.getMessage());
 
+            verify(consumer).unchecked();
+            verify(consumer).onErrorThrowAsUnchecked(any());
             verify(consumer).accept(1D);
             verifyNoMoreInteractions(consumer);
         }

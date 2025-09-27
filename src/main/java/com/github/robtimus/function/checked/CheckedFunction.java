@@ -321,17 +321,10 @@ public interface CheckedFunction<T, R, X extends Exception> {
      * @return A function that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code function} is {@code null}.
      */
+    @SuppressWarnings("unchecked")
     static <T, R> Function<T, R> unchecked(CheckedFunction<? super T, ? extends R, ?> function) {
         Objects.requireNonNull(function);
-        return t -> {
-            try {
-                return function.apply(t);
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new UncheckedException(e);
-            }
-        };
+        return (Function<T, R>) function.unchecked();
     }
 
     /**

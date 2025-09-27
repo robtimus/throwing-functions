@@ -324,9 +324,10 @@ public interface CheckedBiPredicate<T, U, X extends Exception> {
      * @return A predicate that negates the results of {@code predicate}.
      * @throws NullPointerException If {@code predicate} is {@code null}.
      */
+    @SuppressWarnings("unchecked")
     static <T, U, X extends Exception> CheckedBiPredicate<T, U, X> not(CheckedBiPredicate<? super T, ? super U, ? extends X> predicate) {
         Objects.requireNonNull(predicate);
-        return (t, u) -> !predicate.test(t, u);
+        return (CheckedBiPredicate<T, U, X>) predicate.negate();
     }
 
     /**
@@ -339,17 +340,10 @@ public interface CheckedBiPredicate<T, U, X extends Exception> {
      * @return A predicate that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code predicate} is {@code null}.
      */
+    @SuppressWarnings("unchecked")
     static <T, U> BiPredicate<T, U> unchecked(CheckedBiPredicate<? super T, ? super U, ?> predicate) {
         Objects.requireNonNull(predicate);
-        return (t, u) -> {
-            try {
-                return predicate.test(t, u);
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new UncheckedException(e);
-            }
-        };
+        return (BiPredicate<T, U>) predicate.unchecked();
     }
 
     /**

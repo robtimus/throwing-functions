@@ -692,6 +692,8 @@ class CheckedDoubleSupplierTest {
 
             assertEquals(1D, unchecked.getAsDouble());
 
+            verify(supplier).unchecked();
+            verify(supplier).onErrorThrowAsUnchecked(any());
             verify(supplier).getAsDouble();
             verifyNoMoreInteractions(supplier);
         }
@@ -708,6 +710,8 @@ class CheckedDoubleSupplierTest {
             IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
             assertEquals("foo", cause.getMessage());
 
+            verify(supplier).unchecked();
+            verify(supplier).onErrorThrowAsUnchecked(any());
             verify(supplier).getAsDouble();
             verifyNoMoreInteractions(supplier);
         }
@@ -723,6 +727,8 @@ class CheckedDoubleSupplierTest {
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, unchecked::getAsDouble);
             assertEquals("foo", thrown.getMessage());
 
+            verify(supplier).unchecked();
+            verify(supplier).onErrorThrowAsUnchecked(any());
             verify(supplier).getAsDouble();
             verifyNoMoreInteractions(supplier);
         }

@@ -892,6 +892,8 @@ class CheckedToDoubleBiFunctionTest {
 
             assertEquals(6D, unchecked.applyAsDouble("foo", "bar"));
 
+            verify(function).unchecked();
+            verify(function).onErrorThrowAsUnchecked(any());
             verify(function).applyAsDouble("foo", "bar");
             verifyNoMoreInteractions(function);
         }
@@ -908,6 +910,8 @@ class CheckedToDoubleBiFunctionTest {
             IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
             assertEquals("foobar", cause.getMessage());
 
+            verify(function).unchecked();
+            verify(function).onErrorThrowAsUnchecked(any());
             verify(function).applyAsDouble("foo", "bar");
             verifyNoMoreInteractions(function);
         }
@@ -923,6 +927,8 @@ class CheckedToDoubleBiFunctionTest {
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.applyAsDouble("foo", "bar"));
             assertEquals("foobar", thrown.getMessage());
 
+            verify(function).unchecked();
+            verify(function).onErrorThrowAsUnchecked(any());
             verify(function).applyAsDouble("foo", "bar");
             verifyNoMoreInteractions(function);
         }

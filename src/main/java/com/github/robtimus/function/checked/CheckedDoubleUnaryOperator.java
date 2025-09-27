@@ -288,15 +288,7 @@ public interface CheckedDoubleUnaryOperator<X extends Exception> {
      */
     static DoubleUnaryOperator unchecked(CheckedDoubleUnaryOperator<?> operator) {
         Objects.requireNonNull(operator);
-        return t -> {
-            try {
-                return operator.applyAsDouble(t);
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new UncheckedException(e);
-            }
-        };
+        return operator.unchecked();
     }
 
     /**

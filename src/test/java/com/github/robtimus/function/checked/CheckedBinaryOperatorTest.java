@@ -888,6 +888,8 @@ class CheckedBinaryOperatorTest {
 
             assertEquals("foobar", unchecked.apply("foo", "bar"));
 
+            verify(operator).unchecked();
+            verify(operator).onErrorThrowAsUnchecked(any());
             verify(operator).apply("foo", "bar");
             verifyNoMoreInteractions(operator);
         }
@@ -904,6 +906,8 @@ class CheckedBinaryOperatorTest {
             IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
             assertEquals("foobar", cause.getMessage());
 
+            verify(operator).unchecked();
+            verify(operator).onErrorThrowAsUnchecked(any());
             verify(operator).apply("foo", "bar");
             verifyNoMoreInteractions(operator);
         }
@@ -919,6 +923,8 @@ class CheckedBinaryOperatorTest {
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.apply("foo", "bar"));
             assertEquals("foobar", thrown.getMessage());
 
+            verify(operator).unchecked();
+            verify(operator).onErrorThrowAsUnchecked(any());
             verify(operator).apply("foo", "bar");
             verifyNoMoreInteractions(operator);
         }

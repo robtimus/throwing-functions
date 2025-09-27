@@ -888,6 +888,8 @@ class CheckedToIntFunctionTest {
 
             assertEquals(3, unchecked.applyAsInt("foo"));
 
+            verify(function).unchecked();
+            verify(function).onErrorThrowAsUnchecked(any());
             verify(function).applyAsInt("foo");
             verifyNoMoreInteractions(function);
         }
@@ -904,6 +906,8 @@ class CheckedToIntFunctionTest {
             IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
             assertEquals("foo", cause.getMessage());
 
+            verify(function).unchecked();
+            verify(function).onErrorThrowAsUnchecked(any());
             verify(function).applyAsInt("foo");
             verifyNoMoreInteractions(function);
         }
@@ -919,6 +923,8 @@ class CheckedToIntFunctionTest {
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.applyAsInt("foo"));
             assertEquals("foo", thrown.getMessage());
 
+            verify(function).unchecked();
+            verify(function).onErrorThrowAsUnchecked(any());
             verify(function).applyAsInt("foo");
             verifyNoMoreInteractions(function);
         }

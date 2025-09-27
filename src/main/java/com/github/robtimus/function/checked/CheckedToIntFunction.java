@@ -278,17 +278,10 @@ public interface CheckedToIntFunction<T, X extends Exception> {
      * @return A function that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code function} is {@code null}.
      */
+    @SuppressWarnings("unchecked")
     static <T> ToIntFunction<T> unchecked(CheckedToIntFunction<? super T, ?> function) {
         Objects.requireNonNull(function);
-        return t -> {
-            try {
-                return function.applyAsInt(t);
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new UncheckedException(e);
-            }
-        };
+        return (ToIntFunction<T>) function.unchecked();
     }
 
     /**
