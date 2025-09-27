@@ -24,7 +24,7 @@ import java.util.function.ToIntBiFunction;
 import java.util.function.ToIntFunction;
 
 /**
- * Represents a function that accepts two arguments and produces a {@code int}-valued result.
+ * Represents a function that accepts two arguments and produces an {@code int}-valued result.
  * This is a checked-exception throwing equivalent of {@link ToIntBiFunction}.
  *
  * @param <T> The type of the first argument to the function.

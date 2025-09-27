@@ -23,7 +23,7 @@ import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
 /**
- * Represents a function that accepts a {@code int}-valued argument and produces a result.
+ * Represents a function that accepts an {@code int}-valued argument and produces a result.
  * This is a checked-exception throwing equivalent of {@link IntFunction}.
  *
  * @param <R> The type of the result of the function.

@@ -24,7 +24,7 @@ import java.util.function.IntSupplier;
 import java.util.function.ToIntFunction;
 
 /**
- * Represents an operation upon two {@code int}-valued operands and producing a {@code int}-valued result.
+ * Represents an operation upon two {@code int}-valued operands and producing an {@code int}-valued result.
  * This is a checked-exception throwing equivalent of {@link IntBinaryOperator}.
  *
  * @param <X> The type of checked exception that can be thrown.
