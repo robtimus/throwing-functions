@@ -950,7 +950,7 @@ class CheckedToDoubleBiFunctionTest {
         }
 
         @Test
-        void testargumentThrowsUnchecked() {
+        void testArgumentThrowsUnchecked() {
             CheckedToDoubleBiFunction<String, String, IOException> function = CheckedToDoubleBiFunction.checked((s1, s2) -> {
                 throw new UncheckedException(s1 + s2, new IOException());
             });

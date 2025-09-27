@@ -946,7 +946,7 @@ class CheckedToIntFunctionTest {
         }
 
         @Test
-        void testargumentThrowsUnchecked() {
+        void testArgumentThrowsUnchecked() {
             CheckedToIntFunction<String, IOException> function = CheckedToIntFunction.checked(s -> {
                 throw new UncheckedException(s, new IOException());
             });

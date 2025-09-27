@@ -856,7 +856,7 @@ class CheckedLongConsumerTest {
         }
 
         @Test
-        void testargumentThrowsUnchecked() {
+        void testArgumentThrowsUnchecked() {
             CheckedLongConsumer<IOException> consumer = CheckedLongConsumer.checked(d -> {
                 throw new UncheckedException(Long.toString(d), new IOException());
             });

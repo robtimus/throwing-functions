@@ -749,7 +749,7 @@ class CheckedSupplierTest {
         }
 
         @Test
-        void testargumentThrowsUnchecked() {
+        void testArgumentThrowsUnchecked() {
             CheckedSupplier<String, IOException> supplier = CheckedSupplier.checked(() -> {
                 throw new UncheckedException("foo", new IOException());
             });

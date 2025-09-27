@@ -752,7 +752,7 @@ class CheckedBooleanSupplierTest {
         }
 
         @Test
-        void testargumentThrowsUnchecked() {
+        void testArgumentThrowsUnchecked() {
             CheckedBooleanSupplier<IOException> supplier = CheckedBooleanSupplier.checked(() -> {
                 throw new UncheckedException("foo", new IOException());
             });

@@ -949,7 +949,7 @@ class CheckedToLongBiFunctionTest {
         }
 
         @Test
-        void testargumentThrowsUnchecked() {
+        void testArgumentThrowsUnchecked() {
             CheckedToLongBiFunction<String, String, IOException> function = CheckedToLongBiFunction.checked((s1, s2) -> {
                 throw new UncheckedException(s1 + s2, new IOException());
             });

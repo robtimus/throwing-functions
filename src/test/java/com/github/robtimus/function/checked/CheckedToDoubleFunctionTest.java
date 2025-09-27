@@ -946,7 +946,7 @@ class CheckedToDoubleFunctionTest {
         }
 
         @Test
-        void testargumentThrowsUnchecked() {
+        void testArgumentThrowsUnchecked() {
             CheckedToDoubleFunction<String, IOException> function = CheckedToDoubleFunction.checked(s -> {
                 throw new UncheckedException(s, new IOException());
             });

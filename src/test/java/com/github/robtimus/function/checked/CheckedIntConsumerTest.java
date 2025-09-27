@@ -856,7 +856,7 @@ class CheckedIntConsumerTest {
         }
 
         @Test
-        void testargumentThrowsUnchecked() {
+        void testArgumentThrowsUnchecked() {
             CheckedIntConsumer<IOException> consumer = CheckedIntConsumer.checked(d -> {
                 throw new UncheckedException(Integer.toString(d), new IOException());
             });

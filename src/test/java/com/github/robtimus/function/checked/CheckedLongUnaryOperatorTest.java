@@ -954,7 +954,7 @@ class CheckedLongUnaryOperatorTest {
         }
 
         @Test
-        void testargumentThrowsUnchecked() {
+        void testArgumentThrowsUnchecked() {
             CheckedLongUnaryOperator<IOException> operator = CheckedLongUnaryOperator.checked(l -> {
                 throw new UncheckedException(Long.toString(l), new IOException());
             });

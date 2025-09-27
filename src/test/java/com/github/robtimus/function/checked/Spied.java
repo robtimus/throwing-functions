@@ -27,17 +27,20 @@ import java.util.function.Consumer;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleConsumer;
 import java.util.function.DoubleFunction;
+import java.util.function.DoublePredicate;
 import java.util.function.DoubleSupplier;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
 import java.util.function.IntBinaryOperator;
 import java.util.function.IntConsumer;
 import java.util.function.IntFunction;
+import java.util.function.IntPredicate;
 import java.util.function.IntSupplier;
 import java.util.function.IntUnaryOperator;
 import java.util.function.LongBinaryOperator;
 import java.util.function.LongConsumer;
 import java.util.function.LongFunction;
+import java.util.function.LongPredicate;
 import java.util.function.LongSupplier;
 import java.util.function.LongUnaryOperator;
 import java.util.function.Predicate;
@@ -91,6 +94,10 @@ final class Spied {
         return spy(new CheckedDoubleFunctionWrapper<>(function));
     }
 
+    static <X extends Exception> CheckedDoublePredicate<X> checkedDoublePredicate(CheckedDoublePredicate<X> predicate) {
+        return spy(new CheckedDoublePredicateWrapper<>(predicate));
+    }
+
     static <X extends Exception> CheckedDoubleSupplier<X> checkedDoubleSupplier(CheckedDoubleSupplier<X> supplier) {
         return spy(new CheckedDoubleSupplierWrapper<>(supplier));
     }
@@ -115,6 +122,10 @@ final class Spied {
         return spy(new CheckedIntFunctionWrapper<>(function));
     }
 
+    static <X extends Exception> CheckedIntPredicate<X> checkedIntPredicate(CheckedIntPredicate<X> predicate) {
+        return spy(new CheckedIntPredicateWrapper<>(predicate));
+    }
+
     static <X extends Exception> CheckedIntSupplier<X> checkedIntSupplier(CheckedIntSupplier<X> supplier) {
         return spy(new CheckedIntSupplierWrapper<>(supplier));
     }
@@ -133,6 +144,10 @@ final class Spied {
 
     static <R, X extends Exception> CheckedLongFunction<R, X> checkedLongFunction(CheckedLongFunction<R, X> function) {
         return spy(new CheckedLongFunctionWrapper<>(function));
+    }
+
+    static <X extends Exception> CheckedLongPredicate<X> checkedLongPredicate(CheckedLongPredicate<X> predicate) {
+        return spy(new CheckedLongPredicateWrapper<>(predicate));
     }
 
     static <X extends Exception> CheckedLongSupplier<X> checkedLongSupplier(CheckedLongSupplier<X> supplier) {
@@ -219,6 +234,10 @@ final class Spied {
         return spy(new DoubleFunctionWrapper<>(function));
     }
 
+    static DoublePredicate doublePredicate(DoublePredicate predicate) {
+        return spy(new DoublePredicateWrapper(predicate));
+    }
+
     static DoubleSupplier doubleSupplier(DoubleSupplier supplier) {
         return spy(new DoubleSupplierWrapper(supplier));
     }
@@ -243,6 +262,10 @@ final class Spied {
         return spy(new IntFunctionWrapper<>(function));
     }
 
+    static IntPredicate intPredicate(IntPredicate predicate) {
+        return spy(new IntPredicateWrapper(predicate));
+    }
+
     static IntSupplier intSupplier(IntSupplier supplier) {
         return spy(new IntSupplierWrapper(supplier));
     }
@@ -261,6 +284,10 @@ final class Spied {
 
     static <R> LongFunction<R> longFunction(LongFunction<R> function) {
         return spy(new LongFunctionWrapper<>(function));
+    }
+
+    static LongPredicate longPredicate(LongPredicate predicate) {
+        return spy(new LongPredicateWrapper(predicate));
     }
 
     static LongSupplier longSupplier(LongSupplier supplier) {
@@ -437,6 +464,20 @@ final class Spied {
         }
     }
 
+    private static final class CheckedDoublePredicateWrapper<X extends Exception> implements CheckedDoublePredicate<X> {
+
+        private final CheckedDoublePredicate<X> predicate;
+
+        private CheckedDoublePredicateWrapper(CheckedDoublePredicate<X> predicate) {
+            this.predicate = predicate;
+        }
+
+        @Override
+        public boolean test(double t) throws X {
+            return predicate.test(t);
+        }
+    }
+
     private static final class CheckedDoubleSupplierWrapper<X extends Exception> implements CheckedDoubleSupplier<X> {
 
         private final CheckedDoubleSupplier<X> supplier;
@@ -521,6 +562,20 @@ final class Spied {
         }
     }
 
+    private static final class CheckedIntPredicateWrapper<X extends Exception> implements CheckedIntPredicate<X> {
+
+        private final CheckedIntPredicate<X> predicate;
+
+        private CheckedIntPredicateWrapper(CheckedIntPredicate<X> predicate) {
+            this.predicate = predicate;
+        }
+
+        @Override
+        public boolean test(int t) throws X {
+            return predicate.test(t);
+        }
+    }
+
     private static final class CheckedIntSupplierWrapper<X extends Exception> implements CheckedIntSupplier<X> {
 
         private final CheckedIntSupplier<X> supplier;
@@ -588,6 +643,20 @@ final class Spied {
         @Override
         public R apply(long t) throws X {
             return function.apply(t);
+        }
+    }
+
+    private static final class CheckedLongPredicateWrapper<X extends Exception> implements CheckedLongPredicate<X> {
+
+        private final CheckedLongPredicate<X> predicate;
+
+        private CheckedLongPredicateWrapper(CheckedLongPredicate<X> predicate) {
+            this.predicate = predicate;
+        }
+
+        @Override
+        public boolean test(long t) throws X {
+            return predicate.test(t);
         }
     }
 
@@ -885,6 +954,20 @@ final class Spied {
         }
     }
 
+    private static final class DoublePredicateWrapper implements DoublePredicate {
+
+        private final DoublePredicate predicate;
+
+        private DoublePredicateWrapper(DoublePredicate predicate) {
+            this.predicate = predicate;
+        }
+
+        @Override
+        public boolean test(double t) {
+            return predicate.test(t);
+        }
+    }
+
     private static final class DoubleSupplierWrapper implements DoubleSupplier {
 
         private final DoubleSupplier supplier;
@@ -969,6 +1052,20 @@ final class Spied {
         }
     }
 
+    private static final class IntPredicateWrapper implements IntPredicate {
+
+        private final IntPredicate predicate;
+
+        private IntPredicateWrapper(IntPredicate predicate) {
+            this.predicate = predicate;
+        }
+
+        @Override
+        public boolean test(int t) {
+            return predicate.test(t);
+        }
+    }
+
     private static final class IntSupplierWrapper implements IntSupplier {
 
         private final IntSupplier supplier;
@@ -1036,6 +1133,20 @@ final class Spied {
         @Override
         public R apply(long t) {
             return function.apply(t);
+        }
+    }
+
+    private static final class LongPredicateWrapper implements LongPredicate {
+
+        private final LongPredicate predicate;
+
+        private LongPredicateWrapper(LongPredicate predicate) {
+            this.predicate = predicate;
+        }
+
+        @Override
+        public boolean test(long t) {
+            return predicate.test(t);
         }
     }
 

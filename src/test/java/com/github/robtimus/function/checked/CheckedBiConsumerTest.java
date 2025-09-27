@@ -857,7 +857,7 @@ class CheckedBiConsumerTest {
         }
 
         @Test
-        void testargumentThrowsUnchecked() {
+        void testArgumentThrowsUnchecked() {
             CheckedBiConsumer<String, String, IOException> consumer = CheckedBiConsumer.checked((s1, s2) -> {
                 throw new UncheckedException(s1 + s2, new IOException());
             });

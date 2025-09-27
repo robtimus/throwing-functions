@@ -946,7 +946,7 @@ class CheckedBinaryOperatorTest {
         }
 
         @Test
-        void testargumentThrowsUnchecked() {
+        void testArgumentThrowsUnchecked() {
             CheckedBinaryOperator<String, IOException> operator = CheckedBinaryOperator.checked((s1, s2) -> {
                 throw new UncheckedException(s1 + s2, new IOException());
             });

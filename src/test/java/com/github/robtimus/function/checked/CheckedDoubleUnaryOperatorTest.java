@@ -954,7 +954,7 @@ class CheckedDoubleUnaryOperatorTest {
         }
 
         @Test
-        void testargumentThrowsUnchecked() {
+        void testArgumentThrowsUnchecked() {
             CheckedDoubleUnaryOperator<IOException> operator = CheckedDoubleUnaryOperator.checked(d -> {
                 throw new UncheckedException(Double.toString(d), new IOException());
             });

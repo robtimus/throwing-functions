@@ -964,7 +964,7 @@ class CheckedUnaryOperatorTest {
         }
 
         @Test
-        void testargumentThrowsUnchecked() {
+        void testArgumentThrowsUnchecked() {
             CheckedUnaryOperator<String, IOException> operator = CheckedUnaryOperator.checked(s -> {
                 throw new UncheckedException(s, new IOException());
             });

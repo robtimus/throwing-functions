@@ -1506,7 +1506,7 @@ class CheckedPredicateTest {
         }
 
         @Test
-        void testargumentThrowsUnchecked() {
+        void testArgumentThrowsUnchecked() {
             CheckedPredicate<String, IOException> predicate = CheckedPredicate.checked(s -> {
                 throw new UncheckedException(s, new IOException());
             });

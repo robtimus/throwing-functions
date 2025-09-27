@@ -1155,7 +1155,7 @@ class CheckedFunctionTest {
         }
 
         @Test
-        void testargumentThrowsUnchecked() {
+        void testArgumentThrowsUnchecked() {
             CheckedFunction<String, String, IOException> function = CheckedFunction.checked(s -> {
                 throw new UncheckedException(s, new IOException());
             });

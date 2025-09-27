@@ -1042,7 +1042,7 @@ class CheckedBiFunctionTest {
         }
 
         @Test
-        void testargumentThrowsUnchecked() {
+        void testArgumentThrowsUnchecked() {
             CheckedBiFunction<String, String, String, IOException> function = CheckedBiFunction.checked((s1, s2) -> {
                 throw new UncheckedException(s1 + s2, new IOException());
             });

@@ -947,7 +947,7 @@ class CheckedLongBinaryOperatorTest {
         }
 
         @Test
-        void testargumentThrowsUnchecked() {
+        void testArgumentThrowsUnchecked() {
             CheckedLongBinaryOperator<IOException> operator = CheckedLongBinaryOperator.checked((l1, l2) -> {
                 throw new UncheckedException(Long.toString(l1 + l2), new IOException());
             });

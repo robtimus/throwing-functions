@@ -1507,7 +1507,7 @@ class CheckedBiPredicateTest {
         }
 
         @Test
-        void testargumentThrowsUnchecked() {
+        void testArgumentThrowsUnchecked() {
             CheckedBiPredicate<String, String, IOException> predicate = CheckedBiPredicate.checked((s1, s2) -> {
                 throw new UncheckedException(s1 + s2, new IOException());
             });

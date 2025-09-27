@@ -759,7 +759,7 @@ class CheckedRunnableTest {
         }
 
         @Test
-        void testargumentThrowsUnchecked() {
+        void testArgumentThrowsUnchecked() {
             CheckedRunnable<IOException> runnable = CheckedRunnable.checked(() -> {
                 throw new UncheckedException("foo", new IOException());
             });

@@ -946,7 +946,7 @@ class CheckedLongFunctionTest {
         }
 
         @Test
-        void testargumentThrowsUnchecked() {
+        void testArgumentThrowsUnchecked() {
             CheckedLongFunction<String, IOException> function = CheckedLongFunction.checked(d -> {
                 throw new UncheckedException(Long.toString(d), new IOException());
             });

@@ -750,7 +750,7 @@ class CheckedLongSupplierTest {
         }
 
         @Test
-        void testargumentThrowsUnchecked() {
+        void testArgumentThrowsUnchecked() {
             CheckedLongSupplier<IOException> supplier = CheckedLongSupplier.checked(() -> {
                 throw new UncheckedException("foo", new IOException());
             });

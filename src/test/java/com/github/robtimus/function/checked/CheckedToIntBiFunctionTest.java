@@ -949,7 +949,7 @@ class CheckedToIntBiFunctionTest {
         }
 
         @Test
-        void testargumentThrowsUnchecked() {
+        void testArgumentThrowsUnchecked() {
             CheckedToIntBiFunction<String, String, IOException> function = CheckedToIntBiFunction.checked((s1, s2) -> {
                 throw new UncheckedException(s1 + s2, new IOException());
             });

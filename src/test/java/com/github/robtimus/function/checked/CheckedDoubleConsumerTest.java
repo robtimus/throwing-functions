@@ -856,7 +856,7 @@ class CheckedDoubleConsumerTest {
         }
 
         @Test
-        void testargumentThrowsUnchecked() {
+        void testArgumentThrowsUnchecked() {
             CheckedDoubleConsumer<IOException> consumer = CheckedDoubleConsumer.checked(d -> {
                 throw new UncheckedException(Double.toString(d), new IOException());
             });
