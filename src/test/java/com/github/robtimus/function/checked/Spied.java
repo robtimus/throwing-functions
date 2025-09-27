@@ -26,15 +26,18 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleConsumer;
+import java.util.function.DoubleFunction;
 import java.util.function.DoubleSupplier;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
 import java.util.function.IntBinaryOperator;
 import java.util.function.IntConsumer;
+import java.util.function.IntFunction;
 import java.util.function.IntSupplier;
 import java.util.function.IntUnaryOperator;
 import java.util.function.LongBinaryOperator;
 import java.util.function.LongConsumer;
+import java.util.function.LongFunction;
 import java.util.function.LongSupplier;
 import java.util.function.LongUnaryOperator;
 import java.util.function.Predicate;
@@ -84,6 +87,10 @@ final class Spied {
         return spy(new CheckedDoubleConsumerWrapper<>(consumer));
     }
 
+    static <R, X extends Exception> CheckedDoubleFunction<R, X> checkedDoubleFunction(CheckedDoubleFunction<R, X> function) {
+        return spy(new CheckedDoubleFunctionWrapper<>(function));
+    }
+
     static <X extends Exception> CheckedDoubleSupplier<X> checkedDoubleSupplier(CheckedDoubleSupplier<X> supplier) {
         return spy(new CheckedDoubleSupplierWrapper<>(supplier));
     }
@@ -104,6 +111,10 @@ final class Spied {
         return spy(new CheckedIntConsumerWrapper<>(consumer));
     }
 
+    static <R, X extends Exception> CheckedIntFunction<R, X> checkedIntFunction(CheckedIntFunction<R, X> function) {
+        return spy(new CheckedIntFunctionWrapper<>(function));
+    }
+
     static <X extends Exception> CheckedIntSupplier<X> checkedIntSupplier(CheckedIntSupplier<X> supplier) {
         return spy(new CheckedIntSupplierWrapper<>(supplier));
     }
@@ -118,6 +129,10 @@ final class Spied {
 
     static <X extends Exception> CheckedLongConsumer<X> checkedLongConsumer(CheckedLongConsumer<X> consumer) {
         return spy(new CheckedLongConsumerWrapper<>(consumer));
+    }
+
+    static <R, X extends Exception> CheckedLongFunction<R, X> checkedLongFunction(CheckedLongFunction<R, X> function) {
+        return spy(new CheckedLongFunctionWrapper<>(function));
     }
 
     static <X extends Exception> CheckedLongSupplier<X> checkedLongSupplier(CheckedLongSupplier<X> supplier) {
@@ -200,6 +215,10 @@ final class Spied {
         return spy(new DoubleConsumerWrapper(consumer));
     }
 
+    static <R> DoubleFunction<R> doubleFunction(DoubleFunction<R> function) {
+        return spy(new DoubleFunctionWrapper<>(function));
+    }
+
     static DoubleSupplier doubleSupplier(DoubleSupplier supplier) {
         return spy(new DoubleSupplierWrapper(supplier));
     }
@@ -220,6 +239,10 @@ final class Spied {
         return spy(new IntConsumerWrapper(consumer));
     }
 
+    static <R> IntFunction<R> intFunction(IntFunction<R> function) {
+        return spy(new IntFunctionWrapper<>(function));
+    }
+
     static IntSupplier intSupplier(IntSupplier supplier) {
         return spy(new IntSupplierWrapper(supplier));
     }
@@ -234,6 +257,10 @@ final class Spied {
 
     static LongConsumer longConsumer(LongConsumer consumer) {
         return spy(new LongConsumerWrapper(consumer));
+    }
+
+    static <R> LongFunction<R> longFunction(LongFunction<R> function) {
+        return spy(new LongFunctionWrapper<>(function));
     }
 
     static LongSupplier longSupplier(LongSupplier supplier) {
@@ -396,6 +423,20 @@ final class Spied {
         }
     }
 
+    private static final class CheckedDoubleFunctionWrapper<R, X extends Exception> implements CheckedDoubleFunction<R, X> {
+
+        private final CheckedDoubleFunction<R, X> function;
+
+        private CheckedDoubleFunctionWrapper(CheckedDoubleFunction<R, X> function) {
+            this.function = function;
+        }
+
+        @Override
+        public R apply(double t) throws X {
+            return function.apply(t);
+        }
+    }
+
     private static final class CheckedDoubleSupplierWrapper<X extends Exception> implements CheckedDoubleSupplier<X> {
 
         private final CheckedDoubleSupplier<X> supplier;
@@ -466,6 +507,20 @@ final class Spied {
         }
     }
 
+    private static final class CheckedIntFunctionWrapper<R, X extends Exception> implements CheckedIntFunction<R, X> {
+
+        private final CheckedIntFunction<R, X> function;
+
+        private CheckedIntFunctionWrapper(CheckedIntFunction<R, X> function) {
+            this.function = function;
+        }
+
+        @Override
+        public R apply(int t) throws X {
+            return function.apply(t);
+        }
+    }
+
     private static final class CheckedIntSupplierWrapper<X extends Exception> implements CheckedIntSupplier<X> {
 
         private final CheckedIntSupplier<X> supplier;
@@ -519,6 +574,20 @@ final class Spied {
         @Override
         public void accept(long t) throws X {
             consumer.accept(t);
+        }
+    }
+
+    private static final class CheckedLongFunctionWrapper<R, X extends Exception> implements CheckedLongFunction<R, X> {
+
+        private final CheckedLongFunction<R, X> function;
+
+        private CheckedLongFunctionWrapper(CheckedLongFunction<R, X> function) {
+            this.function = function;
+        }
+
+        @Override
+        public R apply(long t) throws X {
+            return function.apply(t);
         }
     }
 
@@ -802,6 +871,20 @@ final class Spied {
         }
     }
 
+    private static final class DoubleFunctionWrapper<R> implements DoubleFunction<R> {
+
+        private final DoubleFunction<R> function;
+
+        private DoubleFunctionWrapper(DoubleFunction<R> function) {
+            this.function = function;
+        }
+
+        @Override
+        public R apply(double t) {
+            return function.apply(t);
+        }
+    }
+
     private static final class DoubleSupplierWrapper implements DoubleSupplier {
 
         private final DoubleSupplier supplier;
@@ -872,6 +955,20 @@ final class Spied {
         }
     }
 
+    private static final class IntFunctionWrapper<R> implements IntFunction<R> {
+
+        private final IntFunction<R> function;
+
+        private IntFunctionWrapper(IntFunction<R> function) {
+            this.function = function;
+        }
+
+        @Override
+        public R apply(int t) {
+            return function.apply(t);
+        }
+    }
+
     private static final class IntSupplierWrapper implements IntSupplier {
 
         private final IntSupplier supplier;
@@ -925,6 +1022,20 @@ final class Spied {
         @Override
         public void accept(long t) {
             consumer.accept(t);
+        }
+    }
+
+    private static final class LongFunctionWrapper<R> implements LongFunction<R> {
+
+        private final LongFunction<R> function;
+
+        private LongFunctionWrapper(LongFunction<R> function) {
+            this.function = function;
+        }
+
+        @Override
+        public R apply(long t) {
+            return function.apply(t);
         }
     }
 
