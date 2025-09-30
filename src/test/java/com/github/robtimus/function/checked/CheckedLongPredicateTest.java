@@ -37,6 +37,8 @@ import java.util.function.LongPredicate;
 import java.util.function.Predicate;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 
 @SuppressWarnings("nls")
 class CheckedLongPredicateTest {
@@ -154,16 +156,15 @@ class CheckedLongPredicateTest {
         @Nested
         class ThisThrowsUnchecked {
 
-            @Test
-            void testOtherMatches() throws IOException {
-                CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(l -> {
-                    throw new IllegalStateException(Long.toString(l));
-                });
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testOtherMatches(UncheckedThrowable<?> throwable) throws IOException {
+                CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(throwable::throwUnchecked);
                 CheckedLongPredicate<IOException> other = Spied.checkedLongPredicate(l -> l % 2 != 0);
 
                 CheckedLongPredicate<IOException> composed = predicate.and(other);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> composed.test(1L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> composed.test(1L));
                 assertEquals("1", thrown.getMessage());
 
                 verify(predicate).test(1L);
@@ -171,16 +172,15 @@ class CheckedLongPredicateTest {
                 verifyNoMoreInteractions(predicate, other);
             }
 
-            @Test
-            void testOtherDoesNotMatch() throws IOException {
-                CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(l -> {
-                    throw new IllegalStateException(Long.toString(l));
-                });
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testOtherDoesNotMatch(UncheckedThrowable<?> throwable) throws IOException {
+                CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(throwable::throwUnchecked);
                 CheckedLongPredicate<IOException> other = Spied.checkedLongPredicate(l -> l % 2 == 0);
 
                 CheckedLongPredicate<IOException> composed = predicate.and(other);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> composed.test(1L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> composed.test(1L));
                 assertEquals("1", thrown.getMessage());
 
                 verify(predicate).test(1L);
@@ -230,16 +230,15 @@ class CheckedLongPredicateTest {
         @Nested
         class OtherThrowsUnchecked {
 
-            @Test
-            void testThisMatches() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testThisMatches(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(l -> l % 2 != 0);
-                CheckedLongPredicate<IOException> other = Spied.checkedLongPredicate(l -> {
-                    throw new IllegalStateException(Long.toString(l));
-                });
+                CheckedLongPredicate<IOException> other = Spied.checkedLongPredicate(throwable::throwUnchecked);
 
                 CheckedLongPredicate<IOException> composed = predicate.and(other);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> composed.test(1L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> composed.test(1L));
                 assertEquals("1", thrown.getMessage());
 
                 verify(predicate).test(1L);
@@ -248,12 +247,11 @@ class CheckedLongPredicateTest {
                 verifyNoMoreInteractions(predicate, other);
             }
 
-            @Test
-            void testThisDoesNotMatch() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testThisDoesNotMatch(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(l -> l % 2 == 0);
-                CheckedLongPredicate<IOException> other = Spied.checkedLongPredicate(l -> {
-                    throw new IOException(Long.toString(l));
-                });
+                CheckedLongPredicate<IOException> other = Spied.checkedLongPredicate(throwable::throwUnchecked);
 
                 CheckedLongPredicate<IOException> composed = predicate.and(other);
 
@@ -300,15 +298,14 @@ class CheckedLongPredicateTest {
             verifyNoMoreInteractions(predicate);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(l -> {
-                throw new IllegalStateException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(throwable::throwUnchecked);
 
             CheckedLongPredicate<IOException> negated = predicate.negate();
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> negated.test(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> negated.test(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(predicate).test(1L);
@@ -430,16 +427,15 @@ class CheckedLongPredicateTest {
         @Nested
         class ThisThrowsUnchecked {
 
-            @Test
-            void testOtherMatches() throws IOException {
-                CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(l -> {
-                    throw new IllegalStateException(Long.toString(l));
-                });
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testOtherMatches(UncheckedThrowable<?> throwable) throws IOException {
+                CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(throwable::throwUnchecked);
                 CheckedLongPredicate<IOException> other = Spied.checkedLongPredicate(l -> l % 2 != 0);
 
                 CheckedLongPredicate<IOException> composed = predicate.or(other);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> composed.test(1L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> composed.test(1L));
                 assertEquals("1", thrown.getMessage());
 
                 verify(predicate).test(1L);
@@ -447,16 +443,15 @@ class CheckedLongPredicateTest {
                 verifyNoMoreInteractions(predicate, other);
             }
 
-            @Test
-            void testOtherDoesNotMatch() throws IOException {
-                CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(l -> {
-                    throw new IllegalStateException(Long.toString(l));
-                });
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testOtherDoesNotMatch(UncheckedThrowable<?> throwable) throws IOException {
+                CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(throwable::throwUnchecked);
                 CheckedLongPredicate<IOException> other = Spied.checkedLongPredicate(l -> l % 2 == 0);
 
                 CheckedLongPredicate<IOException> composed = predicate.or(other);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> composed.test(1L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> composed.test(1L));
                 assertEquals("1", thrown.getMessage());
 
                 verify(predicate).test(1L);
@@ -506,12 +501,11 @@ class CheckedLongPredicateTest {
         @Nested
         class OtherThrowsUnchecked {
 
-            @Test
-            void testThisMatches() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testThisMatches(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(l -> l % 2 != 0);
-                CheckedLongPredicate<IOException> other = Spied.checkedLongPredicate(l -> {
-                    throw new IllegalStateException(Long.toString(l));
-                });
+                CheckedLongPredicate<IOException> other = Spied.checkedLongPredicate(throwable::throwUnchecked);
 
                 CheckedLongPredicate<IOException> composed = predicate.or(other);
 
@@ -522,16 +516,15 @@ class CheckedLongPredicateTest {
                 verifyNoMoreInteractions(predicate, other);
             }
 
-            @Test
-            void testThisDoesNotMatch() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testThisDoesNotMatch(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(l -> l % 2 == 0);
-                CheckedLongPredicate<IOException> other = Spied.checkedLongPredicate(l -> {
-                    throw new IllegalStateException(Long.toString(l));
-                });
+                CheckedLongPredicate<IOException> other = Spied.checkedLongPredicate(throwable::throwUnchecked);
 
                 CheckedLongPredicate<IOException> composed = predicate.or(other);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> composed.test(1L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> composed.test(1L));
                 assertEquals("1", thrown.getMessage());
 
                 verify(predicate).test(1L);
@@ -587,17 +580,16 @@ class CheckedLongPredicateTest {
             verifyNoMoreInteractions(predicate, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(l -> {
-                throw new IllegalStateException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(throwable::throwUnchecked);
 
             Function<IOException, ExecutionException> errorMapper = Spied.function(ExecutionException::new);
 
             CheckedLongPredicate<ExecutionException> throwing = predicate.onErrorThrowAsChecked(errorMapper);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> throwing.test(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> throwing.test(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(predicate).test(1L);
@@ -651,17 +643,16 @@ class CheckedLongPredicateTest {
             verifyNoMoreInteractions(predicate, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(l -> {
-                throw new IllegalArgumentException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(throwable::throwUnchecked);
 
             Function<IOException, IllegalStateException> errorMapper = Spied.function(IllegalStateException::new);
 
             LongPredicate throwing = predicate.onErrorThrowAsUnchecked(errorMapper);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> throwing.test(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> throwing.test(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(predicate).test(1L);
@@ -738,19 +729,18 @@ class CheckedLongPredicateTest {
                 verifyNoMoreInteractions(predicate, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException, ExecutionException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ExecutionException {
                 CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(l -> {
                     throw new IOException(Long.toString(l));
                 });
 
-                CheckedPredicate<IOException, ExecutionException> errorHandler = Spied.checkedPredicate(e -> {
-                    throw new IllegalStateException(e);
-                });
+                CheckedPredicate<IOException, ExecutionException> errorHandler = Spied.checkedPredicate(throwable::throwUnchecked);
 
                 CheckedLongPredicate<ExecutionException> handling = predicate.onErrorHandleChecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.test(1L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.test(1L));
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("1", cause.getMessage());
 
@@ -761,17 +751,16 @@ class CheckedLongPredicateTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(l -> {
-                throw new IllegalStateException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(throwable::throwUnchecked);
 
             CheckedPredicate<IOException, ExecutionException> errorHandler = Spied.checkedPredicate(e -> e.getMessage() == null);
 
             CheckedLongPredicate<ExecutionException> handling = predicate.onErrorHandleChecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.test(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.test(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(predicate).test(1L);
@@ -826,19 +815,18 @@ class CheckedLongPredicateTest {
                 verifyNoMoreInteractions(predicate, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(l -> {
                     throw new IOException(Long.toString(l));
                 });
 
-                Predicate<IOException> errorHandler = Spied.predicate(e -> {
-                    throw new IllegalStateException(e);
-                });
+                Predicate<IOException> errorHandler = Spied.predicate(throwable::throwUnchecked);
 
                 LongPredicate handling = predicate.onErrorHandleUnchecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.test(1L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.test(1L));
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("1", cause.getMessage());
 
@@ -849,17 +837,16 @@ class CheckedLongPredicateTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(l -> {
-                throw new IllegalStateException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(throwable::throwUnchecked);
 
             Predicate<IOException> errorHandler = Spied.predicate(e -> e.getMessage() == null);
 
             LongPredicate handling = predicate.onErrorHandleUnchecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.test(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.test(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(predicate).test(1L);
@@ -936,19 +923,18 @@ class CheckedLongPredicateTest {
                 verifyNoMoreInteractions(predicate, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException, ParseException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ParseException {
                 CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(l -> {
                     throw new IOException(Long.toString(l));
                 });
 
-                CheckedLongPredicate<ParseException> fallback = Spied.checkedLongPredicate(l -> {
-                    throw new IllegalStateException(Long.toString(l));
-                });
+                CheckedLongPredicate<ParseException> fallback = Spied.checkedLongPredicate(throwable::throwUnchecked);
 
                 CheckedLongPredicate<ParseException> testing = predicate.onErrorTestChecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> testing.test(1L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> testing.test(1L));
                 assertEquals("1", thrown.getMessage());
 
                 verify(predicate).test(1L);
@@ -958,17 +944,16 @@ class CheckedLongPredicateTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(l -> {
-                throw new IllegalStateException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(throwable::throwUnchecked);
 
             CheckedLongPredicate<ParseException> fallback = Spied.checkedLongPredicate(l -> l % 2 == 0);
 
             CheckedLongPredicate<ParseException> testing = predicate.onErrorTestChecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> testing.test(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> testing.test(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(predicate).test(1L);
@@ -1023,19 +1008,18 @@ class CheckedLongPredicateTest {
                 verifyNoMoreInteractions(predicate, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(l -> {
                     throw new IOException(Long.toString(l));
                 });
 
-                LongPredicate fallback = Spied.longPredicate(l -> {
-                    throw new IllegalStateException(Long.toString(l));
-                });
+                LongPredicate fallback = Spied.longPredicate(throwable::throwUnchecked);
 
                 LongPredicate testing = predicate.onErrorTestUnchecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> testing.test(1L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> testing.test(1L));
                 assertEquals("1", thrown.getMessage());
 
                 verify(predicate).test(1L);
@@ -1045,17 +1029,16 @@ class CheckedLongPredicateTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(l -> {
-                throw new IllegalStateException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(throwable::throwUnchecked);
 
             LongPredicate fallback = Spied.longPredicate(l -> l % 2 == 0);
 
             LongPredicate testing = predicate.onErrorTestUnchecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> testing.test(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> testing.test(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(predicate).test(1L);
@@ -1132,19 +1115,18 @@ class CheckedLongPredicateTest {
                 verifyNoMoreInteractions(predicate, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException, ParseException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ParseException {
                 CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(l -> {
                     throw new IOException(Long.toString(l));
                 });
 
-                CheckedBooleanSupplier<ParseException> fallback = Spied.checkedBooleanSupplier(() -> {
-                    throw new IllegalStateException("bar");
-                });
+                CheckedBooleanSupplier<ParseException> fallback = Spied.checkedBooleanSupplier(() -> throwable.throwUnchecked("bar"));
 
                 CheckedLongPredicate<ParseException> getting = predicate.onErrorGetCheckedAsBoolean(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.test(1L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.test(1L));
                 assertEquals("bar", thrown.getMessage());
 
                 verify(predicate).test(1L);
@@ -1154,17 +1136,16 @@ class CheckedLongPredicateTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(l -> {
-                throw new IllegalStateException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(throwable::throwUnchecked);
 
             CheckedBooleanSupplier<ParseException> fallback = Spied.checkedBooleanSupplier(() -> false);
 
             CheckedLongPredicate<ParseException> getting = predicate.onErrorGetCheckedAsBoolean(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.test(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.test(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(predicate).test(1L);
@@ -1219,19 +1200,18 @@ class CheckedLongPredicateTest {
                 verifyNoMoreInteractions(predicate, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(l -> {
                     throw new IOException(Long.toString(l));
                 });
 
-                BooleanSupplier fallback = Spied.booleanSupplier(() -> {
-                    throw new IllegalStateException("bar");
-                });
+                BooleanSupplier fallback = Spied.booleanSupplier(() -> throwable.throwUnchecked("bar"));
 
                 LongPredicate getting = predicate.onErrorGetUncheckedAsBoolean(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.test(1L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.test(1L));
                 assertEquals("bar", thrown.getMessage());
 
                 verify(predicate).test(1L);
@@ -1241,17 +1221,16 @@ class CheckedLongPredicateTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(l -> {
-                throw new IllegalStateException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(throwable::throwUnchecked);
 
             BooleanSupplier fallback = Spied.booleanSupplier(() -> false);
 
             LongPredicate getting = predicate.onErrorGetUncheckedAsBoolean(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.test(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.test(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(predicate).test(1L);
@@ -1291,15 +1270,14 @@ class CheckedLongPredicateTest {
             verifyNoMoreInteractions(predicate);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(l -> {
-                throw new IllegalStateException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(throwable::throwUnchecked);
 
             LongPredicate returning = predicate.onErrorReturn(false);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> returning.test(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> returning.test(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(predicate).test(1L);
@@ -1343,15 +1321,14 @@ class CheckedLongPredicateTest {
             verifyNoMoreInteractions(predicate);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(l -> {
-                throw new IllegalArgumentException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(throwable::throwUnchecked);
 
             LongPredicate unchecked = predicate.unchecked();
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.test(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> unchecked.test(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(predicate).test(1L);
@@ -1416,15 +1393,14 @@ class CheckedLongPredicateTest {
             verifyNoMoreInteractions(predicate);
         }
 
-        @Test
-        void testArgumentThrowsUnchecked() throws IOException {
-            CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(l -> {
-                throw new IllegalStateException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testArgumentThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(throwable::throwUnchecked);
 
             CheckedLongPredicate<IOException> negated = CheckedLongPredicate.not(predicate);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> negated.test(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> negated.test(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(predicate).negate();
@@ -1473,15 +1449,14 @@ class CheckedLongPredicateTest {
             verifyNoMoreInteractions(predicate);
         }
 
-        @Test
-        void testArgumentThrowsUnchecked() throws IOException {
-            CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(l -> {
-                throw new IllegalArgumentException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testArgumentThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongPredicate<IOException> predicate = Spied.checkedLongPredicate(throwable::throwUnchecked);
 
             LongPredicate unchecked = CheckedLongPredicate.unchecked(predicate);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.test(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> unchecked.test(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(predicate).unchecked();

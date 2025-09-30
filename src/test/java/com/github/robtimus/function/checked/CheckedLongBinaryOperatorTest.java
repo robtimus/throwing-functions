@@ -34,6 +34,8 @@ import java.util.function.LongSupplier;
 import java.util.function.ToLongFunction;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 
 @SuppressWarnings("nls")
 class CheckedLongBinaryOperatorTest {
@@ -83,17 +85,16 @@ class CheckedLongBinaryOperatorTest {
             verifyNoMoreInteractions(operator, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongBinaryOperator<IOException> operator = Spied.checkedLongBinaryOperator((l1, l2) -> {
-                throw new IllegalStateException(Long.toString(l1 + l2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongBinaryOperator<IOException> operator = Spied.checkedLongBinaryOperator((l1, l2) -> throwable.throwUnchecked(l1 + l2));
 
             Function<IOException, ExecutionException> errorMapper = Spied.function(ExecutionException::new);
 
             CheckedLongBinaryOperator<ExecutionException> throwing = operator.onErrorThrowAsChecked(errorMapper);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> throwing.applyAsLong(1L, 2L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> throwing.applyAsLong(1L, 2L));
             assertEquals("3", thrown.getMessage());
 
             verify(operator).applyAsLong(1L, 2L);
@@ -147,17 +148,16 @@ class CheckedLongBinaryOperatorTest {
             verifyNoMoreInteractions(operator, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongBinaryOperator<IOException> operator = Spied.checkedLongBinaryOperator((l1, l2) -> {
-                throw new IllegalArgumentException(Long.toString(l1 + l2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongBinaryOperator<IOException> operator = Spied.checkedLongBinaryOperator((l1, l2) -> throwable.throwUnchecked(l1 + l2));
 
             Function<IOException, IllegalStateException> errorMapper = Spied.function(IllegalStateException::new);
 
             LongBinaryOperator throwing = operator.onErrorThrowAsUnchecked(errorMapper);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> throwing.applyAsLong(1L, 2L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> throwing.applyAsLong(1L, 2L));
             assertEquals("3", thrown.getMessage());
 
             verify(operator).applyAsLong(1L, 2L);
@@ -234,19 +234,18 @@ class CheckedLongBinaryOperatorTest {
                 verifyNoMoreInteractions(operator, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException, ExecutionException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ExecutionException {
                 CheckedLongBinaryOperator<IOException> operator = Spied.checkedLongBinaryOperator((l1, l2) -> {
                     throw new IOException(Long.toString(l1 + l2));
                 });
 
-                CheckedToLongFunction<IOException, ExecutionException> errorHandler = Spied.checkedToLongFunction(e -> {
-                    throw new IllegalStateException(e);
-                });
+                CheckedToLongFunction<IOException, ExecutionException> errorHandler = Spied.checkedToLongFunction(throwable::throwUnchecked);
 
                 CheckedLongBinaryOperator<ExecutionException> handling = operator.onErrorHandleChecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsLong(1L, 2L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsLong(1L, 2L));
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("3", cause.getMessage());
 
@@ -257,17 +256,16 @@ class CheckedLongBinaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongBinaryOperator<IOException> operator = Spied.checkedLongBinaryOperator((l1, l2) -> {
-                throw new IllegalStateException(Long.toString(l1 + l2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongBinaryOperator<IOException> operator = Spied.checkedLongBinaryOperator((l1, l2) -> throwable.throwUnchecked(l1 + l2));
 
             CheckedToLongFunction<IOException, ExecutionException> errorHandler = Spied.checkedToLongFunction(e -> 0L);
 
             CheckedLongBinaryOperator<ExecutionException> handling = operator.onErrorHandleChecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsLong(1L, 2L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsLong(1L, 2L));
             assertEquals("3", thrown.getMessage());
 
             verify(operator).applyAsLong(1L, 2L);
@@ -322,19 +320,18 @@ class CheckedLongBinaryOperatorTest {
                 verifyNoMoreInteractions(operator, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedLongBinaryOperator<IOException> operator = Spied.checkedLongBinaryOperator((l1, l2) -> {
                     throw new IOException(Long.toString(l1 + l2));
                 });
 
-                ToLongFunction<IOException> errorHandler = Spied.toLongFunction(e -> {
-                    throw new IllegalStateException(e);
-                });
+                ToLongFunction<IOException> errorHandler = Spied.toLongFunction(throwable::throwUnchecked);
 
                 LongBinaryOperator handling = operator.onErrorHandleUnchecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsLong(1L, 2L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsLong(1L, 2L));
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("3", cause.getMessage());
 
@@ -345,17 +342,16 @@ class CheckedLongBinaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongBinaryOperator<IOException> operator = Spied.checkedLongBinaryOperator((l1, l2) -> {
-                throw new IllegalStateException(Long.toString(l1 + l2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongBinaryOperator<IOException> operator = Spied.checkedLongBinaryOperator((l1, l2) -> throwable.throwUnchecked(l1 + l2));
 
             ToLongFunction<IOException> errorHandler = Spied.toLongFunction(e -> 0L);
 
             LongBinaryOperator handling = operator.onErrorHandleUnchecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsLong(1L, 2L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsLong(1L, 2L));
             assertEquals("3", thrown.getMessage());
 
             verify(operator).applyAsLong(1L, 2L);
@@ -432,19 +428,18 @@ class CheckedLongBinaryOperatorTest {
                 verifyNoMoreInteractions(operator, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException, ParseException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ParseException {
                 CheckedLongBinaryOperator<IOException> operator = Spied.checkedLongBinaryOperator((l1, l2) -> {
                     throw new IOException(Long.toString(l1 + l2));
                 });
 
-                CheckedLongBinaryOperator<ParseException> fallback = Spied.checkedLongBinaryOperator((l1, l2) -> {
-                    throw new IllegalStateException(Long.toString(l1 + l2));
-                });
+                CheckedLongBinaryOperator<ParseException> fallback = Spied.checkedLongBinaryOperator((l1, l2) -> throwable.throwUnchecked(l1 + l2));
 
                 CheckedLongBinaryOperator<ParseException> applying = operator.onErrorApplyChecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsLong(1L, 2L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsLong(1L, 2L));
                 assertEquals("3", thrown.getMessage());
 
                 verify(operator).applyAsLong(1L, 2L);
@@ -454,17 +449,16 @@ class CheckedLongBinaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongBinaryOperator<IOException> operator = Spied.checkedLongBinaryOperator((l1, l2) -> {
-                throw new IllegalStateException(Long.toString(l1 + l2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongBinaryOperator<IOException> operator = Spied.checkedLongBinaryOperator((l1, l2) -> throwable.throwUnchecked(l1 + l2));
 
             CheckedLongBinaryOperator<ParseException> fallback = Spied.checkedLongBinaryOperator((l1, l2) -> l1 + l2 + l1 + l2);
 
             CheckedLongBinaryOperator<ParseException> applying = operator.onErrorApplyChecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsLong(1L, 2L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsLong(1L, 2L));
             assertEquals("3", thrown.getMessage());
 
             verify(operator).applyAsLong(1L, 2L);
@@ -519,19 +513,18 @@ class CheckedLongBinaryOperatorTest {
                 verifyNoMoreInteractions(operator, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedLongBinaryOperator<IOException> operator = Spied.checkedLongBinaryOperator((l1, l2) -> {
                     throw new IOException(Long.toString(l1 + l2));
                 });
 
-                LongBinaryOperator fallback = Spied.longBinaryOperator((l1, l2) -> {
-                    throw new IllegalStateException(Long.toString(l1 + l2));
-                });
+                LongBinaryOperator fallback = Spied.longBinaryOperator((l1, l2) -> throwable.throwUnchecked(l1 + l2));
 
                 LongBinaryOperator applying = operator.onErrorApplyUnchecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsLong(1L, 2L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsLong(1L, 2L));
                 assertEquals("3", thrown.getMessage());
 
                 verify(operator).applyAsLong(1L, 2L);
@@ -541,17 +534,16 @@ class CheckedLongBinaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongBinaryOperator<IOException> operator = Spied.checkedLongBinaryOperator((l1, l2) -> {
-                throw new IllegalStateException(Long.toString(l1 + l2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongBinaryOperator<IOException> operator = Spied.checkedLongBinaryOperator((l1, l2) -> throwable.throwUnchecked(l1 + l2));
 
             LongBinaryOperator fallback = Spied.longBinaryOperator((l1, l2) -> l1 + l2 + l1 + l2);
 
             LongBinaryOperator applying = operator.onErrorApplyUnchecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsLong(1L, 2L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsLong(1L, 2L));
             assertEquals("3", thrown.getMessage());
 
             verify(operator).applyAsLong(1L, 2L);
@@ -628,19 +620,18 @@ class CheckedLongBinaryOperatorTest {
                 verifyNoMoreInteractions(operator, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException, ParseException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ParseException {
                 CheckedLongBinaryOperator<IOException> operator = Spied.checkedLongBinaryOperator((l1, l2) -> {
                     throw new IOException(Long.toString(l1 + l2));
                 });
 
-                CheckedLongSupplier<ParseException> fallback = Spied.checkedLongSupplier(() -> {
-                    throw new IllegalStateException("bar");
-                });
+                CheckedLongSupplier<ParseException> fallback = Spied.checkedLongSupplier(() -> throwable.throwUnchecked("bar"));
 
                 CheckedLongBinaryOperator<ParseException> getting = operator.onErrorGetChecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsLong(1L, 2L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsLong(1L, 2L));
                 assertEquals("bar", thrown.getMessage());
 
                 verify(operator).applyAsLong(1L, 2L);
@@ -650,17 +641,16 @@ class CheckedLongBinaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongBinaryOperator<IOException> operator = Spied.checkedLongBinaryOperator((l1, l2) -> {
-                throw new IllegalStateException(Long.toString(l1 + l2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongBinaryOperator<IOException> operator = Spied.checkedLongBinaryOperator((l1, l2) -> throwable.throwUnchecked(l1 + l2));
 
             CheckedLongSupplier<ParseException> fallback = Spied.checkedLongSupplier(() -> 0L);
 
             CheckedLongBinaryOperator<ParseException> getting = operator.onErrorGetChecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsLong(1L, 2L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsLong(1L, 2L));
             assertEquals("3", thrown.getMessage());
 
             verify(operator).applyAsLong(1L, 2L);
@@ -715,19 +705,18 @@ class CheckedLongBinaryOperatorTest {
                 verifyNoMoreInteractions(operator, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedLongBinaryOperator<IOException> operator = Spied.checkedLongBinaryOperator((l1, l2) -> {
                     throw new IOException(Long.toString(l1 + l2));
                 });
 
-                LongSupplier fallback = Spied.longSupplier(() -> {
-                    throw new IllegalStateException("bar");
-                });
+                LongSupplier fallback = Spied.longSupplier(() -> throwable.throwUnchecked("bar"));
 
                 LongBinaryOperator getting = operator.onErrorGetUnchecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsLong(1L, 2L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsLong(1L, 2L));
                 assertEquals("bar", thrown.getMessage());
 
                 verify(operator).applyAsLong(1L, 2L);
@@ -737,17 +726,16 @@ class CheckedLongBinaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongBinaryOperator<IOException> operator = Spied.checkedLongBinaryOperator((l1, l2) -> {
-                throw new IllegalStateException(Long.toString(l1 + l2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongBinaryOperator<IOException> operator = Spied.checkedLongBinaryOperator((l1, l2) -> throwable.throwUnchecked(l1 + l2));
 
             LongSupplier fallback = Spied.longSupplier(() -> 2L);
 
             LongBinaryOperator getting = operator.onErrorGetUnchecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsLong(1L, 2L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsLong(1L, 2L));
             assertEquals("3", thrown.getMessage());
 
             verify(operator).applyAsLong(1L, 2L);
@@ -787,15 +775,14 @@ class CheckedLongBinaryOperatorTest {
             verifyNoMoreInteractions(operator);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongBinaryOperator<IOException> operator = Spied.checkedLongBinaryOperator((l1, l2) -> {
-                throw new IllegalStateException(Long.toString(l1 + l2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongBinaryOperator<IOException> operator = Spied.checkedLongBinaryOperator((l1, l2) -> throwable.throwUnchecked(l1 + l2));
 
             LongBinaryOperator returning = operator.onErrorReturn(2L);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> returning.applyAsLong(1L, 2L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> returning.applyAsLong(1L, 2L));
             assertEquals("3", thrown.getMessage());
 
             verify(operator).applyAsLong(1L, 2L);
@@ -839,15 +826,14 @@ class CheckedLongBinaryOperatorTest {
             verifyNoMoreInteractions(operator);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongBinaryOperator<IOException> operator = Spied.checkedLongBinaryOperator((l1, l2) -> {
-                throw new IllegalArgumentException(Long.toString(l1 + l2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongBinaryOperator<IOException> operator = Spied.checkedLongBinaryOperator((l1, l2) -> throwable.throwUnchecked(l1 + l2));
 
             LongBinaryOperator unchecked = operator.unchecked();
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.applyAsLong(1L, 2L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> unchecked.applyAsLong(1L, 2L));
             assertEquals("3", thrown.getMessage());
 
             verify(operator).applyAsLong(1L, 2L);
@@ -913,15 +899,14 @@ class CheckedLongBinaryOperatorTest {
             verifyNoMoreInteractions(operator);
         }
 
-        @Test
-        void testArgumentThrowsUnchecked() throws IOException {
-            CheckedLongBinaryOperator<IOException> operator = Spied.checkedLongBinaryOperator((l1, l2) -> {
-                throw new IllegalArgumentException(Long.toString(l1 + l2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testArgumentThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongBinaryOperator<IOException> operator = Spied.checkedLongBinaryOperator((l1, l2) -> throwable.throwUnchecked(l1 + l2));
 
             LongBinaryOperator unchecked = CheckedLongBinaryOperator.unchecked(operator);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.applyAsLong(1L, 2L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> unchecked.applyAsLong(1L, 2L));
             assertEquals("3", thrown.getMessage());
 
             verify(operator).unchecked();

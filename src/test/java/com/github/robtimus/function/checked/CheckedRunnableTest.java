@@ -32,6 +32,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 
 @SuppressWarnings("nls")
 class CheckedRunnableTest {
@@ -81,17 +83,16 @@ class CheckedRunnableTest {
             verifyNoMoreInteractions(runnable, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedRunnable<IOException> runnable = Spied.checkedRunnable(() -> {
-                throw new IllegalStateException("foo");
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedRunnable<IOException> runnable = Spied.checkedRunnable(() -> throwable.throwUnchecked("foo"));
 
             Function<IOException, ExecutionException> errorMapper = Spied.function(ExecutionException::new);
 
             CheckedRunnable<ExecutionException> throwing = runnable.onErrorThrowAsChecked(errorMapper);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, throwing::run);
+            Throwable thrown = assertThrows(throwable.throwableType(), throwing::run);
             assertEquals("foo", thrown.getMessage());
 
             verify(runnable).run();
@@ -145,17 +146,16 @@ class CheckedRunnableTest {
             verifyNoMoreInteractions(runnable, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedRunnable<IOException> runnable = Spied.checkedRunnable(() -> {
-                throw new IllegalArgumentException("foo");
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedRunnable<IOException> runnable = Spied.checkedRunnable(() -> throwable.throwUnchecked("foo"));
 
             Function<IOException, IllegalStateException> errorMapper = Spied.function(IllegalStateException::new);
 
             Runnable throwing = runnable.onErrorThrowAsUnchecked(errorMapper);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, throwing::run);
+            Throwable thrown = assertThrows(throwable.throwableType(), throwing::run);
             assertEquals("foo", thrown.getMessage());
 
             verify(runnable).run();
@@ -232,19 +232,18 @@ class CheckedRunnableTest {
                 verifyNoMoreInteractions(runnable, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException, ExecutionException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ExecutionException {
                 CheckedRunnable<IOException> runnable = Spied.checkedRunnable(() -> {
                     throw new IOException("foo");
                 });
 
-                CheckedConsumer<IOException, ExecutionException> errorHandler = Spied.checkedConsumer(e -> {
-                    throw new IllegalStateException(e);
-                });
+                CheckedConsumer<IOException, ExecutionException> errorHandler = Spied.checkedConsumer(throwable::throwUnchecked);
 
                 CheckedRunnable<ExecutionException> handling = runnable.onErrorHandleChecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, handling::run);
+                Throwable thrown = assertThrows(throwable.throwableType(), handling::run);
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("foo", cause.getMessage());
 
@@ -255,17 +254,16 @@ class CheckedRunnableTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedRunnable<IOException> runnable = Spied.checkedRunnable(() -> {
-                throw new IllegalStateException("foo");
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedRunnable<IOException> runnable = Spied.checkedRunnable(() -> throwable.throwUnchecked("foo"));
 
             CheckedConsumer<IOException, ExecutionException> errorHandler = Spied.checkedConsumer(Exception::getMessage);
 
             CheckedRunnable<ExecutionException> handling = runnable.onErrorHandleChecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, handling::run);
+            Throwable thrown = assertThrows(throwable.throwableType(), handling::run);
             assertEquals("foo", thrown.getMessage());
 
             verify(runnable).run();
@@ -320,19 +318,18 @@ class CheckedRunnableTest {
                 verifyNoMoreInteractions(runnable, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedRunnable<IOException> runnable = Spied.checkedRunnable(() -> {
                     throw new IOException("foo");
                 });
 
-                Consumer<IOException> errorHandler = Spied.consumer(e -> {
-                    throw new IllegalStateException(e);
-                });
+                Consumer<IOException> errorHandler = Spied.consumer(throwable::throwUnchecked);
 
                 Runnable handling = runnable.onErrorHandleUnchecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, handling::run);
+                Throwable thrown = assertThrows(throwable.throwableType(), handling::run);
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("foo", cause.getMessage());
 
@@ -343,17 +340,16 @@ class CheckedRunnableTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedRunnable<IOException> runnable = Spied.checkedRunnable(() -> {
-                throw new IllegalStateException("foo");
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedRunnable<IOException> runnable = Spied.checkedRunnable(() -> throwable.throwUnchecked("foo"));
 
             Consumer<IOException> errorHandler = Spied.consumer(Exception::getMessage);
 
             Runnable handling = runnable.onErrorHandleUnchecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, handling::run);
+            Throwable thrown = assertThrows(throwable.throwableType(), handling::run);
             assertEquals("foo", thrown.getMessage());
 
             verify(runnable).run();
@@ -430,19 +426,18 @@ class CheckedRunnableTest {
                 verifyNoMoreInteractions(runnable, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException, ParseException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ParseException {
                 CheckedRunnable<IOException> runnable = Spied.checkedRunnable(() -> {
                     throw new IOException("foo");
                 });
 
-                CheckedRunnable<ParseException> fallback = Spied.checkedRunnable(() -> {
-                    throw new IllegalStateException("foo");
-                });
+                CheckedRunnable<ParseException> fallback = Spied.checkedRunnable(() -> throwable.throwUnchecked("foo"));
 
                 CheckedRunnable<ParseException> running = runnable.onErrorRunChecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, running::run);
+                Throwable thrown = assertThrows(throwable.throwableType(), running::run);
                 assertEquals("foo", thrown.getMessage());
 
                 verify(runnable).run();
@@ -452,17 +447,16 @@ class CheckedRunnableTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedRunnable<IOException> runnable = Spied.checkedRunnable(() -> {
-                throw new IllegalStateException("foo");
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedRunnable<IOException> runnable = Spied.checkedRunnable(() -> throwable.throwUnchecked("foo"));
 
             CheckedRunnable<ParseException> fallback = Spied.checkedRunnable("foo"::toLowerCase);
 
             CheckedRunnable<ParseException> running = runnable.onErrorRunChecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, running::run);
+            Throwable thrown = assertThrows(throwable.throwableType(), running::run);
             assertEquals("foo", thrown.getMessage());
 
             verify(runnable).run();
@@ -517,19 +511,18 @@ class CheckedRunnableTest {
                 verifyNoMoreInteractions(runnable, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedRunnable<IOException> runnable = Spied.checkedRunnable(() -> {
                     throw new IOException("foo");
                 });
 
-                Runnable fallback = Spied.runnable(() -> {
-                    throw new IllegalStateException("foo");
-                });
+                Runnable fallback = Spied.runnable(() -> throwable.throwUnchecked("foo"));
 
                 Runnable running = runnable.onErrorRunUnchecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, running::run);
+                Throwable thrown = assertThrows(throwable.throwableType(), running::run);
                 assertEquals("foo", thrown.getMessage());
 
                 verify(runnable).run();
@@ -539,17 +532,16 @@ class CheckedRunnableTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedRunnable<IOException> runnable = Spied.checkedRunnable(() -> {
-                throw new IllegalStateException("foo");
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedRunnable<IOException> runnable = Spied.checkedRunnable(() -> throwable.throwUnchecked("foo"));
 
             Runnable fallback = Spied.runnable("foo"::toLowerCase);
 
             Runnable running = runnable.onErrorRunUnchecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, running::run);
+            Throwable thrown = assertThrows(throwable.throwableType(), running::run);
             assertEquals("foo", thrown.getMessage());
 
             verify(runnable).run();
@@ -589,15 +581,14 @@ class CheckedRunnableTest {
             verifyNoMoreInteractions(runnable);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedRunnable<IOException> runnable = Spied.checkedRunnable(() -> {
-                throw new IllegalStateException("foo");
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedRunnable<IOException> runnable = Spied.checkedRunnable(() -> throwable.throwUnchecked("foo"));
 
             Runnable discarding = runnable.onErrorDiscard();
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, discarding::run);
+            Throwable thrown = assertThrows(throwable.throwableType(), discarding::run);
             assertEquals("foo", thrown.getMessage());
 
             verify(runnable).run();
@@ -641,15 +632,14 @@ class CheckedRunnableTest {
             verifyNoMoreInteractions(runnable);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedRunnable<IOException> runnable = Spied.checkedRunnable(() -> {
-                throw new IllegalArgumentException("foo");
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedRunnable<IOException> runnable = Spied.checkedRunnable(() -> throwable.throwUnchecked("foo"));
 
             Runnable unchecked = runnable.unchecked();
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, unchecked::run);
+            Throwable thrown = assertThrows(throwable.throwableType(), unchecked::run);
             assertEquals("foo", thrown.getMessage());
 
             verify(runnable).run();
@@ -720,15 +710,14 @@ class CheckedRunnableTest {
             verifyNoMoreInteractions(runnable);
         }
 
-        @Test
-        void testArgumentThrowsUnchecked() throws IOException {
-            CheckedRunnable<IOException> runnable = Spied.checkedRunnable(() -> {
-                throw new IllegalArgumentException("foo");
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testArgumentThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedRunnable<IOException> runnable = Spied.checkedRunnable(() -> throwable.throwUnchecked("foo"));
 
             Runnable unchecked = CheckedRunnable.unchecked(runnable);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, unchecked::run);
+            Throwable thrown = assertThrows(throwable.throwableType(), unchecked::run);
             assertEquals("foo", thrown.getMessage());
 
             verify(runnable).unchecked();

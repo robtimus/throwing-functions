@@ -30,7 +30,8 @@ import java.util.function.Predicate;
  * @param <X> The type of checked exception that can be thrown.
  */
 @FunctionalInterface
-public interface CheckedLongPredicate<X extends Exception> {
+@SuppressWarnings("squid:S1181") // Error needs to be caught separately (and re-thrown) to not let it be caught as throwable
+public interface CheckedLongPredicate<X extends Throwable> {
 
     /**
      * Evaluates this predicate on the given argument.
@@ -91,17 +92,17 @@ public interface CheckedLongPredicate<X extends Exception> {
      * @return A predicate that transforms any thrown checked exception.
      * @throws NullPointerException If {@code errorMapper} is {@code null}.
      */
-    default <E extends Exception> CheckedLongPredicate<E> onErrorThrowAsChecked(Function<? super X, ? extends E> errorMapper) {
+    default <E extends Throwable> CheckedLongPredicate<E> onErrorThrowAsChecked(Function<? super X, ? extends E> errorMapper) {
         Objects.requireNonNull(errorMapper);
         return t -> {
             try {
                 return test(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 throw errorMapper.apply(x);
             }
         };
@@ -121,12 +122,12 @@ public interface CheckedLongPredicate<X extends Exception> {
         return t -> {
             try {
                 return test(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 throw errorMapper.apply(x);
             }
         };
@@ -141,17 +142,17 @@ public interface CheckedLongPredicate<X extends Exception> {
      * @return A predicate that transforms any thrown checked exception.
      * @throws NullPointerException If {@code errorHandler} is {@code null}.
      */
-    default <E extends Exception> CheckedLongPredicate<E> onErrorHandleChecked(CheckedPredicate<? super X, ? extends E> errorHandler) {
+    default <E extends Throwable> CheckedLongPredicate<E> onErrorHandleChecked(CheckedPredicate<? super X, ? extends E> errorHandler) {
         Objects.requireNonNull(errorHandler);
         return t -> {
             try {
                 return test(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 return errorHandler.test(x);
             }
         };
@@ -170,12 +171,12 @@ public interface CheckedLongPredicate<X extends Exception> {
         return t -> {
             try {
                 return test(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 return errorHandler.test(x);
             }
         };
@@ -190,14 +191,14 @@ public interface CheckedLongPredicate<X extends Exception> {
      * @return A predicate that invokes the {@code fallback} predicate if this predicate throws any checked exception.
      * @throws NullPointerException If {@code fallback} is {@code null}.
      */
-    default <E extends Exception> CheckedLongPredicate<E> onErrorTestChecked(CheckedLongPredicate<? extends E> fallback) {
+    default <E extends Throwable> CheckedLongPredicate<E> onErrorTestChecked(CheckedLongPredicate<? extends E> fallback) {
         Objects.requireNonNull(fallback);
         return t -> {
             try {
                 return test(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.test(t);
             }
         };
@@ -216,9 +217,9 @@ public interface CheckedLongPredicate<X extends Exception> {
         return t -> {
             try {
                 return test(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.test(t);
             }
         };
@@ -233,14 +234,14 @@ public interface CheckedLongPredicate<X extends Exception> {
      * @return A predicate that invokes the {@code fallback} supplier if this predicate throws any checked exception.
      * @throws NullPointerException If {@code fallback} is {@code null}.
      */
-    default <E extends Exception> CheckedLongPredicate<E> onErrorGetCheckedAsBoolean(CheckedBooleanSupplier<? extends E> fallback) {
+    default <E extends Throwable> CheckedLongPredicate<E> onErrorGetCheckedAsBoolean(CheckedBooleanSupplier<? extends E> fallback) {
         Objects.requireNonNull(fallback);
         return t -> {
             try {
                 return test(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.getAsBoolean();
             }
         };
@@ -259,9 +260,9 @@ public interface CheckedLongPredicate<X extends Exception> {
         return t -> {
             try {
                 return test(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.getAsBoolean();
             }
         };
@@ -278,9 +279,9 @@ public interface CheckedLongPredicate<X extends Exception> {
         return t -> {
             try {
                 return test(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback;
             }
         };
@@ -304,7 +305,7 @@ public interface CheckedLongPredicate<X extends Exception> {
      * @return The given lambda as a {@code CheckedLongPredicate}.
      * @throws NullPointerException If {@code predicate} is {@code null}.
      */
-    static <X extends Exception> CheckedLongPredicate<X> of(CheckedLongPredicate<X> predicate) {
+    static <X extends Throwable> CheckedLongPredicate<X> of(CheckedLongPredicate<X> predicate) {
         Objects.requireNonNull(predicate);
         return predicate;
     }
@@ -318,7 +319,7 @@ public interface CheckedLongPredicate<X extends Exception> {
      * @throws NullPointerException If {@code predicate} is {@code null}.
      */
     @SuppressWarnings("unchecked")
-    static <X extends Exception> CheckedLongPredicate<X> not(CheckedLongPredicate<? extends X> predicate) {
+    static <X extends Throwable> CheckedLongPredicate<X> not(CheckedLongPredicate<? extends X> predicate) {
         Objects.requireNonNull(predicate);
         return (CheckedLongPredicate<X>) predicate.negate();
     }
@@ -346,7 +347,7 @@ public interface CheckedLongPredicate<X extends Exception> {
      * @return A predicate that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code predicate} is {@code null}.
      */
-    static <X extends Exception> CheckedLongPredicate<X> checked(LongPredicate predicate) {
+    static <X extends Throwable> CheckedLongPredicate<X> checked(LongPredicate predicate) {
         Objects.requireNonNull(predicate);
         return predicate::test;
     }
@@ -361,7 +362,7 @@ public interface CheckedLongPredicate<X extends Exception> {
      * @return A predicate that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code predicate} or {@code errorType} is {@code null}.
      */
-    static <X extends Exception> CheckedLongPredicate<X> checked(LongPredicate predicate, Class<X> errorType) {
+    static <X extends Throwable> CheckedLongPredicate<X> checked(LongPredicate predicate, Class<X> errorType) {
         Objects.requireNonNull(predicate);
         Objects.requireNonNull(errorType);
         return t -> invokeAndUnwrap(predicate, t, errorType);
@@ -378,12 +379,12 @@ public interface CheckedLongPredicate<X extends Exception> {
      * @throws NullPointerException If {@code predicate} or {@code errorType} is {@code null}.
      * @throws X If {@code predicate} throws an {@link UncheckedException} that wraps an instance of {@code errorType}.
      */
-    static <X extends Exception> boolean invokeAndUnwrap(LongPredicate predicate, long input, Class<X> errorType) throws X {
+    static <X extends Throwable> boolean invokeAndUnwrap(LongPredicate predicate, long input, Class<X> errorType) throws X {
         Objects.requireNonNull(errorType);
         try {
             return predicate.test(input);
         } catch (UncheckedException e) {
-            Exception cause = e.getCause();
+            Throwable cause = e.getCause();
             if (errorType.isInstance(cause)) {
                 throw errorType.cast(cause);
             }

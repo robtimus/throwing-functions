@@ -34,6 +34,8 @@ import java.util.function.IntToDoubleFunction;
 import java.util.function.ToDoubleFunction;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 
 @SuppressWarnings("nls")
 class CheckedIntToDoubleFunctionTest {
@@ -83,17 +85,16 @@ class CheckedIntToDoubleFunctionTest {
             verifyNoMoreInteractions(function, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntToDoubleFunction<IOException> function = Spied.checkedIntToDoubleFunction(i -> {
-                throw new IllegalStateException(Integer.toString(i));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntToDoubleFunction<IOException> function = Spied.checkedIntToDoubleFunction(throwable::throwUnchecked);
 
             Function<IOException, ExecutionException> errorMapper = Spied.function(ExecutionException::new);
 
             CheckedIntToDoubleFunction<ExecutionException> throwing = function.onErrorThrowAsChecked(errorMapper);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> throwing.applyAsDouble(1));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> throwing.applyAsDouble(1));
             assertEquals("1", thrown.getMessage());
 
             verify(function).applyAsDouble(1);
@@ -147,17 +148,16 @@ class CheckedIntToDoubleFunctionTest {
             verifyNoMoreInteractions(function, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntToDoubleFunction<IOException> function = Spied.checkedIntToDoubleFunction(i -> {
-                throw new IllegalArgumentException(Integer.toString(i));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntToDoubleFunction<IOException> function = Spied.checkedIntToDoubleFunction(throwable::throwUnchecked);
 
             Function<IOException, IllegalStateException> errorMapper = Spied.function(IllegalStateException::new);
 
             IntToDoubleFunction throwing = function.onErrorThrowAsUnchecked(errorMapper);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> throwing.applyAsDouble(1));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> throwing.applyAsDouble(1));
             assertEquals("1", thrown.getMessage());
 
             verify(function).applyAsDouble(1);
@@ -234,19 +234,18 @@ class CheckedIntToDoubleFunctionTest {
                 verifyNoMoreInteractions(function, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException, ExecutionException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ExecutionException {
                 CheckedIntToDoubleFunction<IOException> function = Spied.checkedIntToDoubleFunction(i -> {
                     throw new IOException(Integer.toString(i));
                 });
 
-                CheckedToDoubleFunction<IOException, ExecutionException> errorHandler = Spied.checkedToDoubleFunction(e -> {
-                    throw new IllegalStateException(e);
-                });
+                CheckedToDoubleFunction<IOException, ExecutionException> errorHandler = Spied.checkedToDoubleFunction(throwable::throwUnchecked);
 
                 CheckedIntToDoubleFunction<ExecutionException> handling = function.onErrorHandleChecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsDouble(1));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsDouble(1));
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("1", cause.getMessage());
 
@@ -257,17 +256,16 @@ class CheckedIntToDoubleFunctionTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntToDoubleFunction<IOException> function = Spied.checkedIntToDoubleFunction(i -> {
-                throw new IllegalStateException(Integer.toString(i));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntToDoubleFunction<IOException> function = Spied.checkedIntToDoubleFunction(throwable::throwUnchecked);
 
             CheckedToDoubleFunction<IOException, ExecutionException> errorHandler = Spied.checkedToDoubleFunction(e -> 0D);
 
             CheckedIntToDoubleFunction<ExecutionException> handling = function.onErrorHandleChecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsDouble(1));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsDouble(1));
             assertEquals("1", thrown.getMessage());
 
             verify(function).applyAsDouble(1);
@@ -322,19 +320,18 @@ class CheckedIntToDoubleFunctionTest {
                 verifyNoMoreInteractions(function, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedIntToDoubleFunction<IOException> function = Spied.checkedIntToDoubleFunction(i -> {
                     throw new IOException(Integer.toString(i));
                 });
 
-                ToDoubleFunction<IOException> errorHandler = Spied.toDoubleFunction(e -> {
-                    throw new IllegalStateException(e);
-                });
+                ToDoubleFunction<IOException> errorHandler = Spied.toDoubleFunction(throwable::throwUnchecked);
 
                 IntToDoubleFunction handling = function.onErrorHandleUnchecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsDouble(1));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsDouble(1));
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("1", cause.getMessage());
 
@@ -345,17 +342,16 @@ class CheckedIntToDoubleFunctionTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntToDoubleFunction<IOException> function = Spied.checkedIntToDoubleFunction(i -> {
-                throw new IllegalStateException(Integer.toString(i));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntToDoubleFunction<IOException> function = Spied.checkedIntToDoubleFunction(throwable::throwUnchecked);
 
             ToDoubleFunction<IOException> errorHandler = Spied.toDoubleFunction(e -> 0D);
 
             IntToDoubleFunction handling = function.onErrorHandleUnchecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsDouble(1));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsDouble(1));
             assertEquals("1", thrown.getMessage());
 
             verify(function).applyAsDouble(1);
@@ -432,19 +428,19 @@ class CheckedIntToDoubleFunctionTest {
                 verifyNoMoreInteractions(function, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException, ParseException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ParseException {
                 CheckedIntToDoubleFunction<IOException> function = Spied.checkedIntToDoubleFunction(i -> {
                     throw new IOException(Integer.toString(i));
                 });
 
-                CheckedIntToDoubleFunction<ParseException> fallback = Spied.checkedIntToDoubleFunction(i -> {
-                    throw new IllegalStateException(Integer.toString(i));
-                });
+                CheckedIntToDoubleFunction<ParseException> fallback = Spied
+                        .checkedIntToDoubleFunction(throwable::throwUnchecked);
 
                 CheckedIntToDoubleFunction<ParseException> applying = function.onErrorApplyChecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsDouble(1));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsDouble(1));
                 assertEquals("1", thrown.getMessage());
 
                 verify(function).applyAsDouble(1);
@@ -454,17 +450,16 @@ class CheckedIntToDoubleFunctionTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntToDoubleFunction<IOException> function = Spied.checkedIntToDoubleFunction(i -> {
-                throw new IllegalStateException(Integer.toString(i));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntToDoubleFunction<IOException> function = Spied.checkedIntToDoubleFunction(throwable::throwUnchecked);
 
             CheckedIntToDoubleFunction<ParseException> fallback = Spied.checkedIntToDoubleFunction(i -> i * 3);
 
             CheckedIntToDoubleFunction<ParseException> applying = function.onErrorApplyChecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsDouble(1));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsDouble(1));
             assertEquals("1", thrown.getMessage());
 
             verify(function).applyAsDouble(1);
@@ -519,19 +514,18 @@ class CheckedIntToDoubleFunctionTest {
                 verifyNoMoreInteractions(function, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedIntToDoubleFunction<IOException> function = Spied.checkedIntToDoubleFunction(i -> {
                     throw new IOException(Integer.toString(i));
                 });
 
-                IntToDoubleFunction fallback = Spied.intToDoubleFunction(i -> {
-                    throw new IllegalStateException(Integer.toString(i));
-                });
+                IntToDoubleFunction fallback = Spied.intToDoubleFunction(throwable::throwUnchecked);
 
                 IntToDoubleFunction applying = function.onErrorApplyUnchecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsDouble(1));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsDouble(1));
                 assertEquals("1", thrown.getMessage());
 
                 verify(function).applyAsDouble(1);
@@ -541,17 +535,16 @@ class CheckedIntToDoubleFunctionTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntToDoubleFunction<IOException> function = Spied.checkedIntToDoubleFunction(i -> {
-                throw new IllegalStateException(Integer.toString(i));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntToDoubleFunction<IOException> function = Spied.checkedIntToDoubleFunction(throwable::throwUnchecked);
 
             IntToDoubleFunction fallback = Spied.intToDoubleFunction(i -> i * 3);
 
             IntToDoubleFunction applying = function.onErrorApplyUnchecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsDouble(1));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsDouble(1));
             assertEquals("1", thrown.getMessage());
 
             verify(function).applyAsDouble(1);
@@ -628,19 +621,18 @@ class CheckedIntToDoubleFunctionTest {
                 verifyNoMoreInteractions(function, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException, ParseException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ParseException {
                 CheckedIntToDoubleFunction<IOException> function = Spied.checkedIntToDoubleFunction(i -> {
                     throw new IOException(Integer.toString(i));
                 });
 
-                CheckedDoubleSupplier<ParseException> fallback = Spied.checkedDoubleSupplier(() -> {
-                    throw new IllegalStateException("bar");
-                });
+                CheckedDoubleSupplier<ParseException> fallback = Spied.checkedDoubleSupplier(() -> throwable.throwUnchecked("bar"));
 
                 CheckedIntToDoubleFunction<ParseException> getting = function.onErrorGetChecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsDouble(1));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsDouble(1));
                 assertEquals("bar", thrown.getMessage());
 
                 verify(function).applyAsDouble(1);
@@ -650,17 +642,16 @@ class CheckedIntToDoubleFunctionTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntToDoubleFunction<IOException> function = Spied.checkedIntToDoubleFunction(i -> {
-                throw new IllegalStateException(Integer.toString(i));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntToDoubleFunction<IOException> function = Spied.checkedIntToDoubleFunction(throwable::throwUnchecked);
 
             CheckedDoubleSupplier<ParseException> fallback = Spied.checkedDoubleSupplier(() -> 0D);
 
             CheckedIntToDoubleFunction<ParseException> getting = function.onErrorGetChecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsDouble(1));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsDouble(1));
             assertEquals("1", thrown.getMessage());
 
             verify(function).applyAsDouble(1);
@@ -715,19 +706,18 @@ class CheckedIntToDoubleFunctionTest {
                 verifyNoMoreInteractions(function, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedIntToDoubleFunction<IOException> function = Spied.checkedIntToDoubleFunction(i -> {
                     throw new IOException(Integer.toString(i));
                 });
 
-                DoubleSupplier fallback = Spied.doubleSupplier(() -> {
-                    throw new IllegalStateException("bar");
-                });
+                DoubleSupplier fallback = Spied.doubleSupplier(() -> throwable.throwUnchecked("bar"));
 
                 IntToDoubleFunction getting = function.onErrorGetUnchecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsDouble(1));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsDouble(1));
                 assertEquals("bar", thrown.getMessage());
 
                 verify(function).applyAsDouble(1);
@@ -737,17 +727,16 @@ class CheckedIntToDoubleFunctionTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntToDoubleFunction<IOException> function = Spied.checkedIntToDoubleFunction(i -> {
-                throw new IllegalStateException(Integer.toString(i));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntToDoubleFunction<IOException> function = Spied.checkedIntToDoubleFunction(throwable::throwUnchecked);
 
             DoubleSupplier fallback = Spied.doubleSupplier(() -> 0D);
 
             IntToDoubleFunction getting = function.onErrorGetUnchecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsDouble(1));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsDouble(1));
             assertEquals("1", thrown.getMessage());
 
             verify(function).applyAsDouble(1);
@@ -787,15 +776,14 @@ class CheckedIntToDoubleFunctionTest {
             verifyNoMoreInteractions(function);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntToDoubleFunction<IOException> function = Spied.checkedIntToDoubleFunction(i -> {
-                throw new IllegalStateException(Integer.toString(i));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntToDoubleFunction<IOException> function = Spied.checkedIntToDoubleFunction(throwable::throwUnchecked);
 
             IntToDoubleFunction returning = function.onErrorReturn(0D);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> returning.applyAsDouble(1));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> returning.applyAsDouble(1));
             assertEquals("1", thrown.getMessage());
 
             verify(function).applyAsDouble(1);
@@ -839,15 +827,14 @@ class CheckedIntToDoubleFunctionTest {
             verifyNoMoreInteractions(function);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntToDoubleFunction<IOException> function = Spied.checkedIntToDoubleFunction(i -> {
-                throw new IllegalArgumentException(Integer.toString(i));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntToDoubleFunction<IOException> function = Spied.checkedIntToDoubleFunction(throwable::throwUnchecked);
 
             IntToDoubleFunction unchecked = function.unchecked();
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.applyAsDouble(1));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> unchecked.applyAsDouble(1));
             assertEquals("1", thrown.getMessage());
 
             verify(function).applyAsDouble(1);
@@ -913,15 +900,14 @@ class CheckedIntToDoubleFunctionTest {
             verifyNoMoreInteractions(function);
         }
 
-        @Test
-        void testArgumentThrowsUnchecked() throws IOException {
-            CheckedIntToDoubleFunction<IOException> function = Spied.checkedIntToDoubleFunction(i -> {
-                throw new IllegalArgumentException(Integer.toString(i));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testArgumentThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntToDoubleFunction<IOException> function = Spied.checkedIntToDoubleFunction(throwable::throwUnchecked);
 
             IntToDoubleFunction unchecked = CheckedIntToDoubleFunction.unchecked(function);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.applyAsDouble(1));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> unchecked.applyAsDouble(1));
             assertEquals("1", thrown.getMessage());
 
             verify(function).unchecked();

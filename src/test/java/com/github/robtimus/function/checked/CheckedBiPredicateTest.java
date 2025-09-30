@@ -37,6 +37,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 
 @SuppressWarnings("nls")
 class CheckedBiPredicateTest {
@@ -154,16 +156,15 @@ class CheckedBiPredicateTest {
         @Nested
         class ThisThrowsUnchecked {
 
-            @Test
-            void testOtherMatches() throws IOException {
-                CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> {
-                    throw new IllegalStateException(s1 + s2);
-                });
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testOtherMatches(UncheckedThrowable<?> throwable) throws IOException {
+                CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> throwable.throwUnchecked(s1 + s2));
                 CheckedBiPredicate<String, String, IOException> other = Spied.checkedBiPredicate(String::equalsIgnoreCase);
 
                 CheckedBiPredicate<String, String, IOException> composed = predicate.and(other);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> composed.test("foo", "FOO"));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> composed.test("foo", "FOO"));
                 assertEquals("fooFOO", thrown.getMessage());
 
                 verify(predicate).test("foo", "FOO");
@@ -171,16 +172,15 @@ class CheckedBiPredicateTest {
                 verifyNoMoreInteractions(predicate, other);
             }
 
-            @Test
-            void testOtherDoesNotMatch() throws IOException {
-                CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> {
-                    throw new IllegalStateException(s1 + s2);
-                });
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testOtherDoesNotMatch(UncheckedThrowable<?> throwable) throws IOException {
+                CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> throwable.throwUnchecked(s1 + s2));
                 CheckedBiPredicate<String, String, IOException> other = Spied.checkedBiPredicate(String::equalsIgnoreCase);
 
                 CheckedBiPredicate<String, String, IOException> composed = predicate.and(other);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> composed.test("foo", "bar"));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> composed.test("foo", "bar"));
                 assertEquals("foobar", thrown.getMessage());
 
                 verify(predicate).test("foo", "bar");
@@ -230,16 +230,15 @@ class CheckedBiPredicateTest {
         @Nested
         class OtherThrowsUnchecked {
 
-            @Test
-            void testThisMatches() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testThisMatches(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate(String::equalsIgnoreCase);
-                CheckedBiPredicate<String, String, IOException> other = Spied.checkedBiPredicate((s1, s2) -> {
-                    throw new IllegalStateException(s1 + s2);
-                });
+                CheckedBiPredicate<String, String, IOException> other = Spied.checkedBiPredicate((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
                 CheckedBiPredicate<String, String, IOException> composed = predicate.and(other);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> composed.test("foo", "FOO"));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> composed.test("foo", "FOO"));
                 assertEquals("fooFOO", thrown.getMessage());
 
                 verify(predicate).test("foo", "FOO");
@@ -248,12 +247,11 @@ class CheckedBiPredicateTest {
                 verifyNoMoreInteractions(predicate, other);
             }
 
-            @Test
-            void testThisDoesNotMatch() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testThisDoesNotMatch(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate(String::equalsIgnoreCase);
-                CheckedBiPredicate<String, String, IOException> other = Spied.checkedBiPredicate((s1, s2) -> {
-                    throw new IOException(s1 + s2);
-                });
+                CheckedBiPredicate<String, String, IOException> other = Spied.checkedBiPredicate((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
                 CheckedBiPredicate<String, String, IOException> composed = predicate.and(other);
 
@@ -300,15 +298,14 @@ class CheckedBiPredicateTest {
             verifyNoMoreInteractions(predicate);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> {
-                throw new IllegalStateException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             CheckedBiPredicate<String, String, IOException> negated = predicate.negate();
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> negated.test("foo", "bar"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> negated.test("foo", "bar"));
             assertEquals("foobar", thrown.getMessage());
 
             verify(predicate).test("foo", "bar");
@@ -430,16 +427,15 @@ class CheckedBiPredicateTest {
         @Nested
         class ThisThrowsUnchecked {
 
-            @Test
-            void testOtherMatches() throws IOException {
-                CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> {
-                    throw new IllegalStateException(s1 + s2);
-                });
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testOtherMatches(UncheckedThrowable<?> throwable) throws IOException {
+                CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> throwable.throwUnchecked(s1 + s2));
                 CheckedBiPredicate<String, String, IOException> other = Spied.checkedBiPredicate(String::equalsIgnoreCase);
 
                 CheckedBiPredicate<String, String, IOException> composed = predicate.or(other);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> composed.test("foo", "FOO"));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> composed.test("foo", "FOO"));
                 assertEquals("fooFOO", thrown.getMessage());
 
                 verify(predicate).test("foo", "FOO");
@@ -447,16 +443,15 @@ class CheckedBiPredicateTest {
                 verifyNoMoreInteractions(predicate, other);
             }
 
-            @Test
-            void testOtherDoesNotMatch() throws IOException {
-                CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> {
-                    throw new IllegalStateException(s1 + s2);
-                });
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testOtherDoesNotMatch(UncheckedThrowable<?> throwable) throws IOException {
+                CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> throwable.throwUnchecked(s1 + s2));
                 CheckedBiPredicate<String, String, IOException> other = Spied.checkedBiPredicate(String::equalsIgnoreCase);
 
                 CheckedBiPredicate<String, String, IOException> composed = predicate.or(other);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> composed.test("foo", "bar"));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> composed.test("foo", "bar"));
                 assertEquals("foobar", thrown.getMessage());
 
                 verify(predicate).test("foo", "bar");
@@ -506,12 +501,11 @@ class CheckedBiPredicateTest {
         @Nested
         class OtherThrowsUnchecked {
 
-            @Test
-            void testThisMatches() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testThisMatches(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate(String::equalsIgnoreCase);
-                CheckedBiPredicate<String, String, IOException> other = Spied.checkedBiPredicate((s1, s2) -> {
-                    throw new IllegalStateException(s1 + s2);
-                });
+                CheckedBiPredicate<String, String, IOException> other = Spied.checkedBiPredicate((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
                 CheckedBiPredicate<String, String, IOException> composed = predicate.or(other);
 
@@ -522,16 +516,15 @@ class CheckedBiPredicateTest {
                 verifyNoMoreInteractions(predicate, other);
             }
 
-            @Test
-            void testThisDoesNotMatch() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testThisDoesNotMatch(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate(String::equalsIgnoreCase);
-                CheckedBiPredicate<String, String, IOException> other = Spied.checkedBiPredicate((s1, s2) -> {
-                    throw new IllegalStateException(s1 + s2);
-                });
+                CheckedBiPredicate<String, String, IOException> other = Spied.checkedBiPredicate((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
                 CheckedBiPredicate<String, String, IOException> composed = predicate.or(other);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> composed.test("foo", "bar"));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> composed.test("foo", "bar"));
                 assertEquals("foobar", thrown.getMessage());
 
                 verify(predicate).test("foo", "bar");
@@ -587,17 +580,16 @@ class CheckedBiPredicateTest {
             verifyNoMoreInteractions(predicate, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> {
-                throw new IllegalStateException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             Function<IOException, ExecutionException> errorMapper = Spied.function(ExecutionException::new);
 
             CheckedBiPredicate<String, String, ExecutionException> throwing = predicate.onErrorThrowAsChecked(errorMapper);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> throwing.test("foo", "FOO"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> throwing.test("foo", "FOO"));
             assertEquals("fooFOO", thrown.getMessage());
 
             verify(predicate).test("foo", "FOO");
@@ -651,17 +643,16 @@ class CheckedBiPredicateTest {
             verifyNoMoreInteractions(predicate, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> {
-                throw new IllegalArgumentException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             Function<IOException, IllegalStateException> errorMapper = Spied.function(IllegalStateException::new);
 
             BiPredicate<String, String> throwing = predicate.onErrorThrowAsUnchecked(errorMapper);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> throwing.test("foo", "FOO"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> throwing.test("foo", "FOO"));
             assertEquals("fooFOO", thrown.getMessage());
 
             verify(predicate).test("foo", "FOO");
@@ -738,19 +729,18 @@ class CheckedBiPredicateTest {
                 verifyNoMoreInteractions(predicate, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException, ExecutionException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ExecutionException {
                 CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> {
                     throw new IOException(s1 + s2);
                 });
 
-                CheckedPredicate<IOException, ExecutionException> errorHandler = Spied.checkedPredicate(e -> {
-                    throw new IllegalStateException(e);
-                });
+                CheckedPredicate<IOException, ExecutionException> errorHandler = Spied.checkedPredicate(throwable::throwUnchecked);
 
                 CheckedBiPredicate<String, String, ExecutionException> handling = predicate.onErrorHandleChecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.test("foo", "FOO"));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.test("foo", "FOO"));
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("fooFOO", cause.getMessage());
 
@@ -761,17 +751,16 @@ class CheckedBiPredicateTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> {
-                throw new IllegalStateException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             CheckedPredicate<IOException, ExecutionException> errorHandler = Spied.checkedPredicate(e -> e.getMessage() == null);
 
             CheckedBiPredicate<String, String, ExecutionException> handling = predicate.onErrorHandleChecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.test("foo", "FOO"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.test("foo", "FOO"));
             assertEquals("fooFOO", thrown.getMessage());
 
             verify(predicate).test("foo", "FOO");
@@ -826,19 +815,18 @@ class CheckedBiPredicateTest {
                 verifyNoMoreInteractions(predicate, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> {
                     throw new IOException(s1 + s2);
                 });
 
-                Predicate<IOException> errorHandler = Spied.predicate(e -> {
-                    throw new IllegalStateException(e);
-                });
+                Predicate<IOException> errorHandler = Spied.predicate(throwable::throwUnchecked);
 
                 BiPredicate<String, String> handling = predicate.onErrorHandleUnchecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.test("foo", "FOO"));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.test("foo", "FOO"));
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("fooFOO", cause.getMessage());
 
@@ -849,17 +837,16 @@ class CheckedBiPredicateTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> {
-                throw new IllegalStateException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             Predicate<IOException> errorHandler = Spied.predicate(e -> e.getMessage() == null);
 
             BiPredicate<String, String> handling = predicate.onErrorHandleUnchecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.test("foo", "FOO"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.test("foo", "FOO"));
             assertEquals("fooFOO", thrown.getMessage());
 
             verify(predicate).test("foo", "FOO");
@@ -936,19 +923,18 @@ class CheckedBiPredicateTest {
                 verifyNoMoreInteractions(predicate, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException, ParseException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ParseException {
                 CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> {
                     throw new IOException(s1 + s2);
                 });
 
-                CheckedBiPredicate<String, String, ParseException> fallback = Spied.checkedBiPredicate((s1, s2) -> {
-                    throw new IllegalStateException(s1 + s2);
-                });
+                CheckedBiPredicate<String, String, ParseException> fallback = Spied.checkedBiPredicate((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
                 CheckedBiPredicate<String, String, ParseException> testing = predicate.onErrorTestChecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> testing.test("foo", "FOO"));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> testing.test("foo", "FOO"));
                 assertEquals("fooFOO", thrown.getMessage());
 
                 verify(predicate).test("foo", "FOO");
@@ -958,17 +944,16 @@ class CheckedBiPredicateTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> {
-                throw new IllegalStateException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             CheckedBiPredicate<String, String, ParseException> fallback = Spied.checkedBiPredicate(String::equalsIgnoreCase);
 
             CheckedBiPredicate<String, String, ParseException> testing = predicate.onErrorTestChecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> testing.test("foo", "FOO"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> testing.test("foo", "FOO"));
             assertEquals("fooFOO", thrown.getMessage());
 
             verify(predicate).test("foo", "FOO");
@@ -1023,19 +1008,18 @@ class CheckedBiPredicateTest {
                 verifyNoMoreInteractions(predicate, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> {
                     throw new IOException(s1 + s2);
                 });
 
-                BiPredicate<String, String> fallback = Spied.biPredicate((s1, s2) -> {
-                    throw new IllegalStateException(s1 + s2);
-                });
+                BiPredicate<String, String> fallback = Spied.biPredicate((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
                 BiPredicate<String, String> testing = predicate.onErrorTestUnchecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> testing.test("foo", "FOO"));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> testing.test("foo", "FOO"));
                 assertEquals("fooFOO", thrown.getMessage());
 
                 verify(predicate).test("foo", "FOO");
@@ -1045,17 +1029,16 @@ class CheckedBiPredicateTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> {
-                throw new IllegalStateException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             BiPredicate<String, String> fallback = Spied.biPredicate(String::equalsIgnoreCase);
 
             BiPredicate<String, String> testing = predicate.onErrorTestUnchecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> testing.test("foo", "FOO"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> testing.test("foo", "FOO"));
             assertEquals("fooFOO", thrown.getMessage());
 
             verify(predicate).test("foo", "FOO");
@@ -1132,19 +1115,18 @@ class CheckedBiPredicateTest {
                 verifyNoMoreInteractions(predicate, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException, ParseException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ParseException {
                 CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> {
                     throw new IOException(s1 + s2);
                 });
 
-                CheckedBooleanSupplier<ParseException> fallback = Spied.checkedBooleanSupplier(() -> {
-                    throw new IllegalStateException("bar");
-                });
+                CheckedBooleanSupplier<ParseException> fallback = Spied.checkedBooleanSupplier(() -> throwable.throwUnchecked("bar"));
 
                 CheckedBiPredicate<String, String, ParseException> getting = predicate.onErrorGetCheckedAsBoolean(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.test("foo", "FOO"));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.test("foo", "FOO"));
                 assertEquals("bar", thrown.getMessage());
 
                 verify(predicate).test("foo", "FOO");
@@ -1154,17 +1136,16 @@ class CheckedBiPredicateTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> {
-                throw new IllegalStateException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             CheckedBooleanSupplier<ParseException> fallback = Spied.checkedBooleanSupplier(() -> false);
 
             CheckedBiPredicate<String, String, ParseException> getting = predicate.onErrorGetCheckedAsBoolean(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.test("foo", "FOO"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.test("foo", "FOO"));
             assertEquals("fooFOO", thrown.getMessage());
 
             verify(predicate).test("foo", "FOO");
@@ -1219,19 +1200,18 @@ class CheckedBiPredicateTest {
                 verifyNoMoreInteractions(predicate, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> {
                     throw new IOException(s1 + s2);
                 });
 
-                BooleanSupplier fallback = Spied.booleanSupplier(() -> {
-                    throw new IllegalStateException("bar");
-                });
+                BooleanSupplier fallback = Spied.booleanSupplier(() -> throwable.throwUnchecked("bar"));
 
                 BiPredicate<String, String> getting = predicate.onErrorGetUncheckedAsBoolean(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.test("foo", "FOO"));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.test("foo", "FOO"));
                 assertEquals("bar", thrown.getMessage());
 
                 verify(predicate).test("foo", "FOO");
@@ -1241,17 +1221,16 @@ class CheckedBiPredicateTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> {
-                throw new IllegalStateException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             BooleanSupplier fallback = Spied.booleanSupplier(() -> false);
 
             BiPredicate<String, String> getting = predicate.onErrorGetUncheckedAsBoolean(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.test("foo", "FOO"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.test("foo", "FOO"));
             assertEquals("fooFOO", thrown.getMessage());
 
             verify(predicate).test("foo", "FOO");
@@ -1291,15 +1270,14 @@ class CheckedBiPredicateTest {
             verifyNoMoreInteractions(predicate);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> {
-                throw new IllegalStateException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             BiPredicate<String, String> returning = predicate.onErrorReturn(false);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> returning.test("foo", "FOO"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> returning.test("foo", "FOO"));
             assertEquals("fooFOO", thrown.getMessage());
 
             verify(predicate).test("foo", "FOO");
@@ -1343,15 +1321,14 @@ class CheckedBiPredicateTest {
             verifyNoMoreInteractions(predicate);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> {
-                throw new IllegalArgumentException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             BiPredicate<String, String> unchecked = predicate.unchecked();
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.test("foo", "FOO"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> unchecked.test("foo", "FOO"));
             assertEquals("fooFOO", thrown.getMessage());
 
             verify(predicate).test("foo", "FOO");
@@ -1416,15 +1393,14 @@ class CheckedBiPredicateTest {
             verifyNoMoreInteractions(predicate);
         }
 
-        @Test
-        void testArgumentThrowsUnchecked() throws IOException {
-            CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> {
-                throw new IllegalStateException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testArgumentThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             CheckedBiPredicate<String, String, IOException> negated = CheckedBiPredicate.not(predicate);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> negated.test("foo", "foo"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> negated.test("foo", "foo"));
             assertEquals("foofoo", thrown.getMessage());
 
             verify(predicate).negate();
@@ -1473,15 +1449,14 @@ class CheckedBiPredicateTest {
             verifyNoMoreInteractions(predicate);
         }
 
-        @Test
-        void testArgumentThrowsUnchecked() throws IOException {
-            CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> {
-                throw new IllegalArgumentException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testArgumentThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedBiPredicate<String, String, IOException> predicate = Spied.checkedBiPredicate((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             BiPredicate<String, String> unchecked = CheckedBiPredicate.unchecked(predicate);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.test("foo", "FOO"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> unchecked.test("foo", "FOO"));
             assertEquals("fooFOO", thrown.getMessage());
 
             verify(predicate).unchecked();

@@ -34,6 +34,8 @@ import java.util.function.LongSupplier;
 import java.util.function.ToLongFunction;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 
 @SuppressWarnings("nls")
 class CheckedDoubleToLongFunctionTest {
@@ -83,17 +85,16 @@ class CheckedDoubleToLongFunctionTest {
             verifyNoMoreInteractions(function, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedDoubleToLongFunction<IOException> function = Spied.checkedDoubleToLongFunction(d -> {
-                throw new IllegalStateException(Double.toString(d));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleToLongFunction<IOException> function = Spied.checkedDoubleToLongFunction(throwable::throwUnchecked);
 
             Function<IOException, ExecutionException> errorMapper = Spied.function(ExecutionException::new);
 
             CheckedDoubleToLongFunction<ExecutionException> throwing = function.onErrorThrowAsChecked(errorMapper);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> throwing.applyAsLong(1D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> throwing.applyAsLong(1D));
             assertEquals("1.0", thrown.getMessage());
 
             verify(function).applyAsLong(1D);
@@ -147,17 +148,16 @@ class CheckedDoubleToLongFunctionTest {
             verifyNoMoreInteractions(function, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedDoubleToLongFunction<IOException> function = Spied.checkedDoubleToLongFunction(d -> {
-                throw new IllegalArgumentException(Double.toString(d));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleToLongFunction<IOException> function = Spied.checkedDoubleToLongFunction(throwable::throwUnchecked);
 
             Function<IOException, IllegalStateException> errorMapper = Spied.function(IllegalStateException::new);
 
             DoubleToLongFunction throwing = function.onErrorThrowAsUnchecked(errorMapper);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> throwing.applyAsLong(1D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> throwing.applyAsLong(1D));
             assertEquals("1.0", thrown.getMessage());
 
             verify(function).applyAsLong(1D);
@@ -234,19 +234,18 @@ class CheckedDoubleToLongFunctionTest {
                 verifyNoMoreInteractions(function, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException, ExecutionException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ExecutionException {
                 CheckedDoubleToLongFunction<IOException> function = Spied.checkedDoubleToLongFunction(d -> {
                     throw new IOException(Double.toString(d));
                 });
 
-                CheckedToLongFunction<IOException, ExecutionException> errorHandler = Spied.checkedToLongFunction(e -> {
-                    throw new IllegalStateException(e);
-                });
+                CheckedToLongFunction<IOException, ExecutionException> errorHandler = Spied.checkedToLongFunction(throwable::throwUnchecked);
 
                 CheckedDoubleToLongFunction<ExecutionException> handling = function.onErrorHandleChecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsLong(1D));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsLong(1D));
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("1.0", cause.getMessage());
 
@@ -257,17 +256,16 @@ class CheckedDoubleToLongFunctionTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedDoubleToLongFunction<IOException> function = Spied.checkedDoubleToLongFunction(d -> {
-                throw new IllegalStateException(Double.toString(d));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleToLongFunction<IOException> function = Spied.checkedDoubleToLongFunction(throwable::throwUnchecked);
 
             CheckedToLongFunction<IOException, ExecutionException> errorHandler = Spied.checkedToLongFunction(e -> 0L);
 
             CheckedDoubleToLongFunction<ExecutionException> handling = function.onErrorHandleChecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsLong(1D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsLong(1D));
             assertEquals("1.0", thrown.getMessage());
 
             verify(function).applyAsLong(1D);
@@ -322,19 +320,18 @@ class CheckedDoubleToLongFunctionTest {
                 verifyNoMoreInteractions(function, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedDoubleToLongFunction<IOException> function = Spied.checkedDoubleToLongFunction(d -> {
                     throw new IOException(Double.toString(d));
                 });
 
-                ToLongFunction<IOException> errorHandler = Spied.toLongFunction(e -> {
-                    throw new IllegalStateException(e);
-                });
+                ToLongFunction<IOException> errorHandler = Spied.toLongFunction(throwable::throwUnchecked);
 
                 DoubleToLongFunction handling = function.onErrorHandleUnchecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsLong(1D));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsLong(1D));
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("1.0", cause.getMessage());
 
@@ -345,17 +342,16 @@ class CheckedDoubleToLongFunctionTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedDoubleToLongFunction<IOException> function = Spied.checkedDoubleToLongFunction(d -> {
-                throw new IllegalStateException(Double.toString(d));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleToLongFunction<IOException> function = Spied.checkedDoubleToLongFunction(throwable::throwUnchecked);
 
             ToLongFunction<IOException> errorHandler = Spied.toLongFunction(e -> 0L);
 
             DoubleToLongFunction handling = function.onErrorHandleUnchecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsLong(1D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsLong(1D));
             assertEquals("1.0", thrown.getMessage());
 
             verify(function).applyAsLong(1D);
@@ -432,19 +428,19 @@ class CheckedDoubleToLongFunctionTest {
                 verifyNoMoreInteractions(function, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException, ParseException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ParseException {
                 CheckedDoubleToLongFunction<IOException> function = Spied.checkedDoubleToLongFunction(d -> {
                     throw new IOException(Double.toString(d));
                 });
 
-                CheckedDoubleToLongFunction<ParseException> fallback = Spied.checkedDoubleToLongFunction(d -> {
-                    throw new IllegalStateException(Double.toString(d));
-                });
+                CheckedDoubleToLongFunction<ParseException> fallback = Spied
+                        .checkedDoubleToLongFunction(throwable::throwUnchecked);
 
                 CheckedDoubleToLongFunction<ParseException> applying = function.onErrorApplyChecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsLong(1D));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsLong(1D));
                 assertEquals("1.0", thrown.getMessage());
 
                 verify(function).applyAsLong(1D);
@@ -454,17 +450,16 @@ class CheckedDoubleToLongFunctionTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedDoubleToLongFunction<IOException> function = Spied.checkedDoubleToLongFunction(d -> {
-                throw new IllegalStateException(Double.toString(d));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleToLongFunction<IOException> function = Spied.checkedDoubleToLongFunction(throwable::throwUnchecked);
 
             CheckedDoubleToLongFunction<ParseException> fallback = Spied.checkedDoubleToLongFunction(d -> (long) d * 3);
 
             CheckedDoubleToLongFunction<ParseException> applying = function.onErrorApplyChecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsLong(1D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsLong(1D));
             assertEquals("1.0", thrown.getMessage());
 
             verify(function).applyAsLong(1D);
@@ -519,19 +514,18 @@ class CheckedDoubleToLongFunctionTest {
                 verifyNoMoreInteractions(function, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedDoubleToLongFunction<IOException> function = Spied.checkedDoubleToLongFunction(d -> {
                     throw new IOException(Double.toString(d));
                 });
 
-                DoubleToLongFunction fallback = Spied.doubleToLongFunction(d -> {
-                    throw new IllegalStateException(Double.toString(d));
-                });
+                DoubleToLongFunction fallback = Spied.doubleToLongFunction(throwable::throwUnchecked);
 
                 DoubleToLongFunction applying = function.onErrorApplyUnchecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsLong(1D));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsLong(1D));
                 assertEquals("1.0", thrown.getMessage());
 
                 verify(function).applyAsLong(1D);
@@ -541,17 +535,16 @@ class CheckedDoubleToLongFunctionTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedDoubleToLongFunction<IOException> function = Spied.checkedDoubleToLongFunction(d -> {
-                throw new IllegalStateException(Double.toString(d));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleToLongFunction<IOException> function = Spied.checkedDoubleToLongFunction(throwable::throwUnchecked);
 
             DoubleToLongFunction fallback = Spied.doubleToLongFunction(d -> (long) d * 3);
 
             DoubleToLongFunction applying = function.onErrorApplyUnchecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsLong(1D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsLong(1D));
             assertEquals("1.0", thrown.getMessage());
 
             verify(function).applyAsLong(1D);
@@ -628,19 +621,18 @@ class CheckedDoubleToLongFunctionTest {
                 verifyNoMoreInteractions(function, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException, ParseException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ParseException {
                 CheckedDoubleToLongFunction<IOException> function = Spied.checkedDoubleToLongFunction(d -> {
                     throw new IOException(Double.toString(d));
                 });
 
-                CheckedLongSupplier<ParseException> fallback = Spied.checkedLongSupplier(() -> {
-                    throw new IllegalStateException("bar");
-                });
+                CheckedLongSupplier<ParseException> fallback = Spied.checkedLongSupplier(() -> throwable.throwUnchecked("bar"));
 
                 CheckedDoubleToLongFunction<ParseException> getting = function.onErrorGetChecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsLong(1D));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsLong(1D));
                 assertEquals("bar", thrown.getMessage());
 
                 verify(function).applyAsLong(1D);
@@ -650,17 +642,16 @@ class CheckedDoubleToLongFunctionTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedDoubleToLongFunction<IOException> function = Spied.checkedDoubleToLongFunction(d -> {
-                throw new IllegalStateException(Double.toString(d));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleToLongFunction<IOException> function = Spied.checkedDoubleToLongFunction(throwable::throwUnchecked);
 
             CheckedLongSupplier<ParseException> fallback = Spied.checkedLongSupplier(() -> 0L);
 
             CheckedDoubleToLongFunction<ParseException> getting = function.onErrorGetChecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsLong(1D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsLong(1D));
             assertEquals("1.0", thrown.getMessage());
 
             verify(function).applyAsLong(1D);
@@ -715,19 +706,18 @@ class CheckedDoubleToLongFunctionTest {
                 verifyNoMoreInteractions(function, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedDoubleToLongFunction<IOException> function = Spied.checkedDoubleToLongFunction(d -> {
                     throw new IOException(Double.toString(d));
                 });
 
-                LongSupplier fallback = Spied.longSupplier(() -> {
-                    throw new IllegalStateException("bar");
-                });
+                LongSupplier fallback = Spied.longSupplier(() -> throwable.throwUnchecked("bar"));
 
                 DoubleToLongFunction getting = function.onErrorGetUnchecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsLong(1D));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsLong(1D));
                 assertEquals("bar", thrown.getMessage());
 
                 verify(function).applyAsLong(1D);
@@ -737,17 +727,16 @@ class CheckedDoubleToLongFunctionTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedDoubleToLongFunction<IOException> function = Spied.checkedDoubleToLongFunction(d -> {
-                throw new IllegalStateException(Double.toString(d));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleToLongFunction<IOException> function = Spied.checkedDoubleToLongFunction(throwable::throwUnchecked);
 
             LongSupplier fallback = Spied.longSupplier(() -> 0L);
 
             DoubleToLongFunction getting = function.onErrorGetUnchecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsLong(1D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsLong(1D));
             assertEquals("1.0", thrown.getMessage());
 
             verify(function).applyAsLong(1D);
@@ -787,15 +776,14 @@ class CheckedDoubleToLongFunctionTest {
             verifyNoMoreInteractions(function);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedDoubleToLongFunction<IOException> function = Spied.checkedDoubleToLongFunction(d -> {
-                throw new IllegalStateException(Double.toString(d));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleToLongFunction<IOException> function = Spied.checkedDoubleToLongFunction(throwable::throwUnchecked);
 
             DoubleToLongFunction returning = function.onErrorReturn(0L);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> returning.applyAsLong(1D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> returning.applyAsLong(1D));
             assertEquals("1.0", thrown.getMessage());
 
             verify(function).applyAsLong(1D);
@@ -839,15 +827,14 @@ class CheckedDoubleToLongFunctionTest {
             verifyNoMoreInteractions(function);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedDoubleToLongFunction<IOException> function = Spied.checkedDoubleToLongFunction(d -> {
-                throw new IllegalArgumentException(Double.toString(d));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleToLongFunction<IOException> function = Spied.checkedDoubleToLongFunction(throwable::throwUnchecked);
 
             DoubleToLongFunction unchecked = function.unchecked();
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.applyAsLong(1D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> unchecked.applyAsLong(1D));
             assertEquals("1.0", thrown.getMessage());
 
             verify(function).applyAsLong(1D);
@@ -913,15 +900,14 @@ class CheckedDoubleToLongFunctionTest {
             verifyNoMoreInteractions(function);
         }
 
-        @Test
-        void testArgumentThrowsUnchecked() throws IOException {
-            CheckedDoubleToLongFunction<IOException> function = Spied.checkedDoubleToLongFunction(d -> {
-                throw new IllegalArgumentException(Double.toString(d));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testArgumentThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleToLongFunction<IOException> function = Spied.checkedDoubleToLongFunction(throwable::throwUnchecked);
 
             DoubleToLongFunction unchecked = CheckedDoubleToLongFunction.unchecked(function);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.applyAsLong(1D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> unchecked.applyAsLong(1D));
             assertEquals("1.0", thrown.getMessage());
 
             verify(function).unchecked();

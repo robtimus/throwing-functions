@@ -34,6 +34,8 @@ import java.util.function.IntSupplier;
 import java.util.function.ToIntFunction;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 
 @SuppressWarnings("nls")
 class CheckedIntBinaryOperatorTest {
@@ -83,17 +85,16 @@ class CheckedIntBinaryOperatorTest {
             verifyNoMoreInteractions(operator, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntBinaryOperator<IOException> operator = Spied.checkedIntBinaryOperator((i1, i2) -> {
-                throw new IllegalStateException(Integer.toString(i1 + i2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntBinaryOperator<IOException> operator = Spied.checkedIntBinaryOperator((i1, i2) -> throwable.throwUnchecked(i1 + i2));
 
             Function<IOException, ExecutionException> errorMapper = Spied.function(ExecutionException::new);
 
             CheckedIntBinaryOperator<ExecutionException> throwing = operator.onErrorThrowAsChecked(errorMapper);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> throwing.applyAsInt(1, 2));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> throwing.applyAsInt(1, 2));
             assertEquals("3", thrown.getMessage());
 
             verify(operator).applyAsInt(1, 2);
@@ -147,17 +148,16 @@ class CheckedIntBinaryOperatorTest {
             verifyNoMoreInteractions(operator, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntBinaryOperator<IOException> operator = Spied.checkedIntBinaryOperator((i1, i2) -> {
-                throw new IllegalArgumentException(Integer.toString(i1 + i2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntBinaryOperator<IOException> operator = Spied.checkedIntBinaryOperator((i1, i2) -> throwable.throwUnchecked(i1 + i2));
 
             Function<IOException, IllegalStateException> errorMapper = Spied.function(IllegalStateException::new);
 
             IntBinaryOperator throwing = operator.onErrorThrowAsUnchecked(errorMapper);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> throwing.applyAsInt(1, 2));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> throwing.applyAsInt(1, 2));
             assertEquals("3", thrown.getMessage());
 
             verify(operator).applyAsInt(1, 2);
@@ -234,19 +234,18 @@ class CheckedIntBinaryOperatorTest {
                 verifyNoMoreInteractions(operator, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException, ExecutionException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ExecutionException {
                 CheckedIntBinaryOperator<IOException> operator = Spied.checkedIntBinaryOperator((i1, i2) -> {
                     throw new IOException(Integer.toString(i1 + i2));
                 });
 
-                CheckedToIntFunction<IOException, ExecutionException> errorHandler = Spied.checkedToIntFunction(e -> {
-                    throw new IllegalStateException(e);
-                });
+                CheckedToIntFunction<IOException, ExecutionException> errorHandler = Spied.checkedToIntFunction(throwable::throwUnchecked);
 
                 CheckedIntBinaryOperator<ExecutionException> handling = operator.onErrorHandleChecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsInt(1, 2));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsInt(1, 2));
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("3", cause.getMessage());
 
@@ -257,17 +256,16 @@ class CheckedIntBinaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntBinaryOperator<IOException> operator = Spied.checkedIntBinaryOperator((i1, i2) -> {
-                throw new IllegalStateException(Integer.toString(i1 + i2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntBinaryOperator<IOException> operator = Spied.checkedIntBinaryOperator((i1, i2) -> throwable.throwUnchecked(i1 + i2));
 
             CheckedToIntFunction<IOException, ExecutionException> errorHandler = Spied.checkedToIntFunction(e -> 0);
 
             CheckedIntBinaryOperator<ExecutionException> handling = operator.onErrorHandleChecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsInt(1, 2));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsInt(1, 2));
             assertEquals("3", thrown.getMessage());
 
             verify(operator).applyAsInt(1, 2);
@@ -322,19 +320,18 @@ class CheckedIntBinaryOperatorTest {
                 verifyNoMoreInteractions(operator, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedIntBinaryOperator<IOException> operator = Spied.checkedIntBinaryOperator((i1, i2) -> {
                     throw new IOException(Integer.toString(i1 + i2));
                 });
 
-                ToIntFunction<IOException> errorHandler = Spied.toIntFunction(e -> {
-                    throw new IllegalStateException(e);
-                });
+                ToIntFunction<IOException> errorHandler = Spied.toIntFunction(throwable::throwUnchecked);
 
                 IntBinaryOperator handling = operator.onErrorHandleUnchecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsInt(1, 2));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsInt(1, 2));
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("3", cause.getMessage());
 
@@ -345,17 +342,16 @@ class CheckedIntBinaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntBinaryOperator<IOException> operator = Spied.checkedIntBinaryOperator((i1, i2) -> {
-                throw new IllegalStateException(Integer.toString(i1 + i2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntBinaryOperator<IOException> operator = Spied.checkedIntBinaryOperator((i1, i2) -> throwable.throwUnchecked(i1 + i2));
 
             ToIntFunction<IOException> errorHandler = Spied.toIntFunction(e -> 0);
 
             IntBinaryOperator handling = operator.onErrorHandleUnchecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsInt(1, 2));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsInt(1, 2));
             assertEquals("3", thrown.getMessage());
 
             verify(operator).applyAsInt(1, 2);
@@ -432,19 +428,18 @@ class CheckedIntBinaryOperatorTest {
                 verifyNoMoreInteractions(operator, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException, ParseException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ParseException {
                 CheckedIntBinaryOperator<IOException> operator = Spied.checkedIntBinaryOperator((i1, i2) -> {
                     throw new IOException(Integer.toString(i1 + i2));
                 });
 
-                CheckedIntBinaryOperator<ParseException> fallback = Spied.checkedIntBinaryOperator((i1, i2) -> {
-                    throw new IllegalStateException(Integer.toString(i1 + i2));
-                });
+                CheckedIntBinaryOperator<ParseException> fallback = Spied.checkedIntBinaryOperator((i1, i2) -> throwable.throwUnchecked(i1 + i2));
 
                 CheckedIntBinaryOperator<ParseException> applying = operator.onErrorApplyChecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsInt(1, 2));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsInt(1, 2));
                 assertEquals("3", thrown.getMessage());
 
                 verify(operator).applyAsInt(1, 2);
@@ -454,17 +449,16 @@ class CheckedIntBinaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntBinaryOperator<IOException> operator = Spied.checkedIntBinaryOperator((i1, i2) -> {
-                throw new IllegalStateException(Integer.toString(i1 + i2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntBinaryOperator<IOException> operator = Spied.checkedIntBinaryOperator((i1, i2) -> throwable.throwUnchecked(i1 + i2));
 
             CheckedIntBinaryOperator<ParseException> fallback = Spied.checkedIntBinaryOperator((i1, i2) -> i1 + i2 + i1 + i2);
 
             CheckedIntBinaryOperator<ParseException> applying = operator.onErrorApplyChecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsInt(1, 2));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsInt(1, 2));
             assertEquals("3", thrown.getMessage());
 
             verify(operator).applyAsInt(1, 2);
@@ -519,19 +513,18 @@ class CheckedIntBinaryOperatorTest {
                 verifyNoMoreInteractions(operator, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedIntBinaryOperator<IOException> operator = Spied.checkedIntBinaryOperator((i1, i2) -> {
                     throw new IOException(Integer.toString(i1 + i2));
                 });
 
-                IntBinaryOperator fallback = Spied.intBinaryOperator((i1, i2) -> {
-                    throw new IllegalStateException(Integer.toString(i1 + i2));
-                });
+                IntBinaryOperator fallback = Spied.intBinaryOperator((i1, i2) -> throwable.throwUnchecked(i1 + i2));
 
                 IntBinaryOperator applying = operator.onErrorApplyUnchecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsInt(1, 2));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsInt(1, 2));
                 assertEquals("3", thrown.getMessage());
 
                 verify(operator).applyAsInt(1, 2);
@@ -541,17 +534,16 @@ class CheckedIntBinaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntBinaryOperator<IOException> operator = Spied.checkedIntBinaryOperator((i1, i2) -> {
-                throw new IllegalStateException(Integer.toString(i1 + i2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntBinaryOperator<IOException> operator = Spied.checkedIntBinaryOperator((i1, i2) -> throwable.throwUnchecked(i1 + i2));
 
             IntBinaryOperator fallback = Spied.intBinaryOperator((i1, i2) -> i1 + i2 + i1 + i2);
 
             IntBinaryOperator applying = operator.onErrorApplyUnchecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsInt(1, 2));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsInt(1, 2));
             assertEquals("3", thrown.getMessage());
 
             verify(operator).applyAsInt(1, 2);
@@ -628,19 +620,18 @@ class CheckedIntBinaryOperatorTest {
                 verifyNoMoreInteractions(operator, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException, ParseException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ParseException {
                 CheckedIntBinaryOperator<IOException> operator = Spied.checkedIntBinaryOperator((i1, i2) -> {
                     throw new IOException(Integer.toString(i1 + i2));
                 });
 
-                CheckedIntSupplier<ParseException> fallback = Spied.checkedIntSupplier(() -> {
-                    throw new IllegalStateException("bar");
-                });
+                CheckedIntSupplier<ParseException> fallback = Spied.checkedIntSupplier(() -> throwable.throwUnchecked("bar"));
 
                 CheckedIntBinaryOperator<ParseException> getting = operator.onErrorGetChecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsInt(1, 2));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsInt(1, 2));
                 assertEquals("bar", thrown.getMessage());
 
                 verify(operator).applyAsInt(1, 2);
@@ -650,17 +641,16 @@ class CheckedIntBinaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntBinaryOperator<IOException> operator = Spied.checkedIntBinaryOperator((i1, i2) -> {
-                throw new IllegalStateException(Integer.toString(i1 + i2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntBinaryOperator<IOException> operator = Spied.checkedIntBinaryOperator((i1, i2) -> throwable.throwUnchecked(i1 + i2));
 
             CheckedIntSupplier<ParseException> fallback = Spied.checkedIntSupplier(() -> 0);
 
             CheckedIntBinaryOperator<ParseException> getting = operator.onErrorGetChecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsInt(1, 2));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsInt(1, 2));
             assertEquals("3", thrown.getMessage());
 
             verify(operator).applyAsInt(1, 2);
@@ -715,19 +705,18 @@ class CheckedIntBinaryOperatorTest {
                 verifyNoMoreInteractions(operator, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedIntBinaryOperator<IOException> operator = Spied.checkedIntBinaryOperator((i1, i2) -> {
                     throw new IOException(Integer.toString(i1 + i2));
                 });
 
-                IntSupplier fallback = Spied.intSupplier(() -> {
-                    throw new IllegalStateException("bar");
-                });
+                IntSupplier fallback = Spied.intSupplier(() -> throwable.throwUnchecked("bar"));
 
                 IntBinaryOperator getting = operator.onErrorGetUnchecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsInt(1, 2));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsInt(1, 2));
                 assertEquals("bar", thrown.getMessage());
 
                 verify(operator).applyAsInt(1, 2);
@@ -737,17 +726,16 @@ class CheckedIntBinaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntBinaryOperator<IOException> operator = Spied.checkedIntBinaryOperator((i1, i2) -> {
-                throw new IllegalStateException(Integer.toString(i1 + i2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntBinaryOperator<IOException> operator = Spied.checkedIntBinaryOperator((i1, i2) -> throwable.throwUnchecked(i1 + i2));
 
             IntSupplier fallback = Spied.intSupplier(() -> 2);
 
             IntBinaryOperator getting = operator.onErrorGetUnchecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsInt(1, 2));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsInt(1, 2));
             assertEquals("3", thrown.getMessage());
 
             verify(operator).applyAsInt(1, 2);
@@ -787,15 +775,14 @@ class CheckedIntBinaryOperatorTest {
             verifyNoMoreInteractions(operator);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntBinaryOperator<IOException> operator = Spied.checkedIntBinaryOperator((i1, i2) -> {
-                throw new IllegalStateException(Integer.toString(i1 + i2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntBinaryOperator<IOException> operator = Spied.checkedIntBinaryOperator((i1, i2) -> throwable.throwUnchecked(i1 + i2));
 
             IntBinaryOperator returning = operator.onErrorReturn(2);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> returning.applyAsInt(1, 2));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> returning.applyAsInt(1, 2));
             assertEquals("3", thrown.getMessage());
 
             verify(operator).applyAsInt(1, 2);
@@ -839,15 +826,14 @@ class CheckedIntBinaryOperatorTest {
             verifyNoMoreInteractions(operator);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntBinaryOperator<IOException> operator = Spied.checkedIntBinaryOperator((i1, i2) -> {
-                throw new IllegalArgumentException(Integer.toString(i1 + i2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntBinaryOperator<IOException> operator = Spied.checkedIntBinaryOperator((i1, i2) -> throwable.throwUnchecked(i1 + i2));
 
             IntBinaryOperator unchecked = operator.unchecked();
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.applyAsInt(1, 2));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> unchecked.applyAsInt(1, 2));
             assertEquals("3", thrown.getMessage());
 
             verify(operator).applyAsInt(1, 2);
@@ -913,15 +899,14 @@ class CheckedIntBinaryOperatorTest {
             verifyNoMoreInteractions(operator);
         }
 
-        @Test
-        void testArgumentThrowsUnchecked() throws IOException {
-            CheckedIntBinaryOperator<IOException> operator = Spied.checkedIntBinaryOperator((i1, i2) -> {
-                throw new IllegalArgumentException(Integer.toString(i1 + i2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testArgumentThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntBinaryOperator<IOException> operator = Spied.checkedIntBinaryOperator((i1, i2) -> throwable.throwUnchecked(i1 + i2));
 
             IntBinaryOperator unchecked = CheckedIntBinaryOperator.unchecked(operator);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.applyAsInt(1, 2));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> unchecked.applyAsInt(1, 2));
             assertEquals("3", thrown.getMessage());
 
             verify(operator).unchecked();

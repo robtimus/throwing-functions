@@ -30,7 +30,8 @@ import java.util.function.ToLongFunction;
  * @param <X> The type of checked exception that can be thrown.
  */
 @FunctionalInterface
-public interface CheckedLongUnaryOperator<X extends Exception> {
+@SuppressWarnings("squid:S1181") // Error needs to be caught separately (and re-thrown) to not let it be caught as throwable
+public interface CheckedLongUnaryOperator<X extends Throwable> {
 
     /**
      * Applies this operator to the given operand.
@@ -50,17 +51,17 @@ public interface CheckedLongUnaryOperator<X extends Exception> {
      * @return A unary operator that transforms any thrown checked exception.
      * @throws NullPointerException If {@code errorMapper} is {@code null}.
      */
-    default <E extends Exception> CheckedLongUnaryOperator<E> onErrorThrowAsChecked(Function<? super X, ? extends E> errorMapper) {
+    default <E extends Throwable> CheckedLongUnaryOperator<E> onErrorThrowAsChecked(Function<? super X, ? extends E> errorMapper) {
         Objects.requireNonNull(errorMapper);
         return t -> {
             try {
                 return applyAsLong(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 throw errorMapper.apply(x);
             }
         };
@@ -80,12 +81,12 @@ public interface CheckedLongUnaryOperator<X extends Exception> {
         return t -> {
             try {
                 return applyAsLong(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 throw errorMapper.apply(x);
             }
         };
@@ -100,17 +101,17 @@ public interface CheckedLongUnaryOperator<X extends Exception> {
      * @return A unary operator that transforms any thrown checked exception.
      * @throws NullPointerException If {@code errorHandler} is {@code null}.
      */
-    default <E extends Exception> CheckedLongUnaryOperator<E> onErrorHandleChecked(CheckedToLongFunction<? super X, ? extends E> errorHandler) {
+    default <E extends Throwable> CheckedLongUnaryOperator<E> onErrorHandleChecked(CheckedToLongFunction<? super X, ? extends E> errorHandler) {
         Objects.requireNonNull(errorHandler);
         return t -> {
             try {
                 return applyAsLong(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 return errorHandler.applyAsLong(x);
             }
         };
@@ -129,12 +130,12 @@ public interface CheckedLongUnaryOperator<X extends Exception> {
         return t -> {
             try {
                 return applyAsLong(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 return errorHandler.applyAsLong(x);
             }
         };
@@ -149,14 +150,14 @@ public interface CheckedLongUnaryOperator<X extends Exception> {
      * @return A unary operator that invokes the {@code fallback} operator if this operator throws any checked exception.
      * @throws NullPointerException If {@code fallback} is {@code null}.
      */
-    default <E extends Exception> CheckedLongUnaryOperator<E> onErrorApplyChecked(CheckedLongUnaryOperator<? extends E> fallback) {
+    default <E extends Throwable> CheckedLongUnaryOperator<E> onErrorApplyChecked(CheckedLongUnaryOperator<? extends E> fallback) {
         Objects.requireNonNull(fallback);
         return t -> {
             try {
                 return applyAsLong(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.applyAsLong(t);
             }
         };
@@ -175,9 +176,9 @@ public interface CheckedLongUnaryOperator<X extends Exception> {
         return t -> {
             try {
                 return applyAsLong(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.applyAsLong(t);
             }
         };
@@ -192,14 +193,14 @@ public interface CheckedLongUnaryOperator<X extends Exception> {
      * @return A unary operator that invokes the {@code fallback} supplier if this operator throws any checked exception.
      * @throws NullPointerException If {@code fallback} is {@code null}.
      */
-    default <E extends Exception> CheckedLongUnaryOperator<E> onErrorGetChecked(CheckedLongSupplier<? extends E> fallback) {
+    default <E extends Throwable> CheckedLongUnaryOperator<E> onErrorGetChecked(CheckedLongSupplier<? extends E> fallback) {
         Objects.requireNonNull(fallback);
         return t -> {
             try {
                 return applyAsLong(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.getAsLong();
             }
         };
@@ -218,9 +219,9 @@ public interface CheckedLongUnaryOperator<X extends Exception> {
         return t -> {
             try {
                 return applyAsLong(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.getAsLong();
             }
         };
@@ -237,9 +238,9 @@ public interface CheckedLongUnaryOperator<X extends Exception> {
         return t -> {
             try {
                 return applyAsLong(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback;
             }
         };
@@ -263,7 +264,7 @@ public interface CheckedLongUnaryOperator<X extends Exception> {
      * @return The given lambda as a {@code CheckedLongUnaryOperator}.
      * @throws NullPointerException If {@code operator} is {@code null}.
      */
-    static <X extends Exception> CheckedLongUnaryOperator<X> of(CheckedLongUnaryOperator<X> operator) {
+    static <X extends Throwable> CheckedLongUnaryOperator<X> of(CheckedLongUnaryOperator<X> operator) {
         Objects.requireNonNull(operator);
         return operator;
     }
@@ -274,7 +275,7 @@ public interface CheckedLongUnaryOperator<X extends Exception> {
      * @param <X> The type of checked exception that can be thrown.
      * @return A unary operator that always returns its input argument.
      */
-    static <X extends Exception> CheckedLongUnaryOperator<X> identity() {
+    static <X extends Throwable> CheckedLongUnaryOperator<X> identity() {
         return t -> t;
     }
 
@@ -301,7 +302,7 @@ public interface CheckedLongUnaryOperator<X extends Exception> {
      * @return A unary operator that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code operator} is {@code null}.
      */
-    static <X extends Exception> CheckedLongUnaryOperator<X> checked(LongUnaryOperator operator) {
+    static <X extends Throwable> CheckedLongUnaryOperator<X> checked(LongUnaryOperator operator) {
         Objects.requireNonNull(operator);
         return operator::applyAsLong;
     }
@@ -316,7 +317,7 @@ public interface CheckedLongUnaryOperator<X extends Exception> {
      * @return A unary operator that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code operator} or {@code errorType} is {@code null}.
      */
-    static <X extends Exception> CheckedLongUnaryOperator<X> checked(LongUnaryOperator operator, Class<X> errorType) {
+    static <X extends Throwable> CheckedLongUnaryOperator<X> checked(LongUnaryOperator operator, Class<X> errorType) {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(errorType);
         return t -> invokeAndUnwrap(operator, t, errorType);
@@ -333,12 +334,12 @@ public interface CheckedLongUnaryOperator<X extends Exception> {
      * @throws NullPointerException If {@code operator} or {@code errorType} is {@code null}.
      * @throws X If {@code operator} throws an {@link UncheckedException} that wraps an instance of {@code errorType}.
      */
-    static <X extends Exception> long invokeAndUnwrap(LongUnaryOperator operator, long input, Class<X> errorType) throws X {
+    static <X extends Throwable> long invokeAndUnwrap(LongUnaryOperator operator, long input, Class<X> errorType) throws X {
         Objects.requireNonNull(errorType);
         try {
             return operator.applyAsLong(input);
         } catch (UncheckedException e) {
-            Exception cause = e.getCause();
+            Throwable cause = e.getCause();
             if (errorType.isInstance(cause)) {
                 throw errorType.cast(cause);
             }

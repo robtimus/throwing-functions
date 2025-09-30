@@ -33,6 +33,8 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 
 @SuppressWarnings("nls")
 class CheckedUnaryOperatorTest {
@@ -82,17 +84,16 @@ class CheckedUnaryOperatorTest {
             verifyNoMoreInteractions(operator, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedUnaryOperator<String, IOException> operator = Spied.checkedUnaryOperator(s -> {
-                throw new IllegalStateException(s);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedUnaryOperator<String, IOException> operator = Spied.checkedUnaryOperator(throwable::throwUnchecked);
 
             Function<IOException, ExecutionException> errorMapper = Spied.function(ExecutionException::new);
 
             CheckedUnaryOperator<String, ExecutionException> throwing = operator.onErrorThrowAsChecked(errorMapper);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> throwing.apply("foo"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> throwing.apply("foo"));
             assertEquals("foo", thrown.getMessage());
 
             verify(operator).apply("foo");
@@ -146,17 +147,16 @@ class CheckedUnaryOperatorTest {
             verifyNoMoreInteractions(operator, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedUnaryOperator<String, IOException> operator = Spied.checkedUnaryOperator(s -> {
-                throw new IllegalArgumentException(s);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedUnaryOperator<String, IOException> operator = Spied.checkedUnaryOperator(throwable::throwUnchecked);
 
             Function<IOException, IllegalStateException> errorMapper = Spied.function(IllegalStateException::new);
 
             UnaryOperator<String> throwing = operator.onErrorThrowAsUnchecked(errorMapper);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> throwing.apply("foo"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> throwing.apply("foo"));
             assertEquals("foo", thrown.getMessage());
 
             verify(operator).apply("foo");
@@ -233,19 +233,18 @@ class CheckedUnaryOperatorTest {
                 verifyNoMoreInteractions(operator, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException, ExecutionException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ExecutionException {
                 CheckedUnaryOperator<String, IOException> operator = Spied.checkedUnaryOperator(s -> {
                     throw new IOException(s);
                 });
 
-                CheckedFunction<IOException, String, ExecutionException> errorHandler = Spied.checkedFunction(e -> {
-                    throw new IllegalStateException(e);
-                });
+                CheckedFunction<IOException, String, ExecutionException> errorHandler = Spied.checkedFunction(throwable::throwUnchecked);
 
                 CheckedUnaryOperator<String, ExecutionException> handling = operator.onErrorHandleChecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.apply("foo"));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.apply("foo"));
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("foo", cause.getMessage());
 
@@ -256,17 +255,16 @@ class CheckedUnaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedUnaryOperator<String, IOException> operator = Spied.checkedUnaryOperator(s -> {
-                throw new IllegalStateException(s);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedUnaryOperator<String, IOException> operator = Spied.checkedUnaryOperator(throwable::throwUnchecked);
 
             CheckedFunction<IOException, String, ExecutionException> errorHandler = Spied.checkedFunction(Exception::getMessage);
 
             CheckedUnaryOperator<String, ExecutionException> handling = operator.onErrorHandleChecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.apply("foo"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.apply("foo"));
             assertEquals("foo", thrown.getMessage());
 
             verify(operator).apply("foo");
@@ -321,19 +319,18 @@ class CheckedUnaryOperatorTest {
                 verifyNoMoreInteractions(operator, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedUnaryOperator<String, IOException> operator = Spied.checkedUnaryOperator(s -> {
                     throw new IOException(s);
                 });
 
-                Function<IOException, String> errorHandler = Spied.function(e -> {
-                    throw new IllegalStateException(e);
-                });
+                Function<IOException, String> errorHandler = Spied.function(throwable::throwUnchecked);
 
                 UnaryOperator<String> handling = operator.onErrorHandleUnchecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.apply("foo"));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.apply("foo"));
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("foo", cause.getMessage());
 
@@ -344,17 +341,16 @@ class CheckedUnaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedUnaryOperator<String, IOException> operator = Spied.checkedUnaryOperator(s -> {
-                throw new IllegalStateException(s);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedUnaryOperator<String, IOException> operator = Spied.checkedUnaryOperator(throwable::throwUnchecked);
 
             Function<IOException, String> errorHandler = Spied.function(Exception::getMessage);
 
             UnaryOperator<String> handling = operator.onErrorHandleUnchecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.apply("foo"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.apply("foo"));
             assertEquals("foo", thrown.getMessage());
 
             verify(operator).apply("foo");
@@ -431,19 +427,18 @@ class CheckedUnaryOperatorTest {
                 verifyNoMoreInteractions(operator, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException, ParseException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ParseException {
                 CheckedUnaryOperator<String, IOException> operator = Spied.checkedUnaryOperator(s -> {
                     throw new IOException(s);
                 });
 
-                CheckedUnaryOperator<String, ParseException> fallback = Spied.checkedUnaryOperator(s -> {
-                    throw new IllegalStateException(s);
-                });
+                CheckedUnaryOperator<String, ParseException> fallback = Spied.checkedUnaryOperator(throwable::throwUnchecked);
 
                 CheckedUnaryOperator<String, ParseException> applying = operator.onErrorApplyChecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.apply("foo"));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.apply("foo"));
                 assertEquals("foo", thrown.getMessage());
 
                 verify(operator).apply("foo");
@@ -453,17 +448,16 @@ class CheckedUnaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedUnaryOperator<String, IOException> operator = Spied.checkedUnaryOperator(s -> {
-                throw new IllegalStateException(s);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedUnaryOperator<String, IOException> operator = Spied.checkedUnaryOperator(throwable::throwUnchecked);
 
             CheckedUnaryOperator<String, ParseException> fallback = Spied.checkedUnaryOperator(s -> s + s);
 
             CheckedUnaryOperator<String, ParseException> applying = operator.onErrorApplyChecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.apply("foo"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.apply("foo"));
             assertEquals("foo", thrown.getMessage());
 
             verify(operator).apply("foo");
@@ -518,19 +512,18 @@ class CheckedUnaryOperatorTest {
                 verifyNoMoreInteractions(operator, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedUnaryOperator<String, IOException> operator = Spied.checkedUnaryOperator(s -> {
                     throw new IOException(s);
                 });
 
-                UnaryOperator<String> fallback = Spied.unaryOperator(s -> {
-                    throw new IllegalStateException(s);
-                });
+                UnaryOperator<String> fallback = Spied.unaryOperator(throwable::throwUnchecked);
 
                 UnaryOperator<String> applying = operator.onErrorApplyUnchecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.apply("foo"));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.apply("foo"));
                 assertEquals("foo", thrown.getMessage());
 
                 verify(operator).apply("foo");
@@ -540,17 +533,16 @@ class CheckedUnaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedUnaryOperator<String, IOException> operator = Spied.checkedUnaryOperator(s -> {
-                throw new IllegalStateException(s);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedUnaryOperator<String, IOException> operator = Spied.checkedUnaryOperator(throwable::throwUnchecked);
 
             UnaryOperator<String> fallback = Spied.unaryOperator(s -> s + s);
 
             UnaryOperator<String> applying = operator.onErrorApplyUnchecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.apply("foo"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.apply("foo"));
             assertEquals("foo", thrown.getMessage());
 
             verify(operator).apply("foo");
@@ -627,19 +619,18 @@ class CheckedUnaryOperatorTest {
                 verifyNoMoreInteractions(operator, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException, ParseException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ParseException {
                 CheckedUnaryOperator<String, IOException> operator = Spied.checkedUnaryOperator(s -> {
                     throw new IOException(s);
                 });
 
-                CheckedSupplier<String, ParseException> fallback = Spied.checkedSupplier(() -> {
-                    throw new IllegalStateException("bar");
-                });
+                CheckedSupplier<String, ParseException> fallback = Spied.checkedSupplier(() -> throwable.throwUnchecked("bar"));
 
                 CheckedUnaryOperator<String, ParseException> getting = operator.onErrorGetChecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.apply("foo"));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.apply("foo"));
                 assertEquals("bar", thrown.getMessage());
 
                 verify(operator).apply("foo");
@@ -649,17 +640,16 @@ class CheckedUnaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedUnaryOperator<String, IOException> operator = Spied.checkedUnaryOperator(s -> {
-                throw new IllegalStateException(s);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedUnaryOperator<String, IOException> operator = Spied.checkedUnaryOperator(throwable::throwUnchecked);
 
             CheckedSupplier<String, ParseException> fallback = Spied.checkedSupplier(() -> "bar");
 
             CheckedUnaryOperator<String, ParseException> getting = operator.onErrorGetChecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.apply("foo"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.apply("foo"));
             assertEquals("foo", thrown.getMessage());
 
             verify(operator).apply("foo");
@@ -714,19 +704,18 @@ class CheckedUnaryOperatorTest {
                 verifyNoMoreInteractions(operator, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedUnaryOperator<String, IOException> operator = Spied.checkedUnaryOperator(s -> {
                     throw new IOException(s);
                 });
 
-                Supplier<String> fallback = Spied.supplier(() -> {
-                    throw new IllegalStateException("bar");
-                });
+                Supplier<String> fallback = Spied.supplier(() -> throwable.throwUnchecked("bar"));
 
                 UnaryOperator<String> getting = operator.onErrorGetUnchecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.apply("foo"));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.apply("foo"));
                 assertEquals("bar", thrown.getMessage());
 
                 verify(operator).apply("foo");
@@ -736,17 +725,16 @@ class CheckedUnaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedUnaryOperator<String, IOException> operator = Spied.checkedUnaryOperator(s -> {
-                throw new IllegalStateException(s);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedUnaryOperator<String, IOException> operator = Spied.checkedUnaryOperator(throwable::throwUnchecked);
 
             Supplier<String> fallback = Spied.supplier(() -> "bar");
 
             UnaryOperator<String> getting = operator.onErrorGetUnchecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.apply("foo"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.apply("foo"));
             assertEquals("foo", thrown.getMessage());
 
             verify(operator).apply("foo");
@@ -786,15 +774,14 @@ class CheckedUnaryOperatorTest {
             verifyNoMoreInteractions(operator);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedUnaryOperator<String, IOException> operator = Spied.checkedUnaryOperator(s -> {
-                throw new IllegalStateException(s);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedUnaryOperator<String, IOException> operator = Spied.checkedUnaryOperator(throwable::throwUnchecked);
 
             UnaryOperator<String> returning = operator.onErrorReturn("bar");
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> returning.apply("foo"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> returning.apply("foo"));
             assertEquals("foo", thrown.getMessage());
 
             verify(operator).apply("foo");
@@ -838,15 +825,14 @@ class CheckedUnaryOperatorTest {
             verifyNoMoreInteractions(operator);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedUnaryOperator<String, IOException> operator = Spied.checkedUnaryOperator(s -> {
-                throw new IllegalArgumentException(s);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedUnaryOperator<String, IOException> operator = Spied.checkedUnaryOperator(throwable::throwUnchecked);
 
             UnaryOperator<String> unchecked = operator.unchecked();
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.apply("foo"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> unchecked.apply("foo"));
             assertEquals("foo", thrown.getMessage());
 
             verify(operator).apply("foo");
@@ -930,15 +916,14 @@ class CheckedUnaryOperatorTest {
             verifyNoMoreInteractions(operator);
         }
 
-        @Test
-        void testArgumentThrowsUnchecked() throws IOException {
-            CheckedUnaryOperator<String, IOException> operator = Spied.checkedUnaryOperator(s -> {
-                throw new IllegalArgumentException(s);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testArgumentThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedUnaryOperator<String, IOException> operator = Spied.checkedUnaryOperator(throwable::throwUnchecked);
 
             UnaryOperator<String> unchecked = CheckedUnaryOperator.unchecked(operator);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.apply("foo"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> unchecked.apply("foo"));
             assertEquals("foo", thrown.getMessage());
 
             verify(operator).unchecked();

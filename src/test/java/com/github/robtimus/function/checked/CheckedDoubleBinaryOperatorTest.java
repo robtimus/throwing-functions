@@ -34,6 +34,8 @@ import java.util.function.Function;
 import java.util.function.ToDoubleFunction;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 
 @SuppressWarnings("nls")
 class CheckedDoubleBinaryOperatorTest {
@@ -83,17 +85,16 @@ class CheckedDoubleBinaryOperatorTest {
             verifyNoMoreInteractions(operator, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedDoubleBinaryOperator<IOException> operator = Spied.checkedDoubleBinaryOperator((d1, d2) -> {
-                throw new IllegalStateException(Double.toString(d1 + d2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleBinaryOperator<IOException> operator = Spied.checkedDoubleBinaryOperator((d1, d2) -> throwable.throwUnchecked(d1 + d2));
 
             Function<IOException, ExecutionException> errorMapper = Spied.function(ExecutionException::new);
 
             CheckedDoubleBinaryOperator<ExecutionException> throwing = operator.onErrorThrowAsChecked(errorMapper);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> throwing.applyAsDouble(1D, 2D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> throwing.applyAsDouble(1D, 2D));
             assertEquals("3.0", thrown.getMessage());
 
             verify(operator).applyAsDouble(1D, 2D);
@@ -147,17 +148,16 @@ class CheckedDoubleBinaryOperatorTest {
             verifyNoMoreInteractions(operator, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedDoubleBinaryOperator<IOException> operator = Spied.checkedDoubleBinaryOperator((d1, d2) -> {
-                throw new IllegalArgumentException(Double.toString(d1 + d2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleBinaryOperator<IOException> operator = Spied.checkedDoubleBinaryOperator((d1, d2) -> throwable.throwUnchecked(d1 + d2));
 
             Function<IOException, IllegalStateException> errorMapper = Spied.function(IllegalStateException::new);
 
             DoubleBinaryOperator throwing = operator.onErrorThrowAsUnchecked(errorMapper);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> throwing.applyAsDouble(1D, 2D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> throwing.applyAsDouble(1D, 2D));
             assertEquals("3.0", thrown.getMessage());
 
             verify(operator).applyAsDouble(1D, 2D);
@@ -234,19 +234,18 @@ class CheckedDoubleBinaryOperatorTest {
                 verifyNoMoreInteractions(operator, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException, ExecutionException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ExecutionException {
                 CheckedDoubleBinaryOperator<IOException> operator = Spied.checkedDoubleBinaryOperator((d1, d2) -> {
                     throw new IOException(Double.toString(d1 + d2));
                 });
 
-                CheckedToDoubleFunction<IOException, ExecutionException> errorHandler = Spied.checkedToDoubleFunction(e -> {
-                    throw new IllegalStateException(e);
-                });
+                CheckedToDoubleFunction<IOException, ExecutionException> errorHandler = Spied.checkedToDoubleFunction(throwable::throwUnchecked);
 
                 CheckedDoubleBinaryOperator<ExecutionException> handling = operator.onErrorHandleChecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsDouble(1D, 2D));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsDouble(1D, 2D));
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("3.0", cause.getMessage());
 
@@ -257,17 +256,16 @@ class CheckedDoubleBinaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedDoubleBinaryOperator<IOException> operator = Spied.checkedDoubleBinaryOperator((d1, d2) -> {
-                throw new IllegalStateException(Double.toString(d1 + d2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleBinaryOperator<IOException> operator = Spied.checkedDoubleBinaryOperator((d1, d2) -> throwable.throwUnchecked(d1 + d2));
 
             CheckedToDoubleFunction<IOException, ExecutionException> errorHandler = Spied.checkedToDoubleFunction(e -> 0D);
 
             CheckedDoubleBinaryOperator<ExecutionException> handling = operator.onErrorHandleChecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsDouble(1D, 2D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsDouble(1D, 2D));
             assertEquals("3.0", thrown.getMessage());
 
             verify(operator).applyAsDouble(1D, 2D);
@@ -322,19 +320,18 @@ class CheckedDoubleBinaryOperatorTest {
                 verifyNoMoreInteractions(operator, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedDoubleBinaryOperator<IOException> operator = Spied.checkedDoubleBinaryOperator((d1, d2) -> {
                     throw new IOException(Double.toString(d1 + d2));
                 });
 
-                ToDoubleFunction<IOException> errorHandler = Spied.toDoubleFunction(e -> {
-                    throw new IllegalStateException(e);
-                });
+                ToDoubleFunction<IOException> errorHandler = Spied.toDoubleFunction(throwable::throwUnchecked);
 
                 DoubleBinaryOperator handling = operator.onErrorHandleUnchecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsDouble(1D, 2D));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsDouble(1D, 2D));
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("3.0", cause.getMessage());
 
@@ -345,17 +342,16 @@ class CheckedDoubleBinaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedDoubleBinaryOperator<IOException> operator = Spied.checkedDoubleBinaryOperator((d1, d2) -> {
-                throw new IllegalStateException(Double.toString(d1 + d2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleBinaryOperator<IOException> operator = Spied.checkedDoubleBinaryOperator((d1, d2) -> throwable.throwUnchecked(d1 + d2));
 
             ToDoubleFunction<IOException> errorHandler = Spied.toDoubleFunction(e -> 0D);
 
             DoubleBinaryOperator handling = operator.onErrorHandleUnchecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsDouble(1D, 2D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsDouble(1D, 2D));
             assertEquals("3.0", thrown.getMessage());
 
             verify(operator).applyAsDouble(1D, 2D);
@@ -432,19 +428,19 @@ class CheckedDoubleBinaryOperatorTest {
                 verifyNoMoreInteractions(operator, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException, ParseException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ParseException {
                 CheckedDoubleBinaryOperator<IOException> operator = Spied.checkedDoubleBinaryOperator((d1, d2) -> {
                     throw new IOException(Double.toString(d1 + d2));
                 });
 
-                CheckedDoubleBinaryOperator<ParseException> fallback = Spied.checkedDoubleBinaryOperator((d1, d2) -> {
-                    throw new IllegalStateException(Double.toString(d1 + d2));
-                });
+                CheckedDoubleBinaryOperator<ParseException> fallback = Spied
+                        .checkedDoubleBinaryOperator((d1, d2) -> throwable.throwUnchecked(d1 + d2));
 
                 CheckedDoubleBinaryOperator<ParseException> applying = operator.onErrorApplyChecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsDouble(1D, 2D));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsDouble(1D, 2D));
                 assertEquals("3.0", thrown.getMessage());
 
                 verify(operator).applyAsDouble(1D, 2D);
@@ -454,17 +450,16 @@ class CheckedDoubleBinaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedDoubleBinaryOperator<IOException> operator = Spied.checkedDoubleBinaryOperator((d1, d2) -> {
-                throw new IllegalStateException(Double.toString(d1 + d2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleBinaryOperator<IOException> operator = Spied.checkedDoubleBinaryOperator((d1, d2) -> throwable.throwUnchecked(d1 + d2));
 
             CheckedDoubleBinaryOperator<ParseException> fallback = Spied.checkedDoubleBinaryOperator((d1, d2) -> d1 + d2 + d1 + d2);
 
             CheckedDoubleBinaryOperator<ParseException> applying = operator.onErrorApplyChecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsDouble(1D, 2D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsDouble(1D, 2D));
             assertEquals("3.0", thrown.getMessage());
 
             verify(operator).applyAsDouble(1D, 2D);
@@ -519,19 +514,18 @@ class CheckedDoubleBinaryOperatorTest {
                 verifyNoMoreInteractions(operator, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedDoubleBinaryOperator<IOException> operator = Spied.checkedDoubleBinaryOperator((d1, d2) -> {
                     throw new IOException(Double.toString(d1 + d2));
                 });
 
-                DoubleBinaryOperator fallback = Spied.doubleBinaryOperator((d1, d2) -> {
-                    throw new IllegalStateException(Double.toString(d1 + d2));
-                });
+                DoubleBinaryOperator fallback = Spied.doubleBinaryOperator((d1, d2) -> throwable.throwUnchecked(d1 + d2));
 
                 DoubleBinaryOperator applying = operator.onErrorApplyUnchecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsDouble(1D, 2D));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsDouble(1D, 2D));
                 assertEquals("3.0", thrown.getMessage());
 
                 verify(operator).applyAsDouble(1D, 2D);
@@ -541,17 +535,16 @@ class CheckedDoubleBinaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedDoubleBinaryOperator<IOException> operator = Spied.checkedDoubleBinaryOperator((d1, d2) -> {
-                throw new IllegalStateException(Double.toString(d1 + d2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleBinaryOperator<IOException> operator = Spied.checkedDoubleBinaryOperator((d1, d2) -> throwable.throwUnchecked(d1 + d2));
 
             DoubleBinaryOperator fallback = Spied.doubleBinaryOperator((d1, d2) -> d1 + d2 + d1 + d2);
 
             DoubleBinaryOperator applying = operator.onErrorApplyUnchecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsDouble(1D, 2D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsDouble(1D, 2D));
             assertEquals("3.0", thrown.getMessage());
 
             verify(operator).applyAsDouble(1D, 2D);
@@ -628,19 +621,18 @@ class CheckedDoubleBinaryOperatorTest {
                 verifyNoMoreInteractions(operator, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException, ParseException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ParseException {
                 CheckedDoubleBinaryOperator<IOException> operator = Spied.checkedDoubleBinaryOperator((d1, d2) -> {
                     throw new IOException(Double.toString(d1 + d2));
                 });
 
-                CheckedDoubleSupplier<ParseException> fallback = Spied.checkedDoubleSupplier(() -> {
-                    throw new IllegalStateException("bar");
-                });
+                CheckedDoubleSupplier<ParseException> fallback = Spied.checkedDoubleSupplier(() -> throwable.throwUnchecked("bar"));
 
                 CheckedDoubleBinaryOperator<ParseException> getting = operator.onErrorGetChecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsDouble(1D, 2D));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsDouble(1D, 2D));
                 assertEquals("bar", thrown.getMessage());
 
                 verify(operator).applyAsDouble(1D, 2D);
@@ -650,17 +642,16 @@ class CheckedDoubleBinaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedDoubleBinaryOperator<IOException> operator = Spied.checkedDoubleBinaryOperator((d1, d2) -> {
-                throw new IllegalStateException(Double.toString(d1 + d2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleBinaryOperator<IOException> operator = Spied.checkedDoubleBinaryOperator((d1, d2) -> throwable.throwUnchecked(d1 + d2));
 
             CheckedDoubleSupplier<ParseException> fallback = Spied.checkedDoubleSupplier(() -> 0D);
 
             CheckedDoubleBinaryOperator<ParseException> getting = operator.onErrorGetChecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsDouble(1D, 2D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsDouble(1D, 2D));
             assertEquals("3.0", thrown.getMessage());
 
             verify(operator).applyAsDouble(1D, 2D);
@@ -715,19 +706,18 @@ class CheckedDoubleBinaryOperatorTest {
                 verifyNoMoreInteractions(operator, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedDoubleBinaryOperator<IOException> operator = Spied.checkedDoubleBinaryOperator((d1, d2) -> {
                     throw new IOException(Double.toString(d1 + d2));
                 });
 
-                DoubleSupplier fallback = Spied.doubleSupplier(() -> {
-                    throw new IllegalStateException("bar");
-                });
+                DoubleSupplier fallback = Spied.doubleSupplier(() -> throwable.throwUnchecked("bar"));
 
                 DoubleBinaryOperator getting = operator.onErrorGetUnchecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsDouble(1D, 2D));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsDouble(1D, 2D));
                 assertEquals("bar", thrown.getMessage());
 
                 verify(operator).applyAsDouble(1D, 2D);
@@ -737,17 +727,16 @@ class CheckedDoubleBinaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedDoubleBinaryOperator<IOException> operator = Spied.checkedDoubleBinaryOperator((d1, d2) -> {
-                throw new IllegalStateException(Double.toString(d1 + d2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleBinaryOperator<IOException> operator = Spied.checkedDoubleBinaryOperator((d1, d2) -> throwable.throwUnchecked(d1 + d2));
 
             DoubleSupplier fallback = Spied.doubleSupplier(() -> 2D);
 
             DoubleBinaryOperator getting = operator.onErrorGetUnchecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsDouble(1D, 2D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsDouble(1D, 2D));
             assertEquals("3.0", thrown.getMessage());
 
             verify(operator).applyAsDouble(1D, 2D);
@@ -787,15 +776,14 @@ class CheckedDoubleBinaryOperatorTest {
             verifyNoMoreInteractions(operator);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedDoubleBinaryOperator<IOException> operator = Spied.checkedDoubleBinaryOperator((d1, d2) -> {
-                throw new IllegalStateException(Double.toString(d1 + d2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleBinaryOperator<IOException> operator = Spied.checkedDoubleBinaryOperator((d1, d2) -> throwable.throwUnchecked(d1 + d2));
 
             DoubleBinaryOperator returning = operator.onErrorReturn(2D);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> returning.applyAsDouble(1D, 2D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> returning.applyAsDouble(1D, 2D));
             assertEquals("3.0", thrown.getMessage());
 
             verify(operator).applyAsDouble(1D, 2D);
@@ -839,15 +827,14 @@ class CheckedDoubleBinaryOperatorTest {
             verifyNoMoreInteractions(operator);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedDoubleBinaryOperator<IOException> operator = Spied.checkedDoubleBinaryOperator((d1, d2) -> {
-                throw new IllegalArgumentException(Double.toString(d1 + d2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleBinaryOperator<IOException> operator = Spied.checkedDoubleBinaryOperator((d1, d2) -> throwable.throwUnchecked(d1 + d2));
 
             DoubleBinaryOperator unchecked = operator.unchecked();
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.applyAsDouble(1D, 2D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> unchecked.applyAsDouble(1D, 2D));
             assertEquals("3.0", thrown.getMessage());
 
             verify(operator).applyAsDouble(1D, 2D);
@@ -913,15 +900,14 @@ class CheckedDoubleBinaryOperatorTest {
             verifyNoMoreInteractions(operator);
         }
 
-        @Test
-        void testArgumentThrowsUnchecked() throws IOException {
-            CheckedDoubleBinaryOperator<IOException> operator = Spied.checkedDoubleBinaryOperator((d1, d2) -> {
-                throw new IllegalArgumentException(Double.toString(d1 + d2));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testArgumentThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleBinaryOperator<IOException> operator = Spied.checkedDoubleBinaryOperator((d1, d2) -> throwable.throwUnchecked(d1 + d2));
 
             DoubleBinaryOperator unchecked = CheckedDoubleBinaryOperator.unchecked(operator);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.applyAsDouble(1D, 2D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> unchecked.applyAsDouble(1D, 2D));
             assertEquals("3.0", thrown.getMessage());
 
             verify(operator).unchecked();

@@ -32,7 +32,8 @@ import java.util.function.Predicate;
  * @param <X> The type of checked exception that can be thrown.
  */
 @FunctionalInterface
-public interface CheckedBiPredicate<T, U, X extends Exception> {
+@SuppressWarnings("squid:S1181") // Error needs to be caught separately (and re-thrown) to not let it be caught as throwable
+public interface CheckedBiPredicate<T, U, X extends Throwable> {
 
     /**
      * Evaluates this predicate on the given arguments.
@@ -94,17 +95,17 @@ public interface CheckedBiPredicate<T, U, X extends Exception> {
      * @return A predicate that transforms any thrown checked exception.
      * @throws NullPointerException If {@code errorMapper} is {@code null}.
      */
-    default <E extends Exception> CheckedBiPredicate<T, U, E> onErrorThrowAsChecked(Function<? super X, ? extends E> errorMapper) {
+    default <E extends Throwable> CheckedBiPredicate<T, U, E> onErrorThrowAsChecked(Function<? super X, ? extends E> errorMapper) {
         Objects.requireNonNull(errorMapper);
         return (t, u) -> {
             try {
                 return test(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 throw errorMapper.apply(x);
             }
         };
@@ -124,12 +125,12 @@ public interface CheckedBiPredicate<T, U, X extends Exception> {
         return (t, u) -> {
             try {
                 return test(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 throw errorMapper.apply(x);
             }
         };
@@ -144,17 +145,17 @@ public interface CheckedBiPredicate<T, U, X extends Exception> {
      * @return A predicate that transforms any thrown checked exception.
      * @throws NullPointerException If {@code errorHandler} is {@code null}.
      */
-    default <E extends Exception> CheckedBiPredicate<T, U, E> onErrorHandleChecked(CheckedPredicate<? super X, ? extends E> errorHandler) {
+    default <E extends Throwable> CheckedBiPredicate<T, U, E> onErrorHandleChecked(CheckedPredicate<? super X, ? extends E> errorHandler) {
         Objects.requireNonNull(errorHandler);
         return (t, u) -> {
             try {
                 return test(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 return errorHandler.test(x);
             }
         };
@@ -173,12 +174,12 @@ public interface CheckedBiPredicate<T, U, X extends Exception> {
         return (t, u) -> {
             try {
                 return test(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 return errorHandler.test(x);
             }
         };
@@ -193,14 +194,14 @@ public interface CheckedBiPredicate<T, U, X extends Exception> {
      * @return A predicate that invokes the {@code fallback} predicate if this predicate throws any checked exception.
      * @throws NullPointerException If {@code fallback} is {@code null}.
      */
-    default <E extends Exception> CheckedBiPredicate<T, U, E> onErrorTestChecked(CheckedBiPredicate<? super T, ? super U, ? extends E> fallback) {
+    default <E extends Throwable> CheckedBiPredicate<T, U, E> onErrorTestChecked(CheckedBiPredicate<? super T, ? super U, ? extends E> fallback) {
         Objects.requireNonNull(fallback);
         return (t, u) -> {
             try {
                 return test(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.test(t, u);
             }
         };
@@ -219,9 +220,9 @@ public interface CheckedBiPredicate<T, U, X extends Exception> {
         return (t, u) -> {
             try {
                 return test(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.test(t, u);
             }
         };
@@ -236,14 +237,14 @@ public interface CheckedBiPredicate<T, U, X extends Exception> {
      * @return A predicate that invokes the {@code fallback} supplier if this predicate throws any checked exception.
      * @throws NullPointerException If {@code fallback} is {@code null}.
      */
-    default <E extends Exception> CheckedBiPredicate<T, U, E> onErrorGetCheckedAsBoolean(CheckedBooleanSupplier<? extends E> fallback) {
+    default <E extends Throwable> CheckedBiPredicate<T, U, E> onErrorGetCheckedAsBoolean(CheckedBooleanSupplier<? extends E> fallback) {
         Objects.requireNonNull(fallback);
         return (t, u) -> {
             try {
                 return test(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.getAsBoolean();
             }
         };
@@ -262,9 +263,9 @@ public interface CheckedBiPredicate<T, U, X extends Exception> {
         return (t, u) -> {
             try {
                 return test(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.getAsBoolean();
             }
         };
@@ -281,9 +282,9 @@ public interface CheckedBiPredicate<T, U, X extends Exception> {
         return (t, u) -> {
             try {
                 return test(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback;
             }
         };
@@ -309,7 +310,7 @@ public interface CheckedBiPredicate<T, U, X extends Exception> {
      * @return The given lambda as a {@code CheckedPredicate}.
      * @throws NullPointerException If {@code predicate} is {@code null}.
      */
-    static <T, U, X extends Exception> CheckedBiPredicate<T, U, X> of(CheckedBiPredicate<T, U, X> predicate) {
+    static <T, U, X extends Throwable> CheckedBiPredicate<T, U, X> of(CheckedBiPredicate<T, U, X> predicate) {
         Objects.requireNonNull(predicate);
         return predicate;
     }
@@ -325,7 +326,7 @@ public interface CheckedBiPredicate<T, U, X extends Exception> {
      * @throws NullPointerException If {@code predicate} is {@code null}.
      */
     @SuppressWarnings("unchecked")
-    static <T, U, X extends Exception> CheckedBiPredicate<T, U, X> not(CheckedBiPredicate<? super T, ? super U, ? extends X> predicate) {
+    static <T, U, X extends Throwable> CheckedBiPredicate<T, U, X> not(CheckedBiPredicate<? super T, ? super U, ? extends X> predicate) {
         Objects.requireNonNull(predicate);
         return (CheckedBiPredicate<T, U, X>) predicate.negate();
     }
@@ -358,7 +359,7 @@ public interface CheckedBiPredicate<T, U, X extends Exception> {
      * @return A predicate that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code predicate} is {@code null}.
      */
-    static <T, U, X extends Exception> CheckedBiPredicate<T, U, X> checked(BiPredicate<? super T, ? super U> predicate) {
+    static <T, U, X extends Throwable> CheckedBiPredicate<T, U, X> checked(BiPredicate<? super T, ? super U> predicate) {
         Objects.requireNonNull(predicate);
         return predicate::test;
     }
@@ -375,7 +376,7 @@ public interface CheckedBiPredicate<T, U, X extends Exception> {
      * @return A predicate that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code predicate} or {@code errorType} is {@code null}.
      */
-    static <T, U, X extends Exception> CheckedBiPredicate<T, U, X> checked(BiPredicate<? super T, ? super U> predicate, Class<X> errorType) {
+    static <T, U, X extends Throwable> CheckedBiPredicate<T, U, X> checked(BiPredicate<? super T, ? super U> predicate, Class<X> errorType) {
         Objects.requireNonNull(predicate);
         Objects.requireNonNull(errorType);
         return (t, u) -> invokeAndUnwrap(predicate, t, u, errorType);
@@ -395,14 +396,14 @@ public interface CheckedBiPredicate<T, U, X extends Exception> {
      * @throws NullPointerException If {@code predicate} or {@code errorType} is {@code null}.
      * @throws X If {@code predicate} throws an {@link UncheckedException} that wraps an instance of {@code errorType}.
      */
-    static <T, U, X extends Exception> boolean invokeAndUnwrap(BiPredicate<? super T, ? super U> predicate, T input1, U input2, Class<X> errorType)
+    static <T, U, X extends Throwable> boolean invokeAndUnwrap(BiPredicate<? super T, ? super U> predicate, T input1, U input2, Class<X> errorType)
             throws X {
 
         Objects.requireNonNull(errorType);
         try {
             return predicate.test(input1, input2);
         } catch (UncheckedException e) {
-            Exception cause = e.getCause();
+            Throwable cause = e.getCause();
             if (errorType.isInstance(cause)) {
                 throw errorType.cast(cause);
             }

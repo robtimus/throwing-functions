@@ -28,7 +28,8 @@ import java.util.function.Function;
  * @param <X> The type of checked exception that can be thrown.
  */
 @FunctionalInterface
-public interface CheckedRunnable<X extends Exception> {
+@SuppressWarnings("squid:S1181") // Error needs to be caught separately (and re-thrown) to not let it be caught as throwable
+public interface CheckedRunnable<X extends Throwable> {
 
     /**
      * Performs this task.
@@ -46,17 +47,17 @@ public interface CheckedRunnable<X extends Exception> {
      * @return A task that transforms any thrown checked exception.
      * @throws NullPointerException If {@code errorMapper} is {@code null}.
      */
-    default <E extends Exception> CheckedRunnable<E> onErrorThrowAsChecked(Function<? super X, ? extends E> errorMapper) {
+    default <E extends Throwable> CheckedRunnable<E> onErrorThrowAsChecked(Function<? super X, ? extends E> errorMapper) {
         Objects.requireNonNull(errorMapper);
         return () -> {
             try {
                 run();
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 throw errorMapper.apply(x);
             }
         };
@@ -76,12 +77,12 @@ public interface CheckedRunnable<X extends Exception> {
         return () -> {
             try {
                 run();
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 throw errorMapper.apply(x);
             }
         };
@@ -95,17 +96,17 @@ public interface CheckedRunnable<X extends Exception> {
      * @return A task that handles any thrown checked exception.
      * @throws NullPointerException If {@code errorHandler} is {@code null}.
      */
-    default <E extends Exception> CheckedRunnable<E> onErrorHandleChecked(CheckedConsumer<? super X, ? extends E> errorHandler) {
+    default <E extends Throwable> CheckedRunnable<E> onErrorHandleChecked(CheckedConsumer<? super X, ? extends E> errorHandler) {
         Objects.requireNonNull(errorHandler);
         return () -> {
             try {
                 run();
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 errorHandler.accept(x);
             }
         };
@@ -123,12 +124,12 @@ public interface CheckedRunnable<X extends Exception> {
         return () -> {
             try {
                 run();
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 errorHandler.accept(x);
             }
         };
@@ -142,14 +143,14 @@ public interface CheckedRunnable<X extends Exception> {
      * @return A task that invokes the {@code fallback} task if this task throws any checked exception.
      * @throws NullPointerException If {@code fallback} is {@code null}.
      */
-    default <E extends Exception> CheckedRunnable<E> onErrorRunChecked(CheckedRunnable<? extends E> fallback) {
+    default <E extends Throwable> CheckedRunnable<E> onErrorRunChecked(CheckedRunnable<? extends E> fallback) {
         Objects.requireNonNull(fallback);
         return () -> {
             try {
                 run();
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 fallback.run();
             }
         };
@@ -167,9 +168,9 @@ public interface CheckedRunnable<X extends Exception> {
         return () -> {
             try {
                 run();
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 fallback.run();
             }
         };
@@ -184,9 +185,9 @@ public interface CheckedRunnable<X extends Exception> {
         return () -> {
             try {
                 run();
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 // discard
             }
         };
@@ -209,7 +210,7 @@ public interface CheckedRunnable<X extends Exception> {
      * @return The given lambda as a {@code CheckedRunnable}.
      * @throws NullPointerException If {@code task} is {@code null}.
      */
-    static <X extends Exception> CheckedRunnable<X> of(CheckedRunnable<X> task) {
+    static <X extends Throwable> CheckedRunnable<X> of(CheckedRunnable<X> task) {
         Objects.requireNonNull(task);
         return task;
     }
@@ -236,7 +237,7 @@ public interface CheckedRunnable<X extends Exception> {
      * @return A task that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code task} is {@code null}.
      */
-    static <X extends Exception> CheckedRunnable<X> checked(Runnable task) {
+    static <X extends Throwable> CheckedRunnable<X> checked(Runnable task) {
         Objects.requireNonNull(task);
         return task::run;
     }
@@ -251,7 +252,7 @@ public interface CheckedRunnable<X extends Exception> {
      * @return A task that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code task} or {@code errorType} is {@code null}.
      */
-    static <X extends Exception> CheckedRunnable<X> checked(Runnable task, Class<X> errorType) {
+    static <X extends Throwable> CheckedRunnable<X> checked(Runnable task, Class<X> errorType) {
         Objects.requireNonNull(task);
         Objects.requireNonNull(errorType);
         return () -> invokeAndUnwrap(task, errorType);
@@ -266,12 +267,12 @@ public interface CheckedRunnable<X extends Exception> {
      * @throws NullPointerException If {@code task} or {@code errorType} is {@code null}.
      * @throws X If {@code task} throws an {@link UncheckedException} that wraps an instance of {@code errorType}.
      */
-    static <X extends Exception> void invokeAndUnwrap(Runnable task, Class<X> errorType) throws X {
+    static <X extends Throwable> void invokeAndUnwrap(Runnable task, Class<X> errorType) throws X {
         Objects.requireNonNull(errorType);
         try {
             task.run();
         } catch (UncheckedException e) {
-            Exception cause = e.getCause();
+            Throwable cause = e.getCause();
             if (errorType.isInstance(cause)) {
                 throw errorType.cast(cause);
             }

@@ -33,6 +33,8 @@ import java.util.function.Function;
 import java.util.function.ObjDoubleConsumer;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 
 @SuppressWarnings("nls")
 class CheckedObjDoubleConsumerTest {
@@ -82,17 +84,16 @@ class CheckedObjDoubleConsumerTest {
             verifyNoMoreInteractions(consumer, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedObjDoubleConsumer<String, IOException> consumer = Spied.checkedObjDoubleConsumer((s, d) -> {
-                throw new IllegalStateException(s + d);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedObjDoubleConsumer<String, IOException> consumer = Spied.checkedObjDoubleConsumer((s, d) -> throwable.throwUnchecked(s + d));
 
             Function<IOException, ExecutionException> errorMapper = Spied.function(ExecutionException::new);
 
             CheckedObjDoubleConsumer<String, ExecutionException> throwing = consumer.onErrorThrowAsChecked(errorMapper);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> throwing.accept("foo", 1D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> throwing.accept("foo", 1D));
             assertEquals("foo1.0", thrown.getMessage());
 
             verify(consumer).accept("foo", 1D);
@@ -146,17 +147,16 @@ class CheckedObjDoubleConsumerTest {
             verifyNoMoreInteractions(consumer, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedObjDoubleConsumer<String, IOException> consumer = Spied.checkedObjDoubleConsumer((s, d) -> {
-                throw new IllegalArgumentException(s + d);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedObjDoubleConsumer<String, IOException> consumer = Spied.checkedObjDoubleConsumer((s, d) -> throwable.throwUnchecked(s + d));
 
             Function<IOException, IllegalStateException> errorMapper = Spied.function(IllegalStateException::new);
 
             ObjDoubleConsumer<String> throwing = consumer.onErrorThrowAsUnchecked(errorMapper);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> throwing.accept("foo", 1D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> throwing.accept("foo", 1D));
             assertEquals("foo1.0", thrown.getMessage());
 
             verify(consumer).accept("foo", 1D);
@@ -233,19 +233,18 @@ class CheckedObjDoubleConsumerTest {
                 verifyNoMoreInteractions(consumer, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException, ExecutionException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ExecutionException {
                 CheckedObjDoubleConsumer<String, IOException> consumer = Spied.checkedObjDoubleConsumer((s, d) -> {
                     throw new IOException(s + d);
                 });
 
-                CheckedConsumer<IOException, ExecutionException> errorHandler = Spied.checkedConsumer(e -> {
-                    throw new IllegalStateException(e);
-                });
+                CheckedConsumer<IOException, ExecutionException> errorHandler = Spied.checkedConsumer(throwable::throwUnchecked);
 
                 CheckedObjDoubleConsumer<String, ExecutionException> handling = consumer.onErrorHandleChecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.accept("foo", 1D));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.accept("foo", 1D));
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("foo1.0", cause.getMessage());
 
@@ -256,17 +255,16 @@ class CheckedObjDoubleConsumerTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedObjDoubleConsumer<String, IOException> consumer = Spied.checkedObjDoubleConsumer((s, d) -> {
-                throw new IllegalStateException(s + d);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedObjDoubleConsumer<String, IOException> consumer = Spied.checkedObjDoubleConsumer((s, d) -> throwable.throwUnchecked(s + d));
 
             CheckedConsumer<IOException, ExecutionException> errorHandler = Spied.checkedConsumer(Exception::getMessage);
 
             CheckedObjDoubleConsumer<String, ExecutionException> handling = consumer.onErrorHandleChecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.accept("foo", 1D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.accept("foo", 1D));
             assertEquals("foo1.0", thrown.getMessage());
 
             verify(consumer).accept("foo", 1D);
@@ -321,19 +319,18 @@ class CheckedObjDoubleConsumerTest {
                 verifyNoMoreInteractions(consumer, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedObjDoubleConsumer<String, IOException> consumer = Spied.checkedObjDoubleConsumer((s, d) -> {
                     throw new IOException(s + d);
                 });
 
-                Consumer<IOException> errorHandler = Spied.consumer(e -> {
-                    throw new IllegalStateException(e);
-                });
+                Consumer<IOException> errorHandler = Spied.consumer(throwable::throwUnchecked);
 
                 ObjDoubleConsumer<String> handling = consumer.onErrorHandleUnchecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.accept("foo", 1D));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.accept("foo", 1D));
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("foo1.0", cause.getMessage());
 
@@ -344,17 +341,16 @@ class CheckedObjDoubleConsumerTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedObjDoubleConsumer<String, IOException> consumer = Spied.checkedObjDoubleConsumer((s, d) -> {
-                throw new IllegalStateException(s + d);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedObjDoubleConsumer<String, IOException> consumer = Spied.checkedObjDoubleConsumer((s, d) -> throwable.throwUnchecked(s + d));
 
             Consumer<IOException> errorHandler = Spied.consumer(Exception::getMessage);
 
             ObjDoubleConsumer<String> handling = consumer.onErrorHandleUnchecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.accept("foo", 1D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.accept("foo", 1D));
             assertEquals("foo1.0", thrown.getMessage());
 
             verify(consumer).accept("foo", 1D);
@@ -431,19 +427,18 @@ class CheckedObjDoubleConsumerTest {
                 verifyNoMoreInteractions(consumer, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException, ParseException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ParseException {
                 CheckedObjDoubleConsumer<String, IOException> consumer = Spied.checkedObjDoubleConsumer((s, d) -> {
                     throw new IOException(s + d);
                 });
 
-                CheckedObjDoubleConsumer<String, ParseException> fallback = Spied.checkedObjDoubleConsumer((s, d) -> {
-                    throw new IllegalStateException(s + d);
-                });
+                CheckedObjDoubleConsumer<String, ParseException> fallback = Spied.checkedObjDoubleConsumer((s, d) -> throwable.throwUnchecked(s + d));
 
                 CheckedObjDoubleConsumer<String, ParseException> applying = consumer.onErrorAcceptChecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.accept("foo", 1D));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.accept("foo", 1D));
                 assertEquals("foo1.0", thrown.getMessage());
 
                 verify(consumer).accept("foo", 1D);
@@ -453,17 +448,16 @@ class CheckedObjDoubleConsumerTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedObjDoubleConsumer<String, IOException> consumer = Spied.checkedObjDoubleConsumer((s, d) -> {
-                throw new IllegalStateException(s + d);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedObjDoubleConsumer<String, IOException> consumer = Spied.checkedObjDoubleConsumer((s, d) -> throwable.throwUnchecked(s + d));
 
             CheckedObjDoubleConsumer<String, ParseException> fallback = Spied.checkedObjDoubleConsumer(CheckedObjDoubleConsumerTest::ignore);
 
             CheckedObjDoubleConsumer<String, ParseException> applying = consumer.onErrorAcceptChecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.accept("foo", 1D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.accept("foo", 1D));
             assertEquals("foo1.0", thrown.getMessage());
 
             verify(consumer).accept("foo", 1D);
@@ -518,19 +512,18 @@ class CheckedObjDoubleConsumerTest {
                 verifyNoMoreInteractions(consumer, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedObjDoubleConsumer<String, IOException> consumer = Spied.checkedObjDoubleConsumer((s, d) -> {
                     throw new IOException(s + d);
                 });
 
-                ObjDoubleConsumer<String> fallback = Spied.objDoubleConsumer((s, d) -> {
-                    throw new IllegalStateException(s + d);
-                });
+                ObjDoubleConsumer<String> fallback = Spied.objDoubleConsumer((s, d) -> throwable.throwUnchecked(s + d));
 
                 ObjDoubleConsumer<String> applying = consumer.onErrorAcceptUnchecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.accept("foo", 1D));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.accept("foo", 1D));
                 assertEquals("foo1.0", thrown.getMessage());
 
                 verify(consumer).accept("foo", 1D);
@@ -540,17 +533,16 @@ class CheckedObjDoubleConsumerTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedObjDoubleConsumer<String, IOException> consumer = Spied.checkedObjDoubleConsumer((s, d) -> {
-                throw new IllegalStateException(s + d);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedObjDoubleConsumer<String, IOException> consumer = Spied.checkedObjDoubleConsumer((s, d) -> throwable.throwUnchecked(s + d));
 
             ObjDoubleConsumer<String> fallback = Spied.objDoubleConsumer(CheckedObjDoubleConsumerTest::ignore);
 
             ObjDoubleConsumer<String> applying = consumer.onErrorAcceptUnchecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.accept("foo", 1D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.accept("foo", 1D));
             assertEquals("foo1.0", thrown.getMessage());
 
             verify(consumer).accept("foo", 1D);
@@ -590,15 +582,14 @@ class CheckedObjDoubleConsumerTest {
             verifyNoMoreInteractions(consumer);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedObjDoubleConsumer<String, IOException> consumer = Spied.checkedObjDoubleConsumer((s, d) -> {
-                throw new IllegalStateException(s + d);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedObjDoubleConsumer<String, IOException> consumer = Spied.checkedObjDoubleConsumer((s, d) -> throwable.throwUnchecked(s + d));
 
             ObjDoubleConsumer<String> discarding = consumer.onErrorDiscard();
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> discarding.accept("foo", 1D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> discarding.accept("foo", 1D));
             assertEquals("foo1.0", thrown.getMessage());
 
             verify(consumer).accept("foo", 1D);
@@ -642,15 +633,14 @@ class CheckedObjDoubleConsumerTest {
             verifyNoMoreInteractions(consumer);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedObjDoubleConsumer<String, IOException> consumer = Spied.checkedObjDoubleConsumer((s, d) -> {
-                throw new IllegalArgumentException(s + d);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedObjDoubleConsumer<String, IOException> consumer = Spied.checkedObjDoubleConsumer((s, d) -> throwable.throwUnchecked(s + d));
 
             ObjDoubleConsumer<String> unchecked = consumer.unchecked();
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.accept("foo", 1D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> unchecked.accept("foo", 1D));
             assertEquals("foo1.0", thrown.getMessage());
 
             verify(consumer).accept("foo", 1D);
@@ -721,15 +711,14 @@ class CheckedObjDoubleConsumerTest {
             verifyNoMoreInteractions(consumer);
         }
 
-        @Test
-        void testArgumentThrowsUnchecked() throws IOException {
-            CheckedObjDoubleConsumer<String, IOException> consumer = Spied.checkedObjDoubleConsumer((s, d) -> {
-                throw new IllegalArgumentException(s + d);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testArgumentThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedObjDoubleConsumer<String, IOException> consumer = Spied.checkedObjDoubleConsumer((s, d) -> throwable.throwUnchecked(s + d));
 
             ObjDoubleConsumer<String> unchecked = CheckedObjDoubleConsumer.unchecked(consumer);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.accept("foo", 1D));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> unchecked.accept("foo", 1D));
             assertEquals("foo1.0", thrown.getMessage());
 
             verify(consumer).unchecked();

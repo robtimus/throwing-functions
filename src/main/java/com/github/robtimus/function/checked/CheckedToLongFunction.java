@@ -30,7 +30,8 @@ import java.util.function.ToLongFunction;
  * @param <X> The type of checked exception that can be thrown.
  */
 @FunctionalInterface
-public interface CheckedToLongFunction<T, X extends Exception> {
+@SuppressWarnings("squid:S1181") // Error needs to be caught separately (and re-thrown) to not let it be caught as throwable
+public interface CheckedToLongFunction<T, X extends Throwable> {
 
     /**
      * Applies this function to the given argument.
@@ -50,17 +51,17 @@ public interface CheckedToLongFunction<T, X extends Exception> {
      * @return A function that transforms any thrown checked exception.
      * @throws NullPointerException If {@code errorMapper} is {@code null}.
      */
-    default <E extends Exception> CheckedToLongFunction<T, E> onErrorThrowAsChecked(Function<? super X, ? extends E> errorMapper) {
+    default <E extends Throwable> CheckedToLongFunction<T, E> onErrorThrowAsChecked(Function<? super X, ? extends E> errorMapper) {
         Objects.requireNonNull(errorMapper);
         return t -> {
             try {
                 return applyAsLong(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 throw errorMapper.apply(x);
             }
         };
@@ -80,12 +81,12 @@ public interface CheckedToLongFunction<T, X extends Exception> {
         return t -> {
             try {
                 return applyAsLong(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 throw errorMapper.apply(x);
             }
         };
@@ -100,17 +101,17 @@ public interface CheckedToLongFunction<T, X extends Exception> {
      * @return A function that transforms any thrown checked exception.
      * @throws NullPointerException If {@code errorHandler} is {@code null}.
      */
-    default <E extends Exception> CheckedToLongFunction<T, E> onErrorHandleChecked(CheckedToLongFunction<? super X, ? extends E> errorHandler) {
+    default <E extends Throwable> CheckedToLongFunction<T, E> onErrorHandleChecked(CheckedToLongFunction<? super X, ? extends E> errorHandler) {
         Objects.requireNonNull(errorHandler);
         return t -> {
             try {
                 return applyAsLong(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 return errorHandler.applyAsLong(x);
             }
         };
@@ -129,12 +130,12 @@ public interface CheckedToLongFunction<T, X extends Exception> {
         return t -> {
             try {
                 return applyAsLong(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 return errorHandler.applyAsLong(x);
             }
         };
@@ -149,14 +150,14 @@ public interface CheckedToLongFunction<T, X extends Exception> {
      * @return A function that invokes the {@code fallback} function if this function throws any checked exception.
      * @throws NullPointerException If {@code fallback} is {@code null}.
      */
-    default <E extends Exception> CheckedToLongFunction<T, E> onErrorApplyChecked(CheckedToLongFunction<? super T, ? extends E> fallback) {
+    default <E extends Throwable> CheckedToLongFunction<T, E> onErrorApplyChecked(CheckedToLongFunction<? super T, ? extends E> fallback) {
         Objects.requireNonNull(fallback);
         return t -> {
             try {
                 return applyAsLong(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.applyAsLong(t);
             }
         };
@@ -175,9 +176,9 @@ public interface CheckedToLongFunction<T, X extends Exception> {
         return t -> {
             try {
                 return applyAsLong(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.applyAsLong(t);
             }
         };
@@ -192,14 +193,14 @@ public interface CheckedToLongFunction<T, X extends Exception> {
      * @return A function that invokes the {@code fallback} supplier if this function throws any checked exception.
      * @throws NullPointerException If {@code fallback} is {@code null}.
      */
-    default <E extends Exception> CheckedToLongFunction<T, E> onErrorGetChecked(CheckedLongSupplier<? extends E> fallback) {
+    default <E extends Throwable> CheckedToLongFunction<T, E> onErrorGetChecked(CheckedLongSupplier<? extends E> fallback) {
         Objects.requireNonNull(fallback);
         return t -> {
             try {
                 return applyAsLong(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.getAsLong();
             }
         };
@@ -218,9 +219,9 @@ public interface CheckedToLongFunction<T, X extends Exception> {
         return t -> {
             try {
                 return applyAsLong(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.getAsLong();
             }
         };
@@ -237,9 +238,9 @@ public interface CheckedToLongFunction<T, X extends Exception> {
         return t -> {
             try {
                 return applyAsLong(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback;
             }
         };
@@ -264,7 +265,7 @@ public interface CheckedToLongFunction<T, X extends Exception> {
      * @return The given lambda as a {@code CheckedToLongFunction}.
      * @throws NullPointerException If {@code function} is {@code null}.
      */
-    static <T, X extends Exception> CheckedToLongFunction<T, X> of(CheckedToLongFunction<T, X> function) {
+    static <T, X extends Throwable> CheckedToLongFunction<T, X> of(CheckedToLongFunction<T, X> function) {
         Objects.requireNonNull(function);
         return function;
     }
@@ -294,7 +295,7 @@ public interface CheckedToLongFunction<T, X extends Exception> {
      * @return A function that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code function} is {@code null}.
      */
-    static <T, X extends Exception> CheckedToLongFunction<T, X> checked(ToLongFunction<? super T> function) {
+    static <T, X extends Throwable> CheckedToLongFunction<T, X> checked(ToLongFunction<? super T> function) {
         Objects.requireNonNull(function);
         return function::applyAsLong;
     }
@@ -310,7 +311,7 @@ public interface CheckedToLongFunction<T, X extends Exception> {
      * @return A function that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code function} or {@code errorType} is {@code null}.
      */
-    static <T, X extends Exception> CheckedToLongFunction<T, X> checked(ToLongFunction<? super T> function, Class<X> errorType) {
+    static <T, X extends Throwable> CheckedToLongFunction<T, X> checked(ToLongFunction<? super T> function, Class<X> errorType) {
         Objects.requireNonNull(function);
         Objects.requireNonNull(errorType);
         return t -> invokeAndUnwrap(function, t, errorType);
@@ -328,12 +329,12 @@ public interface CheckedToLongFunction<T, X extends Exception> {
      * @throws NullPointerException If {@code function} or {@code errorType} is {@code null}.
      * @throws X If {@code function} throws an {@link UncheckedException} that wraps an instance of {@code errorType}.
      */
-    static <T, X extends Exception> long invokeAndUnwrap(ToLongFunction<? super T> function, T input, Class<X> errorType) throws X {
+    static <T, X extends Throwable> long invokeAndUnwrap(ToLongFunction<? super T> function, T input, Class<X> errorType) throws X {
         Objects.requireNonNull(errorType);
         try {
             return function.applyAsLong(input);
         } catch (UncheckedException e) {
-            Exception cause = e.getCause();
+            Throwable cause = e.getCause();
             if (errorType.isInstance(cause)) {
                 throw errorType.cast(cause);
             }

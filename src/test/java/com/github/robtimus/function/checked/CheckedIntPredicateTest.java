@@ -37,6 +37,8 @@ import java.util.function.IntPredicate;
 import java.util.function.Predicate;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 
 @SuppressWarnings("nls")
 class CheckedIntPredicateTest {
@@ -154,16 +156,15 @@ class CheckedIntPredicateTest {
         @Nested
         class ThisThrowsUnchecked {
 
-            @Test
-            void testOtherMatches() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
-                    throw new IllegalStateException(Integer.toString(i));
-                });
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testOtherMatches(UncheckedThrowable<?> throwable) throws IOException {
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(throwable::throwUnchecked);
                 CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
                 CheckedIntPredicate<IOException> composed = predicate.and(other);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> composed.test(1));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> composed.test(1));
                 assertEquals("1", thrown.getMessage());
 
                 verify(predicate).test(1);
@@ -171,16 +172,15 @@ class CheckedIntPredicateTest {
                 verifyNoMoreInteractions(predicate, other);
             }
 
-            @Test
-            void testOtherDoesNotMatch() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
-                    throw new IllegalStateException(Integer.toString(i));
-                });
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testOtherDoesNotMatch(UncheckedThrowable<?> throwable) throws IOException {
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(throwable::throwUnchecked);
                 CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> i % 2 == 0);
 
                 CheckedIntPredicate<IOException> composed = predicate.and(other);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> composed.test(1));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> composed.test(1));
                 assertEquals("1", thrown.getMessage());
 
                 verify(predicate).test(1);
@@ -230,16 +230,15 @@ class CheckedIntPredicateTest {
         @Nested
         class OtherThrowsUnchecked {
 
-            @Test
-            void testThisMatches() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testThisMatches(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
-                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> {
-                    throw new IllegalStateException(Integer.toString(i));
-                });
+                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(throwable::throwUnchecked);
 
                 CheckedIntPredicate<IOException> composed = predicate.and(other);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> composed.test(1));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> composed.test(1));
                 assertEquals("1", thrown.getMessage());
 
                 verify(predicate).test(1);
@@ -248,12 +247,11 @@ class CheckedIntPredicateTest {
                 verifyNoMoreInteractions(predicate, other);
             }
 
-            @Test
-            void testThisDoesNotMatch() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testThisDoesNotMatch(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 == 0);
-                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> {
-                    throw new IOException(Integer.toString(i));
-                });
+                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(throwable::throwUnchecked);
 
                 CheckedIntPredicate<IOException> composed = predicate.and(other);
 
@@ -300,15 +298,14 @@ class CheckedIntPredicateTest {
             verifyNoMoreInteractions(predicate);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
-                throw new IllegalStateException(Integer.toString(i));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(throwable::throwUnchecked);
 
             CheckedIntPredicate<IOException> negated = predicate.negate();
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> negated.test(1));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> negated.test(1));
             assertEquals("1", thrown.getMessage());
 
             verify(predicate).test(1);
@@ -430,16 +427,15 @@ class CheckedIntPredicateTest {
         @Nested
         class ThisThrowsUnchecked {
 
-            @Test
-            void testOtherMatches() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
-                    throw new IllegalStateException(Integer.toString(i));
-                });
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testOtherMatches(UncheckedThrowable<?> throwable) throws IOException {
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(throwable::throwUnchecked);
                 CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> i % 2 != 0);
 
                 CheckedIntPredicate<IOException> composed = predicate.or(other);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> composed.test(1));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> composed.test(1));
                 assertEquals("1", thrown.getMessage());
 
                 verify(predicate).test(1);
@@ -447,16 +443,15 @@ class CheckedIntPredicateTest {
                 verifyNoMoreInteractions(predicate, other);
             }
 
-            @Test
-            void testOtherDoesNotMatch() throws IOException {
-                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
-                    throw new IllegalStateException(Integer.toString(i));
-                });
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testOtherDoesNotMatch(UncheckedThrowable<?> throwable) throws IOException {
+                CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(throwable::throwUnchecked);
                 CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> i % 2 == 0);
 
                 CheckedIntPredicate<IOException> composed = predicate.or(other);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> composed.test(1));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> composed.test(1));
                 assertEquals("1", thrown.getMessage());
 
                 verify(predicate).test(1);
@@ -506,12 +501,11 @@ class CheckedIntPredicateTest {
         @Nested
         class OtherThrowsUnchecked {
 
-            @Test
-            void testThisMatches() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testThisMatches(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 != 0);
-                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> {
-                    throw new IllegalStateException(Integer.toString(i));
-                });
+                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(throwable::throwUnchecked);
 
                 CheckedIntPredicate<IOException> composed = predicate.or(other);
 
@@ -522,16 +516,15 @@ class CheckedIntPredicateTest {
                 verifyNoMoreInteractions(predicate, other);
             }
 
-            @Test
-            void testThisDoesNotMatch() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testThisDoesNotMatch(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> i % 2 == 0);
-                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(i -> {
-                    throw new IllegalStateException(Integer.toString(i));
-                });
+                CheckedIntPredicate<IOException> other = Spied.checkedIntPredicate(throwable::throwUnchecked);
 
                 CheckedIntPredicate<IOException> composed = predicate.or(other);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> composed.test(1));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> composed.test(1));
                 assertEquals("1", thrown.getMessage());
 
                 verify(predicate).test(1);
@@ -587,17 +580,16 @@ class CheckedIntPredicateTest {
             verifyNoMoreInteractions(predicate, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
-                throw new IllegalStateException(Integer.toString(i));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(throwable::throwUnchecked);
 
             Function<IOException, ExecutionException> errorMapper = Spied.function(ExecutionException::new);
 
             CheckedIntPredicate<ExecutionException> throwing = predicate.onErrorThrowAsChecked(errorMapper);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> throwing.test(1));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> throwing.test(1));
             assertEquals("1", thrown.getMessage());
 
             verify(predicate).test(1);
@@ -651,17 +643,16 @@ class CheckedIntPredicateTest {
             verifyNoMoreInteractions(predicate, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
-                throw new IllegalArgumentException(Integer.toString(i));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(throwable::throwUnchecked);
 
             Function<IOException, IllegalStateException> errorMapper = Spied.function(IllegalStateException::new);
 
             IntPredicate throwing = predicate.onErrorThrowAsUnchecked(errorMapper);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> throwing.test(1));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> throwing.test(1));
             assertEquals("1", thrown.getMessage());
 
             verify(predicate).test(1);
@@ -738,19 +729,18 @@ class CheckedIntPredicateTest {
                 verifyNoMoreInteractions(predicate, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException, ExecutionException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ExecutionException {
                 CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
                     throw new IOException(Integer.toString(i));
                 });
 
-                CheckedPredicate<IOException, ExecutionException> errorHandler = Spied.checkedPredicate(e -> {
-                    throw new IllegalStateException(e);
-                });
+                CheckedPredicate<IOException, ExecutionException> errorHandler = Spied.checkedPredicate(throwable::throwUnchecked);
 
                 CheckedIntPredicate<ExecutionException> handling = predicate.onErrorHandleChecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.test(1));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.test(1));
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("1", cause.getMessage());
 
@@ -761,17 +751,16 @@ class CheckedIntPredicateTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
-                throw new IllegalStateException(Integer.toString(i));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(throwable::throwUnchecked);
 
             CheckedPredicate<IOException, ExecutionException> errorHandler = Spied.checkedPredicate(e -> e.getMessage() == null);
 
             CheckedIntPredicate<ExecutionException> handling = predicate.onErrorHandleChecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.test(1));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.test(1));
             assertEquals("1", thrown.getMessage());
 
             verify(predicate).test(1);
@@ -826,19 +815,18 @@ class CheckedIntPredicateTest {
                 verifyNoMoreInteractions(predicate, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
                     throw new IOException(Integer.toString(i));
                 });
 
-                Predicate<IOException> errorHandler = Spied.predicate(e -> {
-                    throw new IllegalStateException(e);
-                });
+                Predicate<IOException> errorHandler = Spied.predicate(throwable::throwUnchecked);
 
                 IntPredicate handling = predicate.onErrorHandleUnchecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.test(1));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.test(1));
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("1", cause.getMessage());
 
@@ -849,17 +837,16 @@ class CheckedIntPredicateTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
-                throw new IllegalStateException(Integer.toString(i));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(throwable::throwUnchecked);
 
             Predicate<IOException> errorHandler = Spied.predicate(e -> e.getMessage() == null);
 
             IntPredicate handling = predicate.onErrorHandleUnchecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.test(1));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.test(1));
             assertEquals("1", thrown.getMessage());
 
             verify(predicate).test(1);
@@ -936,19 +923,18 @@ class CheckedIntPredicateTest {
                 verifyNoMoreInteractions(predicate, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException, ParseException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ParseException {
                 CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
                     throw new IOException(Integer.toString(i));
                 });
 
-                CheckedIntPredicate<ParseException> fallback = Spied.checkedIntPredicate(i -> {
-                    throw new IllegalStateException(Integer.toString(i));
-                });
+                CheckedIntPredicate<ParseException> fallback = Spied.checkedIntPredicate(throwable::throwUnchecked);
 
                 CheckedIntPredicate<ParseException> testing = predicate.onErrorTestChecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> testing.test(1));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> testing.test(1));
                 assertEquals("1", thrown.getMessage());
 
                 verify(predicate).test(1);
@@ -958,17 +944,16 @@ class CheckedIntPredicateTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
-                throw new IllegalStateException(Integer.toString(i));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(throwable::throwUnchecked);
 
             CheckedIntPredicate<ParseException> fallback = Spied.checkedIntPredicate(i -> i % 2 == 0);
 
             CheckedIntPredicate<ParseException> testing = predicate.onErrorTestChecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> testing.test(1));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> testing.test(1));
             assertEquals("1", thrown.getMessage());
 
             verify(predicate).test(1);
@@ -1023,19 +1008,18 @@ class CheckedIntPredicateTest {
                 verifyNoMoreInteractions(predicate, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
                     throw new IOException(Integer.toString(i));
                 });
 
-                IntPredicate fallback = Spied.intPredicate(i -> {
-                    throw new IllegalStateException(Integer.toString(i));
-                });
+                IntPredicate fallback = Spied.intPredicate(throwable::throwUnchecked);
 
                 IntPredicate testing = predicate.onErrorTestUnchecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> testing.test(1));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> testing.test(1));
                 assertEquals("1", thrown.getMessage());
 
                 verify(predicate).test(1);
@@ -1045,17 +1029,16 @@ class CheckedIntPredicateTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
-                throw new IllegalStateException(Integer.toString(i));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(throwable::throwUnchecked);
 
             IntPredicate fallback = Spied.intPredicate(i -> i % 2 == 0);
 
             IntPredicate testing = predicate.onErrorTestUnchecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> testing.test(1));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> testing.test(1));
             assertEquals("1", thrown.getMessage());
 
             verify(predicate).test(1);
@@ -1132,19 +1115,18 @@ class CheckedIntPredicateTest {
                 verifyNoMoreInteractions(predicate, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException, ParseException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ParseException {
                 CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
                     throw new IOException(Integer.toString(i));
                 });
 
-                CheckedBooleanSupplier<ParseException> fallback = Spied.checkedBooleanSupplier(() -> {
-                    throw new IllegalStateException("bar");
-                });
+                CheckedBooleanSupplier<ParseException> fallback = Spied.checkedBooleanSupplier(() -> throwable.throwUnchecked("bar"));
 
                 CheckedIntPredicate<ParseException> getting = predicate.onErrorGetCheckedAsBoolean(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.test(1));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.test(1));
                 assertEquals("bar", thrown.getMessage());
 
                 verify(predicate).test(1);
@@ -1154,17 +1136,16 @@ class CheckedIntPredicateTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
-                throw new IllegalStateException(Integer.toString(i));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(throwable::throwUnchecked);
 
             CheckedBooleanSupplier<ParseException> fallback = Spied.checkedBooleanSupplier(() -> false);
 
             CheckedIntPredicate<ParseException> getting = predicate.onErrorGetCheckedAsBoolean(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.test(1));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.test(1));
             assertEquals("1", thrown.getMessage());
 
             verify(predicate).test(1);
@@ -1219,19 +1200,18 @@ class CheckedIntPredicateTest {
                 verifyNoMoreInteractions(predicate, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
                     throw new IOException(Integer.toString(i));
                 });
 
-                BooleanSupplier fallback = Spied.booleanSupplier(() -> {
-                    throw new IllegalStateException("bar");
-                });
+                BooleanSupplier fallback = Spied.booleanSupplier(() -> throwable.throwUnchecked("bar"));
 
                 IntPredicate getting = predicate.onErrorGetUncheckedAsBoolean(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.test(1));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.test(1));
                 assertEquals("bar", thrown.getMessage());
 
                 verify(predicate).test(1);
@@ -1241,17 +1221,16 @@ class CheckedIntPredicateTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
-                throw new IllegalStateException(Integer.toString(i));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(throwable::throwUnchecked);
 
             BooleanSupplier fallback = Spied.booleanSupplier(() -> false);
 
             IntPredicate getting = predicate.onErrorGetUncheckedAsBoolean(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.test(1));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.test(1));
             assertEquals("1", thrown.getMessage());
 
             verify(predicate).test(1);
@@ -1291,15 +1270,14 @@ class CheckedIntPredicateTest {
             verifyNoMoreInteractions(predicate);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
-                throw new IllegalStateException(Integer.toString(i));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(throwable::throwUnchecked);
 
             IntPredicate returning = predicate.onErrorReturn(false);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> returning.test(1));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> returning.test(1));
             assertEquals("1", thrown.getMessage());
 
             verify(predicate).test(1);
@@ -1343,15 +1321,14 @@ class CheckedIntPredicateTest {
             verifyNoMoreInteractions(predicate);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
-                throw new IllegalArgumentException(Integer.toString(i));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(throwable::throwUnchecked);
 
             IntPredicate unchecked = predicate.unchecked();
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.test(1));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> unchecked.test(1));
             assertEquals("1", thrown.getMessage());
 
             verify(predicate).test(1);
@@ -1416,15 +1393,14 @@ class CheckedIntPredicateTest {
             verifyNoMoreInteractions(predicate);
         }
 
-        @Test
-        void testArgumentThrowsUnchecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
-                throw new IllegalStateException(Integer.toString(i));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testArgumentThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(throwable::throwUnchecked);
 
             CheckedIntPredicate<IOException> negated = CheckedIntPredicate.not(predicate);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> negated.test(1));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> negated.test(1));
             assertEquals("1", thrown.getMessage());
 
             verify(predicate).negate();
@@ -1473,15 +1449,14 @@ class CheckedIntPredicateTest {
             verifyNoMoreInteractions(predicate);
         }
 
-        @Test
-        void testArgumentThrowsUnchecked() throws IOException {
-            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(i -> {
-                throw new IllegalArgumentException(Integer.toString(i));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testArgumentThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedIntPredicate<IOException> predicate = Spied.checkedIntPredicate(throwable::throwUnchecked);
 
             IntPredicate unchecked = CheckedIntPredicate.unchecked(predicate);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.test(1));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> unchecked.test(1));
             assertEquals("1", thrown.getMessage());
 
             verify(predicate).unchecked();

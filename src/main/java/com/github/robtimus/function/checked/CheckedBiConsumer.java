@@ -31,7 +31,8 @@ import java.util.function.Function;
  * @param <X> The type of checked exception that can be thrown.
  */
 @FunctionalInterface
-public interface CheckedBiConsumer<T, U, X extends Exception> {
+@SuppressWarnings("squid:S1181") // Error needs to be caught separately (and re-thrown) to not let it be caught as throwable
+public interface CheckedBiConsumer<T, U, X extends Throwable> {
 
     /**
      * Performs this operation on the given arguments.
@@ -68,17 +69,17 @@ public interface CheckedBiConsumer<T, U, X extends Exception> {
      * @return An operation that transforms any thrown checked exception.
      * @throws NullPointerException If {@code errorMapper} is {@code null}.
      */
-    default <E extends Exception> CheckedBiConsumer<T, U, E> onErrorThrowAsChecked(Function<? super X, ? extends E> errorMapper) {
+    default <E extends Throwable> CheckedBiConsumer<T, U, E> onErrorThrowAsChecked(Function<? super X, ? extends E> errorMapper) {
         Objects.requireNonNull(errorMapper);
         return (t, u) -> {
             try {
                 accept(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 throw errorMapper.apply(x);
             }
         };
@@ -98,12 +99,12 @@ public interface CheckedBiConsumer<T, U, X extends Exception> {
         return (t, u) -> {
             try {
                 accept(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 throw errorMapper.apply(x);
             }
         };
@@ -118,17 +119,17 @@ public interface CheckedBiConsumer<T, U, X extends Exception> {
      * @return An operation that handles any thrown checked exception.
      * @throws NullPointerException If {@code errorHandler} is {@code null}.
      */
-    default <E extends Exception> CheckedBiConsumer<T, U, E> onErrorHandleChecked(CheckedConsumer<? super X, ? extends E> errorHandler) {
+    default <E extends Throwable> CheckedBiConsumer<T, U, E> onErrorHandleChecked(CheckedConsumer<? super X, ? extends E> errorHandler) {
         Objects.requireNonNull(errorHandler);
         return (t, u) -> {
             try {
                 accept(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 errorHandler.accept(x);
             }
         };
@@ -147,12 +148,12 @@ public interface CheckedBiConsumer<T, U, X extends Exception> {
         return (t, u) -> {
             try {
                 accept(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 errorHandler.accept(x);
             }
         };
@@ -167,14 +168,14 @@ public interface CheckedBiConsumer<T, U, X extends Exception> {
      * @return An operation that invokes the {@code fallback} operation if this operation throws any checked exception.
      * @throws NullPointerException If {@code fallback} is {@code null}.
      */
-    default <E extends Exception> CheckedBiConsumer<T, U, E> onErrorAcceptChecked(CheckedBiConsumer<? super T, ? super U, ? extends E> fallback) {
+    default <E extends Throwable> CheckedBiConsumer<T, U, E> onErrorAcceptChecked(CheckedBiConsumer<? super T, ? super U, ? extends E> fallback) {
         Objects.requireNonNull(fallback);
         return (t, u) -> {
             try {
                 accept(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 fallback.accept(t, u);
             }
         };
@@ -193,9 +194,9 @@ public interface CheckedBiConsumer<T, U, X extends Exception> {
         return (t, u) -> {
             try {
                 accept(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 fallback.accept(t, u);
             }
         };
@@ -210,9 +211,9 @@ public interface CheckedBiConsumer<T, U, X extends Exception> {
         return (t, u) -> {
             try {
                 accept(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 // discard
             }
         };
@@ -238,7 +239,7 @@ public interface CheckedBiConsumer<T, U, X extends Exception> {
      * @return The given lambda as a {@code CheckedBiConsumer}.
      * @throws NullPointerException If {@code operation} is {@code null}.
      */
-    static <T, U, X extends Exception> CheckedBiConsumer<T, U, X> of(CheckedBiConsumer<T, U, X> operation) {
+    static <T, U, X extends Throwable> CheckedBiConsumer<T, U, X> of(CheckedBiConsumer<T, U, X> operation) {
         Objects.requireNonNull(operation);
         return operation;
     }
@@ -271,7 +272,7 @@ public interface CheckedBiConsumer<T, U, X extends Exception> {
      * @return An operation that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code operation} is {@code null}.
      */
-    static <T, U, X extends Exception> CheckedBiConsumer<T, U, X> checked(BiConsumer<? super T, ? super U> operation) {
+    static <T, U, X extends Throwable> CheckedBiConsumer<T, U, X> checked(BiConsumer<? super T, ? super U> operation) {
         Objects.requireNonNull(operation);
         return operation::accept;
     }
@@ -288,7 +289,7 @@ public interface CheckedBiConsumer<T, U, X extends Exception> {
      * @return An operation that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code operation} or {@code errorType} is {@code null}.
      */
-    static <T, U, X extends Exception> CheckedBiConsumer<T, U, X> checked(BiConsumer<? super T, ? super U> operation, Class<X> errorType) {
+    static <T, U, X extends Throwable> CheckedBiConsumer<T, U, X> checked(BiConsumer<? super T, ? super U> operation, Class<X> errorType) {
         Objects.requireNonNull(operation);
         Objects.requireNonNull(errorType);
         return (t, u) -> invokeAndUnwrap(operation, t, u, errorType);
@@ -307,14 +308,14 @@ public interface CheckedBiConsumer<T, U, X extends Exception> {
      * @throws NullPointerException If {@code operation} or {@code errorType} is {@code null}.
      * @throws X If {@code operation} throws an {@link UncheckedException} that wraps an instance of {@code errorType}.
      */
-    static <T, U, X extends Exception> void invokeAndUnwrap(BiConsumer<? super T, ? super U> operation, T input1, U input2, Class<X> errorType)
+    static <T, U, X extends Throwable> void invokeAndUnwrap(BiConsumer<? super T, ? super U> operation, T input1, U input2, Class<X> errorType)
             throws X {
 
         Objects.requireNonNull(errorType);
         try {
             operation.accept(input1, input2);
         } catch (UncheckedException e) {
-            Exception cause = e.getCause();
+            Throwable cause = e.getCause();
             if (errorType.isInstance(cause)) {
                 throw errorType.cast(cause);
             }

@@ -32,7 +32,8 @@ import java.util.function.ToDoubleFunction;
  * @param <X> The type of checked exception that can be thrown.
  */
 @FunctionalInterface
-public interface CheckedToDoubleBiFunction<T, U, X extends Exception> {
+@SuppressWarnings("squid:S1181") // Error needs to be caught separately (and re-thrown) to not let it be caught as throwable
+public interface CheckedToDoubleBiFunction<T, U, X extends Throwable> {
 
     /**
      * Applies this function to the given arguments.
@@ -53,17 +54,17 @@ public interface CheckedToDoubleBiFunction<T, U, X extends Exception> {
      * @return A function that transforms any thrown checked exception.
      * @throws NullPointerException If {@code errorMapper} is {@code null}.
      */
-    default <E extends Exception> CheckedToDoubleBiFunction<T, U, E> onErrorThrowAsChecked(Function<? super X, ? extends E> errorMapper) {
+    default <E extends Throwable> CheckedToDoubleBiFunction<T, U, E> onErrorThrowAsChecked(Function<? super X, ? extends E> errorMapper) {
         Objects.requireNonNull(errorMapper);
         return (t, u) -> {
             try {
                 return applyAsDouble(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 throw errorMapper.apply(x);
             }
         };
@@ -83,12 +84,12 @@ public interface CheckedToDoubleBiFunction<T, U, X extends Exception> {
         return (t, u) -> {
             try {
                 return applyAsDouble(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 throw errorMapper.apply(x);
             }
         };
@@ -103,19 +104,19 @@ public interface CheckedToDoubleBiFunction<T, U, X extends Exception> {
      * @return A function that transforms any thrown checked exception.
      * @throws NullPointerException If {@code errorHandler} is {@code null}.
      */
-    default <E extends Exception> CheckedToDoubleBiFunction<T, U, E> onErrorHandleChecked(
+    default <E extends Throwable> CheckedToDoubleBiFunction<T, U, E> onErrorHandleChecked(
             CheckedToDoubleFunction<? super X, ? extends E> errorHandler) {
 
         Objects.requireNonNull(errorHandler);
         return (t, u) -> {
             try {
                 return applyAsDouble(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 return errorHandler.applyAsDouble(x);
             }
         };
@@ -134,12 +135,12 @@ public interface CheckedToDoubleBiFunction<T, U, X extends Exception> {
         return (t, u) -> {
             try {
                 return applyAsDouble(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 return errorHandler.applyAsDouble(x);
             }
         };
@@ -154,16 +155,16 @@ public interface CheckedToDoubleBiFunction<T, U, X extends Exception> {
      * @return A function that invokes the {@code fallback} function if this function throws any checked exception.
      * @throws NullPointerException If {@code fallback} is {@code null}.
      */
-    default <E extends Exception> CheckedToDoubleBiFunction<T, U, E> onErrorApplyChecked(
+    default <E extends Throwable> CheckedToDoubleBiFunction<T, U, E> onErrorApplyChecked(
             CheckedToDoubleBiFunction<? super T, ? super U, ? extends E> fallback) {
 
         Objects.requireNonNull(fallback);
         return (t, u) -> {
             try {
                 return applyAsDouble(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.applyAsDouble(t, u);
             }
         };
@@ -182,9 +183,9 @@ public interface CheckedToDoubleBiFunction<T, U, X extends Exception> {
         return (t, u) -> {
             try {
                 return applyAsDouble(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.applyAsDouble(t, u);
             }
         };
@@ -199,14 +200,14 @@ public interface CheckedToDoubleBiFunction<T, U, X extends Exception> {
      * @return A function that invokes the {@code fallback} supplier if this function throws any checked exception.
      * @throws NullPointerException If {@code fallback} is {@code null}.
      */
-    default <E extends Exception> CheckedToDoubleBiFunction<T, U, E> onErrorGetChecked(CheckedDoubleSupplier<? extends E> fallback) {
+    default <E extends Throwable> CheckedToDoubleBiFunction<T, U, E> onErrorGetChecked(CheckedDoubleSupplier<? extends E> fallback) {
         Objects.requireNonNull(fallback);
         return (t, u) -> {
             try {
                 return applyAsDouble(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.getAsDouble();
             }
         };
@@ -225,9 +226,9 @@ public interface CheckedToDoubleBiFunction<T, U, X extends Exception> {
         return (t, u) -> {
             try {
                 return applyAsDouble(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.getAsDouble();
             }
         };
@@ -244,9 +245,9 @@ public interface CheckedToDoubleBiFunction<T, U, X extends Exception> {
         return (t, u) -> {
             try {
                 return applyAsDouble(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback;
             }
         };
@@ -272,7 +273,7 @@ public interface CheckedToDoubleBiFunction<T, U, X extends Exception> {
      * @return The given lambda as a {@code CheckedToDoubleBiFunction}.
      * @throws NullPointerException If {@code function} is {@code null}.
      */
-    static <T, U, X extends Exception> CheckedToDoubleBiFunction<T, U, X> of(CheckedToDoubleBiFunction<T, U, X> function) {
+    static <T, U, X extends Throwable> CheckedToDoubleBiFunction<T, U, X> of(CheckedToDoubleBiFunction<T, U, X> function) {
         Objects.requireNonNull(function);
         return function;
     }
@@ -305,7 +306,7 @@ public interface CheckedToDoubleBiFunction<T, U, X extends Exception> {
      * @return A function that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code function} is {@code null}.
      */
-    static <T, U, X extends Exception> CheckedToDoubleBiFunction<T, U, X> checked(ToDoubleBiFunction<? super T, ? super U> function) {
+    static <T, U, X extends Throwable> CheckedToDoubleBiFunction<T, U, X> checked(ToDoubleBiFunction<? super T, ? super U> function) {
         Objects.requireNonNull(function);
         return function::applyAsDouble;
     }
@@ -322,7 +323,7 @@ public interface CheckedToDoubleBiFunction<T, U, X extends Exception> {
      * @return A function that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code function} or {@code errorType} is {@code null}.
      */
-    static <T, U, X extends Exception> CheckedToDoubleBiFunction<T, U, X> checked(ToDoubleBiFunction<? super T, ? super U> function,
+    static <T, U, X extends Throwable> CheckedToDoubleBiFunction<T, U, X> checked(ToDoubleBiFunction<? super T, ? super U> function,
                                                                                   Class<X> errorType) {
         Objects.requireNonNull(function);
         Objects.requireNonNull(errorType);
@@ -343,7 +344,7 @@ public interface CheckedToDoubleBiFunction<T, U, X extends Exception> {
      * @throws NullPointerException If {@code function} or {@code errorType} is {@code null}.
      * @throws X If {@code function} throws an {@link UncheckedException} that wraps an instance of {@code errorType}.
      */
-    static <T, U, X extends Exception> double invokeAndUnwrap(ToDoubleBiFunction<? super T, ? super U> function, T input1, U input2,
+    static <T, U, X extends Throwable> double invokeAndUnwrap(ToDoubleBiFunction<? super T, ? super U> function, T input1, U input2,
                                                               Class<X> errorType)
             throws X {
 
@@ -351,7 +352,7 @@ public interface CheckedToDoubleBiFunction<T, U, X extends Exception> {
         try {
             return function.applyAsDouble(input1, input2);
         } catch (UncheckedException e) {
-            Exception cause = e.getCause();
+            Throwable cause = e.getCause();
             if (errorType.isInstance(cause)) {
                 throw errorType.cast(cause);
             }

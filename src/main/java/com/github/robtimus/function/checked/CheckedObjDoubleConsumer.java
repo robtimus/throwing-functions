@@ -30,7 +30,8 @@ import java.util.function.ObjDoubleConsumer;
  * @param <X> The type of checked exception that can be thrown.
  */
 @FunctionalInterface
-public interface CheckedObjDoubleConsumer<T, X extends Exception> {
+@SuppressWarnings("squid:S1181") // Error needs to be caught separately (and re-thrown) to not let it be caught as throwable
+public interface CheckedObjDoubleConsumer<T, X extends Throwable> {
 
     /**
      * Performs this operation on the given arguments.
@@ -50,17 +51,17 @@ public interface CheckedObjDoubleConsumer<T, X extends Exception> {
      * @return An operation that transforms any thrown checked exception.
      * @throws NullPointerException If {@code errorMapper} is {@code null}.
      */
-    default <E extends Exception> CheckedObjDoubleConsumer<T, E> onErrorThrowAsChecked(Function<? super X, ? extends E> errorMapper) {
+    default <E extends Throwable> CheckedObjDoubleConsumer<T, E> onErrorThrowAsChecked(Function<? super X, ? extends E> errorMapper) {
         Objects.requireNonNull(errorMapper);
         return (t, u) -> {
             try {
                 accept(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 throw errorMapper.apply(x);
             }
         };
@@ -80,12 +81,12 @@ public interface CheckedObjDoubleConsumer<T, X extends Exception> {
         return (t, u) -> {
             try {
                 accept(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 throw errorMapper.apply(x);
             }
         };
@@ -100,17 +101,17 @@ public interface CheckedObjDoubleConsumer<T, X extends Exception> {
      * @return An operation that handles any thrown checked exception.
      * @throws NullPointerException If {@code errorHandler} is {@code null}.
      */
-    default <E extends Exception> CheckedObjDoubleConsumer<T, E> onErrorHandleChecked(CheckedConsumer<? super X, ? extends E> errorHandler) {
+    default <E extends Throwable> CheckedObjDoubleConsumer<T, E> onErrorHandleChecked(CheckedConsumer<? super X, ? extends E> errorHandler) {
         Objects.requireNonNull(errorHandler);
         return (t, u) -> {
             try {
                 accept(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 errorHandler.accept(x);
             }
         };
@@ -129,12 +130,12 @@ public interface CheckedObjDoubleConsumer<T, X extends Exception> {
         return (t, u) -> {
             try {
                 accept(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 errorHandler.accept(x);
             }
         };
@@ -149,14 +150,14 @@ public interface CheckedObjDoubleConsumer<T, X extends Exception> {
      * @return An operation that invokes the {@code fallback} operation if this operation throws any checked exception.
      * @throws NullPointerException If {@code fallback} is {@code null}.
      */
-    default <E extends Exception> CheckedObjDoubleConsumer<T, E> onErrorAcceptChecked(CheckedObjDoubleConsumer<? super T, ? extends E> fallback) {
+    default <E extends Throwable> CheckedObjDoubleConsumer<T, E> onErrorAcceptChecked(CheckedObjDoubleConsumer<? super T, ? extends E> fallback) {
         Objects.requireNonNull(fallback);
         return (t, u) -> {
             try {
                 accept(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 fallback.accept(t, u);
             }
         };
@@ -175,9 +176,9 @@ public interface CheckedObjDoubleConsumer<T, X extends Exception> {
         return (t, u) -> {
             try {
                 accept(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 fallback.accept(t, u);
             }
         };
@@ -192,9 +193,9 @@ public interface CheckedObjDoubleConsumer<T, X extends Exception> {
         return (t, u) -> {
             try {
                 accept(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 // discard
             }
         };
@@ -219,7 +220,7 @@ public interface CheckedObjDoubleConsumer<T, X extends Exception> {
      * @return The given lambda as a {@code CheckedObjDoubleConsumer}.
      * @throws NullPointerException If {@code operation} is {@code null}.
      */
-    static <T, X extends Exception> CheckedObjDoubleConsumer<T, X> of(CheckedObjDoubleConsumer<T, X> operation) {
+    static <T, X extends Throwable> CheckedObjDoubleConsumer<T, X> of(CheckedObjDoubleConsumer<T, X> operation) {
         Objects.requireNonNull(operation);
         return operation;
     }
@@ -250,7 +251,7 @@ public interface CheckedObjDoubleConsumer<T, X extends Exception> {
      * @return An operation that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code operation} is {@code null}.
      */
-    static <T, X extends Exception> CheckedObjDoubleConsumer<T, X> checked(ObjDoubleConsumer<? super T> operation) {
+    static <T, X extends Throwable> CheckedObjDoubleConsumer<T, X> checked(ObjDoubleConsumer<? super T> operation) {
         Objects.requireNonNull(operation);
         return operation::accept;
     }
@@ -266,7 +267,7 @@ public interface CheckedObjDoubleConsumer<T, X extends Exception> {
      * @return An operation that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code operation} or {@code errorType} is {@code null}.
      */
-    static <T, X extends Exception> CheckedObjDoubleConsumer<T, X> checked(ObjDoubleConsumer<? super T> operation, Class<X> errorType) {
+    static <T, X extends Throwable> CheckedObjDoubleConsumer<T, X> checked(ObjDoubleConsumer<? super T> operation, Class<X> errorType) {
         Objects.requireNonNull(operation);
         Objects.requireNonNull(errorType);
         return (t, u) -> invokeAndUnwrap(operation, t, u, errorType);
@@ -284,14 +285,14 @@ public interface CheckedObjDoubleConsumer<T, X extends Exception> {
      * @throws NullPointerException If {@code operation} or {@code errorType} is {@code null}.
      * @throws X If {@code operation} throws an {@link UncheckedException} that wraps an instance of {@code errorType}.
      */
-    static <T, X extends Exception> void invokeAndUnwrap(ObjDoubleConsumer<? super T> operation, T input1, double input2, Class<X> errorType)
+    static <T, X extends Throwable> void invokeAndUnwrap(ObjDoubleConsumer<? super T> operation, T input1, double input2, Class<X> errorType)
             throws X {
 
         Objects.requireNonNull(errorType);
         try {
             operation.accept(input1, input2);
         } catch (UncheckedException e) {
-            Exception cause = e.getCause();
+            Throwable cause = e.getCause();
             if (errorType.isInstance(cause)) {
                 throw errorType.cast(cause);
             }

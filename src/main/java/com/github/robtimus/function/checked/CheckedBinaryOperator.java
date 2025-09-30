@@ -31,20 +31,21 @@ import java.util.function.Supplier;
  * @param <X> The type of checked exception that can be thrown.
  */
 @FunctionalInterface
-public interface CheckedBinaryOperator<T, X extends Exception> extends CheckedBiFunction<T, T, T, X> {
+@SuppressWarnings("squid:S1181") // Error needs to be caught separately (and re-thrown) to not let it be caught as throwable
+public interface CheckedBinaryOperator<T, X extends Throwable> extends CheckedBiFunction<T, T, T, X> {
 
     @Override
-    default <E extends Exception> CheckedBinaryOperator<T, E> onErrorThrowAsChecked(Function<? super X, ? extends E> errorMapper) {
+    default <E extends Throwable> CheckedBinaryOperator<T, E> onErrorThrowAsChecked(Function<? super X, ? extends E> errorMapper) {
         Objects.requireNonNull(errorMapper);
         return (t, u) -> {
             try {
                 return apply(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 throw errorMapper.apply(x);
             }
         };
@@ -56,31 +57,31 @@ public interface CheckedBinaryOperator<T, X extends Exception> extends CheckedBi
         return (t, u) -> {
             try {
                 return apply(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 throw errorMapper.apply(x);
             }
         };
     }
 
     @Override
-    default <E extends Exception> CheckedBinaryOperator<T, E> onErrorHandleChecked(
+    default <E extends Throwable> CheckedBinaryOperator<T, E> onErrorHandleChecked(
             CheckedFunction<? super X, ? extends T, ? extends E> errorHandler) {
 
         Objects.requireNonNull(errorHandler);
         return (t, u) -> {
             try {
                 return apply(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 return errorHandler.apply(x);
             }
         };
@@ -92,28 +93,28 @@ public interface CheckedBinaryOperator<T, X extends Exception> extends CheckedBi
         return (t, u) -> {
             try {
                 return apply(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 return errorHandler.apply(x);
             }
         };
     }
 
     @Override
-    default <E extends Exception> CheckedBinaryOperator<T, E> onErrorApplyChecked(
+    default <E extends Throwable> CheckedBinaryOperator<T, E> onErrorApplyChecked(
             CheckedBiFunction<? super T, ? super T, ? extends T, ? extends E> fallback) {
 
         Objects.requireNonNull(fallback);
         return (t, u) -> {
             try {
                 return apply(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.apply(t, u);
             }
         };
@@ -125,23 +126,23 @@ public interface CheckedBinaryOperator<T, X extends Exception> extends CheckedBi
         return (t, u) -> {
             try {
                 return apply(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.apply(t, u);
             }
         };
     }
 
     @Override
-    default <E extends Exception> CheckedBinaryOperator<T, E> onErrorGetChecked(CheckedSupplier<? extends T, ? extends E> fallback) {
+    default <E extends Throwable> CheckedBinaryOperator<T, E> onErrorGetChecked(CheckedSupplier<? extends T, ? extends E> fallback) {
         Objects.requireNonNull(fallback);
         return (t, u) -> {
             try {
                 return apply(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.get();
             }
         };
@@ -153,9 +154,9 @@ public interface CheckedBinaryOperator<T, X extends Exception> extends CheckedBi
         return (t, u) -> {
             try {
                 return apply(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.get();
             }
         };
@@ -166,9 +167,9 @@ public interface CheckedBinaryOperator<T, X extends Exception> extends CheckedBi
         return (t, u) -> {
             try {
                 return apply(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback;
             }
         };
@@ -188,7 +189,7 @@ public interface CheckedBinaryOperator<T, X extends Exception> extends CheckedBi
      * @return The given lambda as a {@code CheckedBinaryOperator}.
      * @throws NullPointerException If {@code operator} is {@code null}.
      */
-    static <T, X extends Exception> CheckedBinaryOperator<T, X> of(CheckedBinaryOperator<T, X> operator) {
+    static <T, X extends Throwable> CheckedBinaryOperator<T, X> of(CheckedBinaryOperator<T, X> operator) {
         Objects.requireNonNull(operator);
         return operator;
     }
@@ -218,7 +219,7 @@ public interface CheckedBinaryOperator<T, X extends Exception> extends CheckedBi
      * @return A binary operator that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code operator} is {@code null}.
      */
-    static <T, X extends Exception> CheckedBinaryOperator<T, X> checked(BinaryOperator<T> operator) {
+    static <T, X extends Throwable> CheckedBinaryOperator<T, X> checked(BinaryOperator<T> operator) {
         Objects.requireNonNull(operator);
         return operator::apply;
     }
@@ -234,7 +235,7 @@ public interface CheckedBinaryOperator<T, X extends Exception> extends CheckedBi
      * @return A binary operator that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code operator} or {@code errorType} is {@code null}.
      */
-    static <T, X extends Exception> CheckedBinaryOperator<T, X> checked(BinaryOperator<T> operator, Class<X> errorType) {
+    static <T, X extends Throwable> CheckedBinaryOperator<T, X> checked(BinaryOperator<T> operator, Class<X> errorType) {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(errorType);
         return (t, u) -> invokeAndUnwrap(operator, t, u, errorType);
@@ -253,12 +254,12 @@ public interface CheckedBinaryOperator<T, X extends Exception> extends CheckedBi
      * @throws NullPointerException If {@code operator} or {@code errorType} is {@code null}.
      * @throws X If {@code operator} throws an {@link UncheckedException} that wraps an instance of {@code errorType}.
      */
-    static <T, X extends Exception> T invokeAndUnwrap(BinaryOperator<T> operator, T input1, T input2, Class<X> errorType) throws X {
+    static <T, X extends Throwable> T invokeAndUnwrap(BinaryOperator<T> operator, T input1, T input2, Class<X> errorType) throws X {
         Objects.requireNonNull(errorType);
         try {
             return operator.apply(input1, input2);
         } catch (UncheckedException e) {
-            Exception cause = e.getCause();
+            Throwable cause = e.getCause();
             if (errorType.isInstance(cause)) {
                 throw errorType.cast(cause);
             }

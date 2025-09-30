@@ -30,7 +30,8 @@ import java.util.function.ToDoubleFunction;
  * @param <X> The type of checked exception that can be thrown.
  */
 @FunctionalInterface
-public interface CheckedIntToDoubleFunction<X extends Exception> {
+@SuppressWarnings("squid:S1181") // Error needs to be caught separately (and re-thrown) to not let it be caught as throwable
+public interface CheckedIntToDoubleFunction<X extends Throwable> {
 
     /**
      * Applies this function to the given argument.
@@ -50,17 +51,17 @@ public interface CheckedIntToDoubleFunction<X extends Exception> {
      * @return A function that transforms any thrown checked exception.
      * @throws NullPointerException If {@code errorMapper} is {@code null}.
      */
-    default <E extends Exception> CheckedIntToDoubleFunction<E> onErrorThrowAsChecked(Function<? super X, ? extends E> errorMapper) {
+    default <E extends Throwable> CheckedIntToDoubleFunction<E> onErrorThrowAsChecked(Function<? super X, ? extends E> errorMapper) {
         Objects.requireNonNull(errorMapper);
         return t -> {
             try {
                 return applyAsDouble(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 throw errorMapper.apply(x);
             }
         };
@@ -80,12 +81,12 @@ public interface CheckedIntToDoubleFunction<X extends Exception> {
         return t -> {
             try {
                 return applyAsDouble(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 throw errorMapper.apply(x);
             }
         };
@@ -100,17 +101,17 @@ public interface CheckedIntToDoubleFunction<X extends Exception> {
      * @return A function that transforms any thrown checked exception.
      * @throws NullPointerException If {@code errorHandler} is {@code null}.
      */
-    default <E extends Exception> CheckedIntToDoubleFunction<E> onErrorHandleChecked(CheckedToDoubleFunction<? super X, ? extends E> errorHandler) {
+    default <E extends Throwable> CheckedIntToDoubleFunction<E> onErrorHandleChecked(CheckedToDoubleFunction<? super X, ? extends E> errorHandler) {
         Objects.requireNonNull(errorHandler);
         return t -> {
             try {
                 return applyAsDouble(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 return errorHandler.applyAsDouble(x);
             }
         };
@@ -129,12 +130,12 @@ public interface CheckedIntToDoubleFunction<X extends Exception> {
         return t -> {
             try {
                 return applyAsDouble(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 return errorHandler.applyAsDouble(x);
             }
         };
@@ -149,14 +150,14 @@ public interface CheckedIntToDoubleFunction<X extends Exception> {
      * @return A function that invokes the {@code fallback} function if this function throws any checked exception.
      * @throws NullPointerException If {@code fallback} is {@code null}.
      */
-    default <E extends Exception> CheckedIntToDoubleFunction<E> onErrorApplyChecked(CheckedIntToDoubleFunction<? extends E> fallback) {
+    default <E extends Throwable> CheckedIntToDoubleFunction<E> onErrorApplyChecked(CheckedIntToDoubleFunction<? extends E> fallback) {
         Objects.requireNonNull(fallback);
         return t -> {
             try {
                 return applyAsDouble(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.applyAsDouble(t);
             }
         };
@@ -175,9 +176,9 @@ public interface CheckedIntToDoubleFunction<X extends Exception> {
         return t -> {
             try {
                 return applyAsDouble(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.applyAsDouble(t);
             }
         };
@@ -192,14 +193,14 @@ public interface CheckedIntToDoubleFunction<X extends Exception> {
      * @return A function that invokes the {@code fallback} supplier if this function throws any checked exception.
      * @throws NullPointerException If {@code fallback} is {@code null}.
      */
-    default <E extends Exception> CheckedIntToDoubleFunction<E> onErrorGetChecked(CheckedDoubleSupplier<? extends E> fallback) {
+    default <E extends Throwable> CheckedIntToDoubleFunction<E> onErrorGetChecked(CheckedDoubleSupplier<? extends E> fallback) {
         Objects.requireNonNull(fallback);
         return t -> {
             try {
                 return applyAsDouble(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.getAsDouble();
             }
         };
@@ -218,9 +219,9 @@ public interface CheckedIntToDoubleFunction<X extends Exception> {
         return t -> {
             try {
                 return applyAsDouble(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.getAsDouble();
             }
         };
@@ -237,9 +238,9 @@ public interface CheckedIntToDoubleFunction<X extends Exception> {
         return t -> {
             try {
                 return applyAsDouble(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback;
             }
         };
@@ -263,7 +264,7 @@ public interface CheckedIntToDoubleFunction<X extends Exception> {
      * @return The given lambda as a {@code CheckedIntToDoubleFunction}.
      * @throws NullPointerException If {@code function} is {@code null}.
      */
-    static <X extends Exception> CheckedIntToDoubleFunction<X> of(CheckedIntToDoubleFunction<X> function) {
+    static <X extends Throwable> CheckedIntToDoubleFunction<X> of(CheckedIntToDoubleFunction<X> function) {
         Objects.requireNonNull(function);
         return function;
     }
@@ -291,7 +292,7 @@ public interface CheckedIntToDoubleFunction<X extends Exception> {
      * @return A function that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code function} is {@code null}.
      */
-    static <X extends Exception> CheckedIntToDoubleFunction<X> checked(IntToDoubleFunction function) {
+    static <X extends Throwable> CheckedIntToDoubleFunction<X> checked(IntToDoubleFunction function) {
         Objects.requireNonNull(function);
         return function::applyAsDouble;
     }
@@ -306,7 +307,7 @@ public interface CheckedIntToDoubleFunction<X extends Exception> {
      * @return A function that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code function} or {@code errorType} is {@code null}.
      */
-    static <X extends Exception> CheckedIntToDoubleFunction<X> checked(IntToDoubleFunction function, Class<X> errorType) {
+    static <X extends Throwable> CheckedIntToDoubleFunction<X> checked(IntToDoubleFunction function, Class<X> errorType) {
         Objects.requireNonNull(function);
         Objects.requireNonNull(errorType);
         return t -> invokeAndUnwrap(function, t, errorType);
@@ -323,12 +324,12 @@ public interface CheckedIntToDoubleFunction<X extends Exception> {
      * @throws NullPointerException If {@code function} or {@code errorType} is {@code null}.
      * @throws X If {@code function} throws an {@link UncheckedException} that wraps an instance of {@code errorType}.
      */
-    static <X extends Exception> double invokeAndUnwrap(IntToDoubleFunction function, int input, Class<X> errorType) throws X {
+    static <X extends Throwable> double invokeAndUnwrap(IntToDoubleFunction function, int input, Class<X> errorType) throws X {
         Objects.requireNonNull(errorType);
         try {
             return function.applyAsDouble(input);
         } catch (UncheckedException e) {
-            Exception cause = e.getCause();
+            Throwable cause = e.getCause();
             if (errorType.isInstance(cause)) {
                 throw errorType.cast(cause);
             }

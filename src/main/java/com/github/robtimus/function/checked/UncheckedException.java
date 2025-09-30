@@ -20,7 +20,7 @@ package com.github.robtimus.function.checked;
 import java.util.Objects;
 
 /**
- * Wraps an exception with an unchecked exception.
+ * Wraps a throwable with an unchecked exception.
  *
  * @author Rob Spoor
  */
@@ -31,30 +31,20 @@ public class UncheckedException extends RuntimeException {
      * Creates a new exception.
      *
      * @param message The optional detail message.
-     * @param cause The exception to wrap.
+     * @param cause The throwable to wrap.
      * @throws NullPointerException If the given throwable is {@code null}.
      */
-    public UncheckedException(String message, Exception cause) {
+    public UncheckedException(String message, Throwable cause) {
         super(message, Objects.requireNonNull(cause));
     }
 
     /**
      * Creates a new exception.
      *
-     * @param cause The exception to wrap.
+     * @param cause The throwable to wrap.
      * @throws NullPointerException If the given throwable is {@code null}.
      */
-    public UncheckedException(Exception cause) {
+    public UncheckedException(Throwable cause) {
         super(Objects.requireNonNull(cause));
-    }
-
-    /**
-     * Returns the cause of this exception.
-     *
-     * @return The cause of this throwable
-     */
-    @Override
-    public synchronized Exception getCause() {
-        return (Exception) super.getCause();
     }
 }

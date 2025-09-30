@@ -33,6 +33,8 @@ import java.util.function.Function;
 import java.util.function.ToDoubleFunction;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 
 @SuppressWarnings("nls")
 class CheckedDoubleSupplierTest {
@@ -82,17 +84,16 @@ class CheckedDoubleSupplierTest {
             verifyNoMoreInteractions(supplier, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedDoubleSupplier<IOException> supplier = Spied.checkedDoubleSupplier(() -> {
-                throw new IllegalStateException("foo");
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleSupplier<IOException> supplier = Spied.checkedDoubleSupplier(() -> throwable.throwUnchecked("foo"));
 
             Function<IOException, ExecutionException> errorMapper = Spied.function(ExecutionException::new);
 
             CheckedDoubleSupplier<ExecutionException> throwing = supplier.onErrorThrowAsChecked(errorMapper);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, throwing::getAsDouble);
+            Throwable thrown = assertThrows(throwable.throwableType(), throwing::getAsDouble);
             assertEquals("foo", thrown.getMessage());
 
             verify(supplier).getAsDouble();
@@ -146,17 +147,16 @@ class CheckedDoubleSupplierTest {
             verifyNoMoreInteractions(supplier, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedDoubleSupplier<IOException> supplier = Spied.checkedDoubleSupplier(() -> {
-                throw new IllegalArgumentException("foo");
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleSupplier<IOException> supplier = Spied.checkedDoubleSupplier(() -> throwable.throwUnchecked("foo"));
 
             Function<IOException, IllegalStateException> errorMapper = Spied.function(IllegalStateException::new);
 
             DoubleSupplier throwing = supplier.onErrorThrowAsUnchecked(errorMapper);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, throwing::getAsDouble);
+            Throwable thrown = assertThrows(throwable.throwableType(), throwing::getAsDouble);
             assertEquals("foo", thrown.getMessage());
 
             verify(supplier).getAsDouble();
@@ -233,19 +233,18 @@ class CheckedDoubleSupplierTest {
                 verifyNoMoreInteractions(supplier, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException, ExecutionException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ExecutionException {
                 CheckedDoubleSupplier<IOException> supplier = Spied.checkedDoubleSupplier(() -> {
                     throw new IOException("foo");
                 });
 
-                CheckedToDoubleFunction<IOException, ExecutionException> errorHandler = Spied.checkedToDoubleFunction(e -> {
-                    throw new IllegalStateException(e);
-                });
+                CheckedToDoubleFunction<IOException, ExecutionException> errorHandler = Spied.checkedToDoubleFunction(throwable::throwUnchecked);
 
                 CheckedDoubleSupplier<ExecutionException> handling = supplier.onErrorHandleChecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, handling::getAsDouble);
+                Throwable thrown = assertThrows(throwable.throwableType(), handling::getAsDouble);
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("foo", cause.getMessage());
 
@@ -256,17 +255,16 @@ class CheckedDoubleSupplierTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedDoubleSupplier<IOException> supplier = Spied.checkedDoubleSupplier(() -> {
-                throw new IllegalStateException("foo");
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleSupplier<IOException> supplier = Spied.checkedDoubleSupplier(() -> throwable.throwUnchecked("foo"));
 
             CheckedToDoubleFunction<IOException, ExecutionException> errorHandler = Spied.checkedToDoubleFunction(e -> 0D);
 
             CheckedDoubleSupplier<ExecutionException> handling = supplier.onErrorHandleChecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, handling::getAsDouble);
+            Throwable thrown = assertThrows(throwable.throwableType(), handling::getAsDouble);
             assertEquals("foo", thrown.getMessage());
 
             verify(supplier).getAsDouble();
@@ -321,19 +319,18 @@ class CheckedDoubleSupplierTest {
                 verifyNoMoreInteractions(supplier, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedDoubleSupplier<IOException> supplier = Spied.checkedDoubleSupplier(() -> {
                     throw new IOException("foo");
                 });
 
-                ToDoubleFunction<IOException> errorHandler = Spied.toDoubleFunction(e -> {
-                    throw new IllegalStateException(e);
-                });
+                ToDoubleFunction<IOException> errorHandler = Spied.toDoubleFunction(throwable::throwUnchecked);
 
                 DoubleSupplier handling = supplier.onErrorHandleUnchecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, handling::getAsDouble);
+                Throwable thrown = assertThrows(throwable.throwableType(), handling::getAsDouble);
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("foo", cause.getMessage());
 
@@ -344,17 +341,16 @@ class CheckedDoubleSupplierTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedDoubleSupplier<IOException> supplier = Spied.checkedDoubleSupplier(() -> {
-                throw new IllegalStateException("foo");
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleSupplier<IOException> supplier = Spied.checkedDoubleSupplier(() -> throwable.throwUnchecked("foo"));
 
             ToDoubleFunction<IOException> errorHandler = Spied.toDoubleFunction(e -> 0D);
 
             DoubleSupplier handling = supplier.onErrorHandleUnchecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, handling::getAsDouble);
+            Throwable thrown = assertThrows(throwable.throwableType(), handling::getAsDouble);
             assertEquals("foo", thrown.getMessage());
 
             verify(supplier).getAsDouble();
@@ -431,19 +427,18 @@ class CheckedDoubleSupplierTest {
                 verifyNoMoreInteractions(supplier, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException, ParseException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ParseException {
                 CheckedDoubleSupplier<IOException> supplier = Spied.checkedDoubleSupplier(() -> {
                     throw new IOException("foo");
                 });
 
-                CheckedDoubleSupplier<ParseException> fallback = Spied.checkedDoubleSupplier(() -> {
-                    throw new IllegalStateException("bar");
-                });
+                CheckedDoubleSupplier<ParseException> fallback = Spied.checkedDoubleSupplier(() -> throwable.throwUnchecked("bar"));
 
                 CheckedDoubleSupplier<ParseException> getting = supplier.onErrorGetCheckedAsDouble(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, getting::getAsDouble);
+                Throwable thrown = assertThrows(throwable.throwableType(), getting::getAsDouble);
                 assertEquals("bar", thrown.getMessage());
 
                 verify(supplier).getAsDouble();
@@ -453,17 +448,16 @@ class CheckedDoubleSupplierTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedDoubleSupplier<IOException> supplier = Spied.checkedDoubleSupplier(() -> {
-                throw new IllegalStateException("foo");
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleSupplier<IOException> supplier = Spied.checkedDoubleSupplier(() -> throwable.throwUnchecked("foo"));
 
             CheckedDoubleSupplier<ParseException> fallback = Spied.checkedDoubleSupplier(() -> 0D);
 
             CheckedDoubleSupplier<ParseException> getting = supplier.onErrorGetCheckedAsDouble(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, getting::getAsDouble);
+            Throwable thrown = assertThrows(throwable.throwableType(), getting::getAsDouble);
             assertEquals("foo", thrown.getMessage());
 
             verify(supplier).getAsDouble();
@@ -518,19 +512,18 @@ class CheckedDoubleSupplierTest {
                 verifyNoMoreInteractions(supplier, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedDoubleSupplier<IOException> supplier = Spied.checkedDoubleSupplier(() -> {
                     throw new IOException("foo");
                 });
 
-                DoubleSupplier fallback = Spied.doubleSupplier(() -> {
-                    throw new IllegalStateException("bar");
-                });
+                DoubleSupplier fallback = Spied.doubleSupplier(() -> throwable.throwUnchecked("bar"));
 
                 DoubleSupplier getting = supplier.onErrorGetUncheckedAsDouble(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, getting::getAsDouble);
+                Throwable thrown = assertThrows(throwable.throwableType(), getting::getAsDouble);
                 assertEquals("bar", thrown.getMessage());
 
                 verify(supplier).getAsDouble();
@@ -540,17 +533,16 @@ class CheckedDoubleSupplierTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedDoubleSupplier<IOException> supplier = Spied.checkedDoubleSupplier(() -> {
-                throw new IllegalStateException("foo");
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleSupplier<IOException> supplier = Spied.checkedDoubleSupplier(() -> throwable.throwUnchecked("foo"));
 
             DoubleSupplier fallback = Spied.doubleSupplier(() -> 0D);
 
             DoubleSupplier getting = supplier.onErrorGetUncheckedAsDouble(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, getting::getAsDouble);
+            Throwable thrown = assertThrows(throwable.throwableType(), getting::getAsDouble);
             assertEquals("foo", thrown.getMessage());
 
             verify(supplier).getAsDouble();
@@ -590,15 +582,14 @@ class CheckedDoubleSupplierTest {
             verifyNoMoreInteractions(supplier);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedDoubleSupplier<IOException> supplier = Spied.checkedDoubleSupplier(() -> {
-                throw new IllegalStateException("foo");
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleSupplier<IOException> supplier = Spied.checkedDoubleSupplier(() -> throwable.throwUnchecked("foo"));
 
             DoubleSupplier returning = supplier.onErrorReturn(0D);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, returning::getAsDouble);
+            Throwable thrown = assertThrows(throwable.throwableType(), returning::getAsDouble);
             assertEquals("foo", thrown.getMessage());
 
             verify(supplier).getAsDouble();
@@ -642,15 +633,14 @@ class CheckedDoubleSupplierTest {
             verifyNoMoreInteractions(supplier);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedDoubleSupplier<IOException> supplier = Spied.checkedDoubleSupplier(() -> {
-                throw new IllegalArgumentException("foo");
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleSupplier<IOException> supplier = Spied.checkedDoubleSupplier(() -> throwable.throwUnchecked("foo"));
 
             DoubleSupplier unchecked = supplier.unchecked();
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, unchecked::getAsDouble);
+            Throwable thrown = assertThrows(throwable.throwableType(), unchecked::getAsDouble);
             assertEquals("foo", thrown.getMessage());
 
             verify(supplier).getAsDouble();
@@ -716,15 +706,14 @@ class CheckedDoubleSupplierTest {
             verifyNoMoreInteractions(supplier);
         }
 
-        @Test
-        void testArgumentThrowsUnchecked() throws IOException {
-            CheckedDoubleSupplier<IOException> supplier = Spied.checkedDoubleSupplier(() -> {
-                throw new IllegalArgumentException("foo");
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testArgumentThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedDoubleSupplier<IOException> supplier = Spied.checkedDoubleSupplier(() -> throwable.throwUnchecked("foo"));
 
             DoubleSupplier unchecked = CheckedDoubleSupplier.unchecked(supplier);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, unchecked::getAsDouble);
+            Throwable thrown = assertThrows(throwable.throwableType(), unchecked::getAsDouble);
             assertEquals("foo", thrown.getMessage());
 
             verify(supplier).unchecked();

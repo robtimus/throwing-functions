@@ -34,6 +34,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 
 @SuppressWarnings("nls")
 class CheckedBiConsumerTest {
@@ -80,16 +82,15 @@ class CheckedBiConsumerTest {
             verifyNoMoreInteractions(consumer, after);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedBiConsumer<String, String, IOException> consumer = Spied.checkedBiConsumer((s1, s2) -> {
-                throw new IllegalStateException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedBiConsumer<String, String, IOException> consumer = Spied.checkedBiConsumer((s1, s2) -> throwable.throwUnchecked(s1 + s2));
             CheckedBiConsumer<String, String, IOException> after = Spied.checkedBiConsumer(Objects::equals);
 
             CheckedBiConsumer<String, String, IOException> composed = consumer.andThen(after);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> composed.accept("foo", "bar"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> composed.accept("foo", "bar"));
             assertEquals("foobar", thrown.getMessage());
 
             verify(consumer).accept("foo", "bar");
@@ -115,16 +116,15 @@ class CheckedBiConsumerTest {
             verifyNoMoreInteractions(consumer, after);
         }
 
-        @Test
-        void testAfterThrowsUnchecked() throws IOException {
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testAfterThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
             CheckedBiConsumer<String, String, IOException> consumer = Spied.checkedBiConsumer(String::concat);
-            CheckedBiConsumer<String, String, IOException> after = Spied.checkedBiConsumer((s1, s2) -> {
-                throw new IllegalStateException(s1 + s2);
-            });
+            CheckedBiConsumer<String, String, IOException> after = Spied.checkedBiConsumer((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             CheckedBiConsumer<String, String, IOException> composed = consumer.andThen(after);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> composed.accept("foo", "bar"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> composed.accept("foo", "bar"));
             assertEquals("foobar", thrown.getMessage());
 
             verify(consumer).accept("foo", "bar");
@@ -179,17 +179,16 @@ class CheckedBiConsumerTest {
             verifyNoMoreInteractions(consumer, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedBiConsumer<String, String, IOException> consumer = Spied.checkedBiConsumer((s1, s2) -> {
-                throw new IllegalStateException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedBiConsumer<String, String, IOException> consumer = Spied.checkedBiConsumer((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             Function<IOException, ExecutionException> errorMapper = Spied.function(ExecutionException::new);
 
             CheckedBiConsumer<String, String, ExecutionException> throwing = consumer.onErrorThrowAsChecked(errorMapper);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> throwing.accept("foo", "bar"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> throwing.accept("foo", "bar"));
             assertEquals("foobar", thrown.getMessage());
 
             verify(consumer).accept("foo", "bar");
@@ -243,17 +242,16 @@ class CheckedBiConsumerTest {
             verifyNoMoreInteractions(consumer, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedBiConsumer<String, String, IOException> consumer = Spied.checkedBiConsumer((s1, s2) -> {
-                throw new IllegalArgumentException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedBiConsumer<String, String, IOException> consumer = Spied.checkedBiConsumer((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             Function<IOException, IllegalStateException> errorMapper = Spied.function(IllegalStateException::new);
 
             BiConsumer<String, String> throwing = consumer.onErrorThrowAsUnchecked(errorMapper);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> throwing.accept("foo", "bar"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> throwing.accept("foo", "bar"));
             assertEquals("foobar", thrown.getMessage());
 
             verify(consumer).accept("foo", "bar");
@@ -330,19 +328,18 @@ class CheckedBiConsumerTest {
                 verifyNoMoreInteractions(consumer, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException, ExecutionException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ExecutionException {
                 CheckedBiConsumer<String, String, IOException> consumer = Spied.checkedBiConsumer((s1, s2) -> {
                     throw new IOException(s1 + s2);
                 });
 
-                CheckedConsumer<IOException, ExecutionException> errorHandler = Spied.checkedConsumer(e -> {
-                    throw new IllegalStateException(e);
-                });
+                CheckedConsumer<IOException, ExecutionException> errorHandler = Spied.checkedConsumer(throwable::throwUnchecked);
 
                 CheckedBiConsumer<String, String, ExecutionException> handling = consumer.onErrorHandleChecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.accept("foo", "bar"));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.accept("foo", "bar"));
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("foobar", cause.getMessage());
 
@@ -353,17 +350,16 @@ class CheckedBiConsumerTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedBiConsumer<String, String, IOException> consumer = Spied.checkedBiConsumer((s1, s2) -> {
-                throw new IllegalStateException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedBiConsumer<String, String, IOException> consumer = Spied.checkedBiConsumer((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             CheckedConsumer<IOException, ExecutionException> errorHandler = Spied.checkedConsumer(Exception::getMessage);
 
             CheckedBiConsumer<String, String, ExecutionException> handling = consumer.onErrorHandleChecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.accept("foo", "bar"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.accept("foo", "bar"));
             assertEquals("foobar", thrown.getMessage());
 
             verify(consumer).accept("foo", "bar");
@@ -418,19 +414,18 @@ class CheckedBiConsumerTest {
                 verifyNoMoreInteractions(consumer, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedBiConsumer<String, String, IOException> consumer = Spied.checkedBiConsumer((s1, s2) -> {
                     throw new IOException(s1 + s2);
                 });
 
-                Consumer<IOException> errorHandler = Spied.consumer(e -> {
-                    throw new IllegalStateException(e);
-                });
+                Consumer<IOException> errorHandler = Spied.consumer(throwable::throwUnchecked);
 
                 BiConsumer<String, String> handling = consumer.onErrorHandleUnchecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.accept("foo", "bar"));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.accept("foo", "bar"));
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("foobar", cause.getMessage());
 
@@ -441,17 +436,16 @@ class CheckedBiConsumerTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedBiConsumer<String, String, IOException> consumer = Spied.checkedBiConsumer((s1, s2) -> {
-                throw new IllegalStateException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedBiConsumer<String, String, IOException> consumer = Spied.checkedBiConsumer((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             Consumer<IOException> errorHandler = Spied.consumer(Exception::getMessage);
 
             BiConsumer<String, String> handling = consumer.onErrorHandleUnchecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.accept("foo", "bar"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.accept("foo", "bar"));
             assertEquals("foobar", thrown.getMessage());
 
             verify(consumer).accept("foo", "bar");
@@ -528,19 +522,18 @@ class CheckedBiConsumerTest {
                 verifyNoMoreInteractions(consumer, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException, ParseException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ParseException {
                 CheckedBiConsumer<String, String, IOException> consumer = Spied.checkedBiConsumer((s1, s2) -> {
                     throw new IOException(s1 + s2);
                 });
 
-                CheckedBiConsumer<String, String, ParseException> fallback = Spied.checkedBiConsumer((s1, s2) -> {
-                    throw new IllegalStateException(s1 + s2);
-                });
+                CheckedBiConsumer<String, String, ParseException> fallback = Spied.checkedBiConsumer((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
                 CheckedBiConsumer<String, String, ParseException> applying = consumer.onErrorAcceptChecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.accept("foo", "bar"));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.accept("foo", "bar"));
                 assertEquals("foobar", thrown.getMessage());
 
                 verify(consumer).accept("foo", "bar");
@@ -550,17 +543,16 @@ class CheckedBiConsumerTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedBiConsumer<String, String, IOException> consumer = Spied.checkedBiConsumer((s1, s2) -> {
-                throw new IllegalStateException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedBiConsumer<String, String, IOException> consumer = Spied.checkedBiConsumer((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             CheckedBiConsumer<String, String, ParseException> fallback = Spied.checkedBiConsumer(Objects::equals);
 
             CheckedBiConsumer<String, String, ParseException> applying = consumer.onErrorAcceptChecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.accept("foo", "bar"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.accept("foo", "bar"));
             assertEquals("foobar", thrown.getMessage());
 
             verify(consumer).accept("foo", "bar");
@@ -615,19 +607,18 @@ class CheckedBiConsumerTest {
                 verifyNoMoreInteractions(consumer, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedBiConsumer<String, String, IOException> consumer = Spied.checkedBiConsumer((s1, s2) -> {
                     throw new IOException(s1 + s2);
                 });
 
-                BiConsumer<String, String> fallback = Spied.biConsumer((s1, s2) -> {
-                    throw new IllegalStateException(s1 + s2);
-                });
+                BiConsumer<String, String> fallback = Spied.biConsumer((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
                 BiConsumer<String, String> applying = consumer.onErrorAcceptUnchecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.accept("foo", "bar"));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.accept("foo", "bar"));
                 assertEquals("foobar", thrown.getMessage());
 
                 verify(consumer).accept("foo", "bar");
@@ -637,17 +628,16 @@ class CheckedBiConsumerTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedBiConsumer<String, String, IOException> consumer = Spied.checkedBiConsumer((s1, s2) -> {
-                throw new IllegalStateException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedBiConsumer<String, String, IOException> consumer = Spied.checkedBiConsumer((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             BiConsumer<String, String> fallback = Spied.biConsumer(Objects::equals);
 
             BiConsumer<String, String> applying = consumer.onErrorAcceptUnchecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.accept("foo", "bar"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.accept("foo", "bar"));
             assertEquals("foobar", thrown.getMessage());
 
             verify(consumer).accept("foo", "bar");
@@ -687,15 +677,14 @@ class CheckedBiConsumerTest {
             verifyNoMoreInteractions(consumer);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedBiConsumer<String, String, IOException> consumer = Spied.checkedBiConsumer((s1, s2) -> {
-                throw new IllegalStateException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedBiConsumer<String, String, IOException> consumer = Spied.checkedBiConsumer((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             BiConsumer<String, String> discarding = consumer.onErrorDiscard();
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> discarding.accept("foo", "bar"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> discarding.accept("foo", "bar"));
             assertEquals("foobar", thrown.getMessage());
 
             verify(consumer).accept("foo", "bar");
@@ -739,15 +728,14 @@ class CheckedBiConsumerTest {
             verifyNoMoreInteractions(consumer);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedBiConsumer<String, String, IOException> consumer = Spied.checkedBiConsumer((s1, s2) -> {
-                throw new IllegalArgumentException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedBiConsumer<String, String, IOException> consumer = Spied.checkedBiConsumer((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             BiConsumer<String, String> unchecked = consumer.unchecked();
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.accept("foo", "bar"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> unchecked.accept("foo", "bar"));
             assertEquals("foobar", thrown.getMessage());
 
             verify(consumer).accept("foo", "bar");
@@ -818,15 +806,14 @@ class CheckedBiConsumerTest {
             verifyNoMoreInteractions(consumer);
         }
 
-        @Test
-        void testArgumentThrowsUnchecked() throws IOException {
-            CheckedBiConsumer<String, String, IOException> consumer = Spied.checkedBiConsumer((s1, s2) -> {
-                throw new IllegalArgumentException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testArgumentThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedBiConsumer<String, String, IOException> consumer = Spied.checkedBiConsumer((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             BiConsumer<String, String> unchecked = CheckedBiConsumer.unchecked(consumer);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.accept("foo", "bar"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> unchecked.accept("foo", "bar"));
             assertEquals("foobar", thrown.getMessage());
 
             verify(consumer).unchecked();

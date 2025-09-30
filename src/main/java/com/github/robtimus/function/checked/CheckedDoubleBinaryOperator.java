@@ -30,7 +30,8 @@ import java.util.function.ToDoubleFunction;
  * @param <X> The type of checked exception that can be thrown.
  */
 @FunctionalInterface
-public interface CheckedDoubleBinaryOperator<X extends Exception> {
+@SuppressWarnings("squid:S1181") // Error needs to be caught separately (and re-thrown) to not let it be caught as throwable
+public interface CheckedDoubleBinaryOperator<X extends Throwable> {
 
     /**
      * Applies this operator to the given operands.
@@ -51,17 +52,17 @@ public interface CheckedDoubleBinaryOperator<X extends Exception> {
      * @return A binary operator that transforms any thrown checked exception.
      * @throws NullPointerException If {@code errorMapper} is {@code null}.
      */
-    default <E extends Exception> CheckedDoubleBinaryOperator<E> onErrorThrowAsChecked(Function<? super X, ? extends E> errorMapper) {
+    default <E extends Throwable> CheckedDoubleBinaryOperator<E> onErrorThrowAsChecked(Function<? super X, ? extends E> errorMapper) {
         Objects.requireNonNull(errorMapper);
         return (t, u) -> {
             try {
                 return applyAsDouble(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 throw errorMapper.apply(x);
             }
         };
@@ -81,12 +82,12 @@ public interface CheckedDoubleBinaryOperator<X extends Exception> {
         return (t, u) -> {
             try {
                 return applyAsDouble(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 throw errorMapper.apply(x);
             }
         };
@@ -101,17 +102,17 @@ public interface CheckedDoubleBinaryOperator<X extends Exception> {
      * @return A binary operator that transforms any thrown checked exception.
      * @throws NullPointerException If {@code errorHandler} is {@code null}.
      */
-    default <E extends Exception> CheckedDoubleBinaryOperator<E> onErrorHandleChecked(CheckedToDoubleFunction<? super X, ? extends E> errorHandler) {
+    default <E extends Throwable> CheckedDoubleBinaryOperator<E> onErrorHandleChecked(CheckedToDoubleFunction<? super X, ? extends E> errorHandler) {
         Objects.requireNonNull(errorHandler);
         return (t, u) -> {
             try {
                 return applyAsDouble(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 return errorHandler.applyAsDouble(x);
             }
         };
@@ -130,12 +131,12 @@ public interface CheckedDoubleBinaryOperator<X extends Exception> {
         return (t, u) -> {
             try {
                 return applyAsDouble(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 return errorHandler.applyAsDouble(x);
             }
         };
@@ -150,14 +151,14 @@ public interface CheckedDoubleBinaryOperator<X extends Exception> {
      * @return A binary operator that invokes the {@code fallback} operator if this operator throws any checked exception.
      * @throws NullPointerException If {@code fallback} is {@code null}.
      */
-    default <E extends Exception> CheckedDoubleBinaryOperator<E> onErrorApplyChecked(CheckedDoubleBinaryOperator<? extends E> fallback) {
+    default <E extends Throwable> CheckedDoubleBinaryOperator<E> onErrorApplyChecked(CheckedDoubleBinaryOperator<? extends E> fallback) {
         Objects.requireNonNull(fallback);
         return (t, u) -> {
             try {
                 return applyAsDouble(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.applyAsDouble(t, u);
             }
         };
@@ -176,9 +177,9 @@ public interface CheckedDoubleBinaryOperator<X extends Exception> {
         return (t, u) -> {
             try {
                 return applyAsDouble(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.applyAsDouble(t, u);
             }
         };
@@ -193,14 +194,14 @@ public interface CheckedDoubleBinaryOperator<X extends Exception> {
      * @return A binary operator that invokes the {@code fallback} supplier if this operator throws any checked exception.
      * @throws NullPointerException If {@code fallback} is {@code null}.
      */
-    default <E extends Exception> CheckedDoubleBinaryOperator<E> onErrorGetChecked(CheckedDoubleSupplier<? extends E> fallback) {
+    default <E extends Throwable> CheckedDoubleBinaryOperator<E> onErrorGetChecked(CheckedDoubleSupplier<? extends E> fallback) {
         Objects.requireNonNull(fallback);
         return (t, u) -> {
             try {
                 return applyAsDouble(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.getAsDouble();
             }
         };
@@ -219,9 +220,9 @@ public interface CheckedDoubleBinaryOperator<X extends Exception> {
         return (t, u) -> {
             try {
                 return applyAsDouble(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.getAsDouble();
             }
         };
@@ -238,9 +239,9 @@ public interface CheckedDoubleBinaryOperator<X extends Exception> {
         return (t, u) -> {
             try {
                 return applyAsDouble(t, u);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback;
             }
         };
@@ -264,7 +265,7 @@ public interface CheckedDoubleBinaryOperator<X extends Exception> {
      * @return The given lambda as a {@code CheckedDoubleBinaryOperator}.
      * @throws NullPointerException If {@code operator} is {@code null}.
      */
-    static <X extends Exception> CheckedDoubleBinaryOperator<X> of(CheckedDoubleBinaryOperator<X> operator) {
+    static <X extends Throwable> CheckedDoubleBinaryOperator<X> of(CheckedDoubleBinaryOperator<X> operator) {
         Objects.requireNonNull(operator);
         return operator;
     }
@@ -292,7 +293,7 @@ public interface CheckedDoubleBinaryOperator<X extends Exception> {
      * @return A binary operator that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code operator} is {@code null}.
      */
-    static <X extends Exception> CheckedDoubleBinaryOperator<X> checked(DoubleBinaryOperator operator) {
+    static <X extends Throwable> CheckedDoubleBinaryOperator<X> checked(DoubleBinaryOperator operator) {
         Objects.requireNonNull(operator);
         return operator::applyAsDouble;
     }
@@ -307,7 +308,7 @@ public interface CheckedDoubleBinaryOperator<X extends Exception> {
      * @return A binary operator that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code operator} or {@code errorType} is {@code null}.
      */
-    static <X extends Exception> CheckedDoubleBinaryOperator<X> checked(DoubleBinaryOperator operator, Class<X> errorType) {
+    static <X extends Throwable> CheckedDoubleBinaryOperator<X> checked(DoubleBinaryOperator operator, Class<X> errorType) {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(errorType);
         return (t, u) -> invokeAndUnwrap(operator, t, u, errorType);
@@ -325,12 +326,12 @@ public interface CheckedDoubleBinaryOperator<X extends Exception> {
      * @throws NullPointerException If {@code operator} or {@code errorType} is {@code null}.
      * @throws X If {@code operator} throws an {@link UncheckedException} that wraps an instance of {@code errorType}.
      */
-    static <X extends Exception> double invokeAndUnwrap(DoubleBinaryOperator operator, double input1, double input2, Class<X> errorType) throws X {
+    static <X extends Throwable> double invokeAndUnwrap(DoubleBinaryOperator operator, double input1, double input2, Class<X> errorType) throws X {
         Objects.requireNonNull(errorType);
         try {
             return operator.applyAsDouble(input1, input2);
         } catch (UncheckedException e) {
-            Exception cause = e.getCause();
+            Throwable cause = e.getCause();
             if (errorType.isInstance(cause)) {
                 throw errorType.cast(cause);
             }

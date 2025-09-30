@@ -30,20 +30,21 @@ import java.util.function.UnaryOperator;
  * @param <X> The type of checked exception that can be thrown.
  */
 @FunctionalInterface
-public interface CheckedUnaryOperator<T, X extends Exception> extends CheckedFunction<T, T, X> {
+@SuppressWarnings("squid:S1181") // Error needs to be caught separately (and re-thrown) to not let it be caught as throwable
+public interface CheckedUnaryOperator<T, X extends Throwable> extends CheckedFunction<T, T, X> {
 
     @Override
-    default <E extends Exception> CheckedUnaryOperator<T, E> onErrorThrowAsChecked(Function<? super X, ? extends E> errorMapper) {
+    default <E extends Throwable> CheckedUnaryOperator<T, E> onErrorThrowAsChecked(Function<? super X, ? extends E> errorMapper) {
         Objects.requireNonNull(errorMapper);
         return t -> {
             try {
                 return apply(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 throw errorMapper.apply(x);
             }
         };
@@ -55,29 +56,29 @@ public interface CheckedUnaryOperator<T, X extends Exception> extends CheckedFun
         return t -> {
             try {
                 return apply(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 throw errorMapper.apply(x);
             }
         };
     }
 
     @Override
-    default <E extends Exception> CheckedUnaryOperator<T, E> onErrorHandleChecked(CheckedFunction<? super X, ? extends T, ? extends E> errorHandler) {
+    default <E extends Throwable> CheckedUnaryOperator<T, E> onErrorHandleChecked(CheckedFunction<? super X, ? extends T, ? extends E> errorHandler) {
         Objects.requireNonNull(errorHandler);
         return t -> {
             try {
                 return apply(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 return errorHandler.apply(x);
             }
         };
@@ -89,26 +90,26 @@ public interface CheckedUnaryOperator<T, X extends Exception> extends CheckedFun
         return t -> {
             try {
                 return apply(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
-                // This cast is safe, because only RuntimeException (handled above) and X can be thrown
+            } catch (Throwable throwable) {
+                // This cast is safe, because only Error, RuntimeException (both handled above) and X can be thrown
                 @SuppressWarnings("unchecked")
-                X x = (X) e;
+                X x = (X) throwable;
                 return errorHandler.apply(x);
             }
         };
     }
 
     @Override
-    default <E extends Exception> CheckedUnaryOperator<T, E> onErrorApplyChecked(CheckedFunction<? super T, ? extends T, ? extends E> fallback) {
+    default <E extends Throwable> CheckedUnaryOperator<T, E> onErrorApplyChecked(CheckedFunction<? super T, ? extends T, ? extends E> fallback) {
         Objects.requireNonNull(fallback);
         return t -> {
             try {
                 return apply(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.apply(t);
             }
         };
@@ -120,23 +121,23 @@ public interface CheckedUnaryOperator<T, X extends Exception> extends CheckedFun
         return t -> {
             try {
                 return apply(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.apply(t);
             }
         };
     }
 
     @Override
-    default <E extends Exception> CheckedUnaryOperator<T, E> onErrorGetChecked(CheckedSupplier<? extends T, ? extends E> fallback) {
+    default <E extends Throwable> CheckedUnaryOperator<T, E> onErrorGetChecked(CheckedSupplier<? extends T, ? extends E> fallback) {
         Objects.requireNonNull(fallback);
         return t -> {
             try {
                 return apply(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.get();
             }
         };
@@ -148,9 +149,9 @@ public interface CheckedUnaryOperator<T, X extends Exception> extends CheckedFun
         return t -> {
             try {
                 return apply(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback.get();
             }
         };
@@ -161,9 +162,9 @@ public interface CheckedUnaryOperator<T, X extends Exception> extends CheckedFun
         return t -> {
             try {
                 return apply(t);
-            } catch (RuntimeException e) {
+            } catch (Error | RuntimeException e) {
                 throw e;
-            } catch (@SuppressWarnings("unused") Exception e) {
+            } catch (@SuppressWarnings("unused") Throwable throwable) {
                 return fallback;
             }
         };
@@ -183,7 +184,7 @@ public interface CheckedUnaryOperator<T, X extends Exception> extends CheckedFun
      * @return The given lambda as a {@code CheckedUnaryOperator}.
      * @throws NullPointerException If {@code operator} is {@code null}.
      */
-    static <T, X extends Exception> CheckedUnaryOperator<T, X> of(CheckedUnaryOperator<T, X> operator) {
+    static <T, X extends Throwable> CheckedUnaryOperator<T, X> of(CheckedUnaryOperator<T, X> operator) {
         Objects.requireNonNull(operator);
         return operator;
     }
@@ -195,7 +196,7 @@ public interface CheckedUnaryOperator<T, X extends Exception> extends CheckedFun
      * @param <X> The type of checked exception that can be thrown.
      * @return A unary operator that always returns its input argument.
      */
-    static <T, X extends Exception> CheckedUnaryOperator<T, X> identity() {
+    static <T, X extends Throwable> CheckedUnaryOperator<T, X> identity() {
         return t -> t;
     }
 
@@ -224,7 +225,7 @@ public interface CheckedUnaryOperator<T, X extends Exception> extends CheckedFun
      * @return A unary operator that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code operator} is {@code null}.
      */
-    static <T, X extends Exception> CheckedUnaryOperator<T, X> checked(UnaryOperator<T> operator) {
+    static <T, X extends Throwable> CheckedUnaryOperator<T, X> checked(UnaryOperator<T> operator) {
         Objects.requireNonNull(operator);
         return operator::apply;
     }
@@ -240,7 +241,7 @@ public interface CheckedUnaryOperator<T, X extends Exception> extends CheckedFun
      * @return A unary operator that wraps any checked exception in an {@link UncheckedException}.
      * @throws NullPointerException If {@code operator} or {@code errorType} is {@code null}.
      */
-    static <T, X extends Exception> CheckedUnaryOperator<T, X> checked(UnaryOperator<T> operator, Class<X> errorType) {
+    static <T, X extends Throwable> CheckedUnaryOperator<T, X> checked(UnaryOperator<T> operator, Class<X> errorType) {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(errorType);
         return t -> invokeAndUnwrap(operator, t, errorType);
@@ -258,12 +259,12 @@ public interface CheckedUnaryOperator<T, X extends Exception> extends CheckedFun
      * @throws NullPointerException If {@code operator} or {@code errorType} is {@code null}.
      * @throws X If {@code operator} throws an {@link UncheckedException} that wraps an instance of {@code errorType}.
      */
-    static <T, X extends Exception> T invokeAndUnwrap(UnaryOperator<T> operator, T input, Class<X> errorType) throws X {
+    static <T, X extends Throwable> T invokeAndUnwrap(UnaryOperator<T> operator, T input, Class<X> errorType) throws X {
         Objects.requireNonNull(errorType);
         try {
             return operator.apply(input);
         } catch (UncheckedException e) {
-            Exception cause = e.getCause();
+            Throwable cause = e.getCause();
             if (errorType.isInstance(cause)) {
                 throw errorType.cast(cause);
             }

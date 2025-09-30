@@ -34,6 +34,8 @@ import java.util.function.LongUnaryOperator;
 import java.util.function.ToLongFunction;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 
 @SuppressWarnings("nls")
 class CheckedLongUnaryOperatorTest {
@@ -83,17 +85,16 @@ class CheckedLongUnaryOperatorTest {
             verifyNoMoreInteractions(operator, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongUnaryOperator<IOException> operator = Spied.checkedLongUnaryOperator(l -> {
-                throw new IllegalStateException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongUnaryOperator<IOException> operator = Spied.checkedLongUnaryOperator(throwable::throwUnchecked);
 
             Function<IOException, ExecutionException> errorMapper = Spied.function(ExecutionException::new);
 
             CheckedLongUnaryOperator<ExecutionException> throwing = operator.onErrorThrowAsChecked(errorMapper);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> throwing.applyAsLong(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> throwing.applyAsLong(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(operator).applyAsLong(1L);
@@ -147,17 +148,16 @@ class CheckedLongUnaryOperatorTest {
             verifyNoMoreInteractions(operator, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongUnaryOperator<IOException> operator = Spied.checkedLongUnaryOperator(l -> {
-                throw new IllegalArgumentException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongUnaryOperator<IOException> operator = Spied.checkedLongUnaryOperator(throwable::throwUnchecked);
 
             Function<IOException, IllegalStateException> errorMapper = Spied.function(IllegalStateException::new);
 
             LongUnaryOperator throwing = operator.onErrorThrowAsUnchecked(errorMapper);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> throwing.applyAsLong(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> throwing.applyAsLong(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(operator).applyAsLong(1L);
@@ -234,19 +234,18 @@ class CheckedLongUnaryOperatorTest {
                 verifyNoMoreInteractions(operator, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException, ExecutionException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ExecutionException {
                 CheckedLongUnaryOperator<IOException> operator = Spied.checkedLongUnaryOperator(l -> {
                     throw new IOException(Long.toString(l));
                 });
 
-                CheckedToLongFunction<IOException, ExecutionException> errorHandler = Spied.checkedToLongFunction(e -> {
-                    throw new IllegalStateException(e);
-                });
+                CheckedToLongFunction<IOException, ExecutionException> errorHandler = Spied.checkedToLongFunction(throwable::throwUnchecked);
 
                 CheckedLongUnaryOperator<ExecutionException> handling = operator.onErrorHandleChecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsLong(1L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsLong(1L));
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("1", cause.getMessage());
 
@@ -257,17 +256,16 @@ class CheckedLongUnaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongUnaryOperator<IOException> operator = Spied.checkedLongUnaryOperator(l -> {
-                throw new IllegalStateException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongUnaryOperator<IOException> operator = Spied.checkedLongUnaryOperator(throwable::throwUnchecked);
 
             CheckedToLongFunction<IOException, ExecutionException> errorHandler = Spied.checkedToLongFunction(e -> 0L);
 
             CheckedLongUnaryOperator<ExecutionException> handling = operator.onErrorHandleChecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsLong(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsLong(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(operator).applyAsLong(1L);
@@ -322,19 +320,18 @@ class CheckedLongUnaryOperatorTest {
                 verifyNoMoreInteractions(operator, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedLongUnaryOperator<IOException> operator = Spied.checkedLongUnaryOperator(l -> {
                     throw new IOException(Long.toString(l));
                 });
 
-                ToLongFunction<IOException> errorHandler = Spied.toLongFunction(e -> {
-                    throw new IllegalStateException(e);
-                });
+                ToLongFunction<IOException> errorHandler = Spied.toLongFunction(throwable::throwUnchecked);
 
                 LongUnaryOperator handling = operator.onErrorHandleUnchecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsLong(1L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsLong(1L));
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("1", cause.getMessage());
 
@@ -345,17 +342,16 @@ class CheckedLongUnaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongUnaryOperator<IOException> operator = Spied.checkedLongUnaryOperator(l -> {
-                throw new IllegalStateException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongUnaryOperator<IOException> operator = Spied.checkedLongUnaryOperator(throwable::throwUnchecked);
 
             ToLongFunction<IOException> errorHandler = Spied.toLongFunction(e -> 0L);
 
             LongUnaryOperator handling = operator.onErrorHandleUnchecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsLong(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsLong(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(operator).applyAsLong(1L);
@@ -432,19 +428,18 @@ class CheckedLongUnaryOperatorTest {
                 verifyNoMoreInteractions(operator, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException, ParseException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ParseException {
                 CheckedLongUnaryOperator<IOException> operator = Spied.checkedLongUnaryOperator(l -> {
                     throw new IOException(Long.toString(l));
                 });
 
-                CheckedLongUnaryOperator<ParseException> fallback = Spied.checkedLongUnaryOperator(l -> {
-                    throw new IllegalStateException(Long.toString(l));
-                });
+                CheckedLongUnaryOperator<ParseException> fallback = Spied.checkedLongUnaryOperator(throwable::throwUnchecked);
 
                 CheckedLongUnaryOperator<ParseException> applying = operator.onErrorApplyChecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsLong(1L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsLong(1L));
                 assertEquals("1", thrown.getMessage());
 
                 verify(operator).applyAsLong(1L);
@@ -454,17 +449,16 @@ class CheckedLongUnaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongUnaryOperator<IOException> operator = Spied.checkedLongUnaryOperator(l -> {
-                throw new IllegalStateException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongUnaryOperator<IOException> operator = Spied.checkedLongUnaryOperator(throwable::throwUnchecked);
 
             CheckedLongUnaryOperator<ParseException> fallback = Spied.checkedLongUnaryOperator(l -> l + l);
 
             CheckedLongUnaryOperator<ParseException> applying = operator.onErrorApplyChecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsLong(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsLong(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(operator).applyAsLong(1L);
@@ -519,19 +513,18 @@ class CheckedLongUnaryOperatorTest {
                 verifyNoMoreInteractions(operator, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedLongUnaryOperator<IOException> operator = Spied.checkedLongUnaryOperator(l -> {
                     throw new IOException(Long.toString(l));
                 });
 
-                LongUnaryOperator fallback = Spied.longUnaryOperator(l -> {
-                    throw new IllegalStateException(Long.toString(l));
-                });
+                LongUnaryOperator fallback = Spied.longUnaryOperator(throwable::throwUnchecked);
 
                 LongUnaryOperator applying = operator.onErrorApplyUnchecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsLong(1L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsLong(1L));
                 assertEquals("1", thrown.getMessage());
 
                 verify(operator).applyAsLong(1L);
@@ -541,17 +534,16 @@ class CheckedLongUnaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongUnaryOperator<IOException> operator = Spied.checkedLongUnaryOperator(l -> {
-                throw new IllegalStateException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongUnaryOperator<IOException> operator = Spied.checkedLongUnaryOperator(throwable::throwUnchecked);
 
             LongUnaryOperator fallback = Spied.longUnaryOperator(l -> l + l);
 
             LongUnaryOperator applying = operator.onErrorApplyUnchecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsLong(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsLong(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(operator).applyAsLong(1L);
@@ -628,19 +620,18 @@ class CheckedLongUnaryOperatorTest {
                 verifyNoMoreInteractions(operator, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException, ParseException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ParseException {
                 CheckedLongUnaryOperator<IOException> operator = Spied.checkedLongUnaryOperator(l -> {
                     throw new IOException(Long.toString(l));
                 });
 
-                CheckedLongSupplier<ParseException> fallback = Spied.checkedLongSupplier(() -> {
-                    throw new IllegalStateException("bar");
-                });
+                CheckedLongSupplier<ParseException> fallback = Spied.checkedLongSupplier(() -> throwable.throwUnchecked("bar"));
 
                 CheckedLongUnaryOperator<ParseException> getting = operator.onErrorGetChecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsLong(1L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsLong(1L));
                 assertEquals("bar", thrown.getMessage());
 
                 verify(operator).applyAsLong(1L);
@@ -650,17 +641,16 @@ class CheckedLongUnaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongUnaryOperator<IOException> operator = Spied.checkedLongUnaryOperator(l -> {
-                throw new IllegalStateException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongUnaryOperator<IOException> operator = Spied.checkedLongUnaryOperator(throwable::throwUnchecked);
 
             CheckedLongSupplier<ParseException> fallback = Spied.checkedLongSupplier(() -> 0L);
 
             CheckedLongUnaryOperator<ParseException> getting = operator.onErrorGetChecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsLong(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsLong(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(operator).applyAsLong(1L);
@@ -715,19 +705,18 @@ class CheckedLongUnaryOperatorTest {
                 verifyNoMoreInteractions(operator, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedLongUnaryOperator<IOException> operator = Spied.checkedLongUnaryOperator(l -> {
                     throw new IOException(Long.toString(l));
                 });
 
-                LongSupplier fallback = Spied.longSupplier(() -> {
-                    throw new IllegalStateException("bar");
-                });
+                LongSupplier fallback = Spied.longSupplier(() -> throwable.throwUnchecked("bar"));
 
                 LongUnaryOperator getting = operator.onErrorGetUnchecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsLong(1L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsLong(1L));
                 assertEquals("bar", thrown.getMessage());
 
                 verify(operator).applyAsLong(1L);
@@ -737,17 +726,16 @@ class CheckedLongUnaryOperatorTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongUnaryOperator<IOException> operator = Spied.checkedLongUnaryOperator(l -> {
-                throw new IllegalStateException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongUnaryOperator<IOException> operator = Spied.checkedLongUnaryOperator(throwable::throwUnchecked);
 
             LongSupplier fallback = Spied.longSupplier(() -> 2L);
 
             LongUnaryOperator getting = operator.onErrorGetUnchecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsLong(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsLong(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(operator).applyAsLong(1L);
@@ -787,15 +775,14 @@ class CheckedLongUnaryOperatorTest {
             verifyNoMoreInteractions(operator);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongUnaryOperator<IOException> operator = Spied.checkedLongUnaryOperator(l -> {
-                throw new IllegalStateException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongUnaryOperator<IOException> operator = Spied.checkedLongUnaryOperator(throwable::throwUnchecked);
 
             LongUnaryOperator returning = operator.onErrorReturn(2L);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> returning.applyAsLong(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> returning.applyAsLong(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(operator).applyAsLong(1L);
@@ -839,15 +826,14 @@ class CheckedLongUnaryOperatorTest {
             verifyNoMoreInteractions(operator);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongUnaryOperator<IOException> operator = Spied.checkedLongUnaryOperator(l -> {
-                throw new IllegalArgumentException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongUnaryOperator<IOException> operator = Spied.checkedLongUnaryOperator(throwable::throwUnchecked);
 
             LongUnaryOperator unchecked = operator.unchecked();
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.applyAsLong(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> unchecked.applyAsLong(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(operator).applyAsLong(1L);
@@ -920,15 +906,14 @@ class CheckedLongUnaryOperatorTest {
             verifyNoMoreInteractions(operator);
         }
 
-        @Test
-        void testArgumentThrowsUnchecked() throws IOException {
-            CheckedLongUnaryOperator<IOException> operator = Spied.checkedLongUnaryOperator(l -> {
-                throw new IllegalArgumentException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testArgumentThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongUnaryOperator<IOException> operator = Spied.checkedLongUnaryOperator(throwable::throwUnchecked);
 
             LongUnaryOperator unchecked = CheckedLongUnaryOperator.unchecked(operator);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.applyAsLong(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> unchecked.applyAsLong(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(operator).unchecked();

@@ -34,6 +34,8 @@ import java.util.function.LongToIntFunction;
 import java.util.function.ToIntFunction;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 
 @SuppressWarnings("nls")
 class CheckedLongToIntFunctionTest {
@@ -83,17 +85,16 @@ class CheckedLongToIntFunctionTest {
             verifyNoMoreInteractions(function, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongToIntFunction<IOException> function = Spied.checkedLongToIntFunction(l -> {
-                throw new IllegalStateException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongToIntFunction<IOException> function = Spied.checkedLongToIntFunction(throwable::throwUnchecked);
 
             Function<IOException, ExecutionException> errorMapper = Spied.function(ExecutionException::new);
 
             CheckedLongToIntFunction<ExecutionException> throwing = function.onErrorThrowAsChecked(errorMapper);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> throwing.applyAsInt(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> throwing.applyAsInt(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(function).applyAsInt(1L);
@@ -147,17 +148,16 @@ class CheckedLongToIntFunctionTest {
             verifyNoMoreInteractions(function, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongToIntFunction<IOException> function = Spied.checkedLongToIntFunction(l -> {
-                throw new IllegalArgumentException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongToIntFunction<IOException> function = Spied.checkedLongToIntFunction(throwable::throwUnchecked);
 
             Function<IOException, IllegalStateException> errorMapper = Spied.function(IllegalStateException::new);
 
             LongToIntFunction throwing = function.onErrorThrowAsUnchecked(errorMapper);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> throwing.applyAsInt(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> throwing.applyAsInt(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(function).applyAsInt(1L);
@@ -234,19 +234,18 @@ class CheckedLongToIntFunctionTest {
                 verifyNoMoreInteractions(function, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException, ExecutionException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ExecutionException {
                 CheckedLongToIntFunction<IOException> function = Spied.checkedLongToIntFunction(l -> {
                     throw new IOException(Long.toString(l));
                 });
 
-                CheckedToIntFunction<IOException, ExecutionException> errorHandler = Spied.checkedToIntFunction(e -> {
-                    throw new IllegalStateException(e);
-                });
+                CheckedToIntFunction<IOException, ExecutionException> errorHandler = Spied.checkedToIntFunction(throwable::throwUnchecked);
 
                 CheckedLongToIntFunction<ExecutionException> handling = function.onErrorHandleChecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsInt(1L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsInt(1L));
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("1", cause.getMessage());
 
@@ -257,17 +256,16 @@ class CheckedLongToIntFunctionTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongToIntFunction<IOException> function = Spied.checkedLongToIntFunction(l -> {
-                throw new IllegalStateException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongToIntFunction<IOException> function = Spied.checkedLongToIntFunction(throwable::throwUnchecked);
 
             CheckedToIntFunction<IOException, ExecutionException> errorHandler = Spied.checkedToIntFunction(e -> 0);
 
             CheckedLongToIntFunction<ExecutionException> handling = function.onErrorHandleChecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsInt(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsInt(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(function).applyAsInt(1L);
@@ -322,19 +320,18 @@ class CheckedLongToIntFunctionTest {
                 verifyNoMoreInteractions(function, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedLongToIntFunction<IOException> function = Spied.checkedLongToIntFunction(l -> {
                     throw new IOException(Long.toString(l));
                 });
 
-                ToIntFunction<IOException> errorHandler = Spied.toIntFunction(e -> {
-                    throw new IllegalStateException(e);
-                });
+                ToIntFunction<IOException> errorHandler = Spied.toIntFunction(throwable::throwUnchecked);
 
                 LongToIntFunction handling = function.onErrorHandleUnchecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsInt(1L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsInt(1L));
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("1", cause.getMessage());
 
@@ -345,17 +342,16 @@ class CheckedLongToIntFunctionTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongToIntFunction<IOException> function = Spied.checkedLongToIntFunction(l -> {
-                throw new IllegalStateException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongToIntFunction<IOException> function = Spied.checkedLongToIntFunction(throwable::throwUnchecked);
 
             ToIntFunction<IOException> errorHandler = Spied.toIntFunction(e -> 0);
 
             LongToIntFunction handling = function.onErrorHandleUnchecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsInt(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsInt(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(function).applyAsInt(1L);
@@ -432,19 +428,18 @@ class CheckedLongToIntFunctionTest {
                 verifyNoMoreInteractions(function, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException, ParseException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ParseException {
                 CheckedLongToIntFunction<IOException> function = Spied.checkedLongToIntFunction(l -> {
                     throw new IOException(Long.toString(l));
                 });
 
-                CheckedLongToIntFunction<ParseException> fallback = Spied.checkedLongToIntFunction(l -> {
-                    throw new IllegalStateException(Long.toString(l));
-                });
+                CheckedLongToIntFunction<ParseException> fallback = Spied.checkedLongToIntFunction(throwable::throwUnchecked);
 
                 CheckedLongToIntFunction<ParseException> applying = function.onErrorApplyChecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsInt(1L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsInt(1L));
                 assertEquals("1", thrown.getMessage());
 
                 verify(function).applyAsInt(1L);
@@ -454,17 +449,16 @@ class CheckedLongToIntFunctionTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongToIntFunction<IOException> function = Spied.checkedLongToIntFunction(l -> {
-                throw new IllegalStateException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongToIntFunction<IOException> function = Spied.checkedLongToIntFunction(throwable::throwUnchecked);
 
             CheckedLongToIntFunction<ParseException> fallback = Spied.checkedLongToIntFunction(l -> (int) l * 3);
 
             CheckedLongToIntFunction<ParseException> applying = function.onErrorApplyChecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsInt(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsInt(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(function).applyAsInt(1L);
@@ -519,19 +513,18 @@ class CheckedLongToIntFunctionTest {
                 verifyNoMoreInteractions(function, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedLongToIntFunction<IOException> function = Spied.checkedLongToIntFunction(l -> {
                     throw new IOException(Long.toString(l));
                 });
 
-                LongToIntFunction fallback = Spied.longToIntFunction(l -> {
-                    throw new IllegalStateException(Long.toString(l));
-                });
+                LongToIntFunction fallback = Spied.longToIntFunction(throwable::throwUnchecked);
 
                 LongToIntFunction applying = function.onErrorApplyUnchecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsInt(1L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsInt(1L));
                 assertEquals("1", thrown.getMessage());
 
                 verify(function).applyAsInt(1L);
@@ -541,17 +534,16 @@ class CheckedLongToIntFunctionTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongToIntFunction<IOException> function = Spied.checkedLongToIntFunction(l -> {
-                throw new IllegalStateException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongToIntFunction<IOException> function = Spied.checkedLongToIntFunction(throwable::throwUnchecked);
 
             LongToIntFunction fallback = Spied.longToIntFunction(l -> (int) l * 3);
 
             LongToIntFunction applying = function.onErrorApplyUnchecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsInt(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsInt(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(function).applyAsInt(1L);
@@ -628,19 +620,18 @@ class CheckedLongToIntFunctionTest {
                 verifyNoMoreInteractions(function, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException, ParseException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ParseException {
                 CheckedLongToIntFunction<IOException> function = Spied.checkedLongToIntFunction(l -> {
                     throw new IOException(Long.toString(l));
                 });
 
-                CheckedIntSupplier<ParseException> fallback = Spied.checkedIntSupplier(() -> {
-                    throw new IllegalStateException("bar");
-                });
+                CheckedIntSupplier<ParseException> fallback = Spied.checkedIntSupplier(() -> throwable.throwUnchecked("bar"));
 
                 CheckedLongToIntFunction<ParseException> getting = function.onErrorGetChecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsInt(1L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsInt(1L));
                 assertEquals("bar", thrown.getMessage());
 
                 verify(function).applyAsInt(1L);
@@ -650,17 +641,16 @@ class CheckedLongToIntFunctionTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongToIntFunction<IOException> function = Spied.checkedLongToIntFunction(l -> {
-                throw new IllegalStateException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongToIntFunction<IOException> function = Spied.checkedLongToIntFunction(throwable::throwUnchecked);
 
             CheckedIntSupplier<ParseException> fallback = Spied.checkedIntSupplier(() -> 0);
 
             CheckedLongToIntFunction<ParseException> getting = function.onErrorGetChecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsInt(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsInt(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(function).applyAsInt(1L);
@@ -715,19 +705,18 @@ class CheckedLongToIntFunctionTest {
                 verifyNoMoreInteractions(function, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedLongToIntFunction<IOException> function = Spied.checkedLongToIntFunction(l -> {
                     throw new IOException(Long.toString(l));
                 });
 
-                IntSupplier fallback = Spied.intSupplier(() -> {
-                    throw new IllegalStateException("bar");
-                });
+                IntSupplier fallback = Spied.intSupplier(() -> throwable.throwUnchecked("bar"));
 
                 LongToIntFunction getting = function.onErrorGetUnchecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsInt(1L));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsInt(1L));
                 assertEquals("bar", thrown.getMessage());
 
                 verify(function).applyAsInt(1L);
@@ -737,17 +726,16 @@ class CheckedLongToIntFunctionTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongToIntFunction<IOException> function = Spied.checkedLongToIntFunction(l -> {
-                throw new IllegalStateException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongToIntFunction<IOException> function = Spied.checkedLongToIntFunction(throwable::throwUnchecked);
 
             IntSupplier fallback = Spied.intSupplier(() -> 0);
 
             LongToIntFunction getting = function.onErrorGetUnchecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsInt(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsInt(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(function).applyAsInt(1L);
@@ -787,15 +775,14 @@ class CheckedLongToIntFunctionTest {
             verifyNoMoreInteractions(function);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongToIntFunction<IOException> function = Spied.checkedLongToIntFunction(l -> {
-                throw new IllegalStateException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongToIntFunction<IOException> function = Spied.checkedLongToIntFunction(throwable::throwUnchecked);
 
             LongToIntFunction returning = function.onErrorReturn(0);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> returning.applyAsInt(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> returning.applyAsInt(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(function).applyAsInt(1L);
@@ -839,15 +826,14 @@ class CheckedLongToIntFunctionTest {
             verifyNoMoreInteractions(function);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongToIntFunction<IOException> function = Spied.checkedLongToIntFunction(l -> {
-                throw new IllegalArgumentException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongToIntFunction<IOException> function = Spied.checkedLongToIntFunction(throwable::throwUnchecked);
 
             LongToIntFunction unchecked = function.unchecked();
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.applyAsInt(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> unchecked.applyAsInt(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(function).applyAsInt(1L);
@@ -913,15 +899,14 @@ class CheckedLongToIntFunctionTest {
             verifyNoMoreInteractions(function);
         }
 
-        @Test
-        void testArgumentThrowsUnchecked() throws IOException {
-            CheckedLongToIntFunction<IOException> function = Spied.checkedLongToIntFunction(l -> {
-                throw new IllegalArgumentException(Long.toString(l));
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testArgumentThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongToIntFunction<IOException> function = Spied.checkedLongToIntFunction(throwable::throwUnchecked);
 
             LongToIntFunction unchecked = CheckedLongToIntFunction.unchecked(function);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.applyAsInt(1L));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> unchecked.applyAsInt(1L));
             assertEquals("1", thrown.getMessage());
 
             verify(function).unchecked();

@@ -33,6 +33,8 @@ import java.util.function.LongSupplier;
 import java.util.function.ToLongFunction;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 
 @SuppressWarnings("nls")
 class CheckedLongSupplierTest {
@@ -82,17 +84,16 @@ class CheckedLongSupplierTest {
             verifyNoMoreInteractions(supplier, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongSupplier<IOException> supplier = Spied.checkedLongSupplier(() -> {
-                throw new IllegalStateException("foo");
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongSupplier<IOException> supplier = Spied.checkedLongSupplier(() -> throwable.throwUnchecked("foo"));
 
             Function<IOException, ExecutionException> errorMapper = Spied.function(ExecutionException::new);
 
             CheckedLongSupplier<ExecutionException> throwing = supplier.onErrorThrowAsChecked(errorMapper);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, throwing::getAsLong);
+            Throwable thrown = assertThrows(throwable.throwableType(), throwing::getAsLong);
             assertEquals("foo", thrown.getMessage());
 
             verify(supplier).getAsLong();
@@ -146,17 +147,16 @@ class CheckedLongSupplierTest {
             verifyNoMoreInteractions(supplier, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongSupplier<IOException> supplier = Spied.checkedLongSupplier(() -> {
-                throw new IllegalArgumentException("foo");
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongSupplier<IOException> supplier = Spied.checkedLongSupplier(() -> throwable.throwUnchecked("foo"));
 
             Function<IOException, IllegalStateException> errorMapper = Spied.function(IllegalStateException::new);
 
             LongSupplier throwing = supplier.onErrorThrowAsUnchecked(errorMapper);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, throwing::getAsLong);
+            Throwable thrown = assertThrows(throwable.throwableType(), throwing::getAsLong);
             assertEquals("foo", thrown.getMessage());
 
             verify(supplier).getAsLong();
@@ -233,19 +233,18 @@ class CheckedLongSupplierTest {
                 verifyNoMoreInteractions(supplier, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException, ExecutionException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ExecutionException {
                 CheckedLongSupplier<IOException> supplier = Spied.checkedLongSupplier(() -> {
                     throw new IOException("foo");
                 });
 
-                CheckedToLongFunction<IOException, ExecutionException> errorHandler = Spied.checkedToLongFunction(e -> {
-                    throw new IllegalStateException(e);
-                });
+                CheckedToLongFunction<IOException, ExecutionException> errorHandler = Spied.checkedToLongFunction(throwable::throwUnchecked);
 
                 CheckedLongSupplier<ExecutionException> handling = supplier.onErrorHandleChecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, handling::getAsLong);
+                Throwable thrown = assertThrows(throwable.throwableType(), handling::getAsLong);
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("foo", cause.getMessage());
 
@@ -256,17 +255,16 @@ class CheckedLongSupplierTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongSupplier<IOException> supplier = Spied.checkedLongSupplier(() -> {
-                throw new IllegalStateException("foo");
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongSupplier<IOException> supplier = Spied.checkedLongSupplier(() -> throwable.throwUnchecked("foo"));
 
             CheckedToLongFunction<IOException, ExecutionException> errorHandler = Spied.checkedToLongFunction(e -> 0L);
 
             CheckedLongSupplier<ExecutionException> handling = supplier.onErrorHandleChecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, handling::getAsLong);
+            Throwable thrown = assertThrows(throwable.throwableType(), handling::getAsLong);
             assertEquals("foo", thrown.getMessage());
 
             verify(supplier).getAsLong();
@@ -321,19 +319,18 @@ class CheckedLongSupplierTest {
                 verifyNoMoreInteractions(supplier, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedLongSupplier<IOException> supplier = Spied.checkedLongSupplier(() -> {
                     throw new IOException("foo");
                 });
 
-                ToLongFunction<IOException> errorHandler = Spied.toLongFunction(e -> {
-                    throw new IllegalStateException(e);
-                });
+                ToLongFunction<IOException> errorHandler = Spied.toLongFunction(throwable::throwUnchecked);
 
                 LongSupplier handling = supplier.onErrorHandleUnchecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, handling::getAsLong);
+                Throwable thrown = assertThrows(throwable.throwableType(), handling::getAsLong);
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("foo", cause.getMessage());
 
@@ -344,17 +341,16 @@ class CheckedLongSupplierTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongSupplier<IOException> supplier = Spied.checkedLongSupplier(() -> {
-                throw new IllegalStateException("foo");
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongSupplier<IOException> supplier = Spied.checkedLongSupplier(() -> throwable.throwUnchecked("foo"));
 
             ToLongFunction<IOException> errorHandler = Spied.toLongFunction(e -> 0L);
 
             LongSupplier handling = supplier.onErrorHandleUnchecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, handling::getAsLong);
+            Throwable thrown = assertThrows(throwable.throwableType(), handling::getAsLong);
             assertEquals("foo", thrown.getMessage());
 
             verify(supplier).getAsLong();
@@ -431,19 +427,18 @@ class CheckedLongSupplierTest {
                 verifyNoMoreInteractions(supplier, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException, ParseException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ParseException {
                 CheckedLongSupplier<IOException> supplier = Spied.checkedLongSupplier(() -> {
                     throw new IOException("foo");
                 });
 
-                CheckedLongSupplier<ParseException> fallback = Spied.checkedLongSupplier(() -> {
-                    throw new IllegalStateException("bar");
-                });
+                CheckedLongSupplier<ParseException> fallback = Spied.checkedLongSupplier(() -> throwable.throwUnchecked("bar"));
 
                 CheckedLongSupplier<ParseException> getting = supplier.onErrorGetCheckedAsLong(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, getting::getAsLong);
+                Throwable thrown = assertThrows(throwable.throwableType(), getting::getAsLong);
                 assertEquals("bar", thrown.getMessage());
 
                 verify(supplier).getAsLong();
@@ -453,17 +448,16 @@ class CheckedLongSupplierTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongSupplier<IOException> supplier = Spied.checkedLongSupplier(() -> {
-                throw new IllegalStateException("foo");
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongSupplier<IOException> supplier = Spied.checkedLongSupplier(() -> throwable.throwUnchecked("foo"));
 
             CheckedLongSupplier<ParseException> fallback = Spied.checkedLongSupplier(() -> 0L);
 
             CheckedLongSupplier<ParseException> getting = supplier.onErrorGetCheckedAsLong(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, getting::getAsLong);
+            Throwable thrown = assertThrows(throwable.throwableType(), getting::getAsLong);
             assertEquals("foo", thrown.getMessage());
 
             verify(supplier).getAsLong();
@@ -518,19 +512,18 @@ class CheckedLongSupplierTest {
                 verifyNoMoreInteractions(supplier, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedLongSupplier<IOException> supplier = Spied.checkedLongSupplier(() -> {
                     throw new IOException("foo");
                 });
 
-                LongSupplier fallback = Spied.longSupplier(() -> {
-                    throw new IllegalStateException("bar");
-                });
+                LongSupplier fallback = Spied.longSupplier(() -> throwable.throwUnchecked("bar"));
 
                 LongSupplier getting = supplier.onErrorGetUncheckedAsLong(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, getting::getAsLong);
+                Throwable thrown = assertThrows(throwable.throwableType(), getting::getAsLong);
                 assertEquals("bar", thrown.getMessage());
 
                 verify(supplier).getAsLong();
@@ -540,17 +533,16 @@ class CheckedLongSupplierTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongSupplier<IOException> supplier = Spied.checkedLongSupplier(() -> {
-                throw new IllegalStateException("foo");
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongSupplier<IOException> supplier = Spied.checkedLongSupplier(() -> throwable.throwUnchecked("foo"));
 
             LongSupplier fallback = Spied.longSupplier(() -> 0L);
 
             LongSupplier getting = supplier.onErrorGetUncheckedAsLong(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, getting::getAsLong);
+            Throwable thrown = assertThrows(throwable.throwableType(), getting::getAsLong);
             assertEquals("foo", thrown.getMessage());
 
             verify(supplier).getAsLong();
@@ -590,15 +582,14 @@ class CheckedLongSupplierTest {
             verifyNoMoreInteractions(supplier);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongSupplier<IOException> supplier = Spied.checkedLongSupplier(() -> {
-                throw new IllegalStateException("foo");
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongSupplier<IOException> supplier = Spied.checkedLongSupplier(() -> throwable.throwUnchecked("foo"));
 
             LongSupplier returning = supplier.onErrorReturn(0L);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, returning::getAsLong);
+            Throwable thrown = assertThrows(throwable.throwableType(), returning::getAsLong);
             assertEquals("foo", thrown.getMessage());
 
             verify(supplier).getAsLong();
@@ -642,15 +633,14 @@ class CheckedLongSupplierTest {
             verifyNoMoreInteractions(supplier);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedLongSupplier<IOException> supplier = Spied.checkedLongSupplier(() -> {
-                throw new IllegalArgumentException("foo");
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongSupplier<IOException> supplier = Spied.checkedLongSupplier(() -> throwable.throwUnchecked("foo"));
 
             LongSupplier unchecked = supplier.unchecked();
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, unchecked::getAsLong);
+            Throwable thrown = assertThrows(throwable.throwableType(), unchecked::getAsLong);
             assertEquals("foo", thrown.getMessage());
 
             verify(supplier).getAsLong();
@@ -716,15 +706,14 @@ class CheckedLongSupplierTest {
             verifyNoMoreInteractions(supplier);
         }
 
-        @Test
-        void testArgumentThrowsUnchecked() throws IOException {
-            CheckedLongSupplier<IOException> supplier = Spied.checkedLongSupplier(() -> {
-                throw new IllegalArgumentException("foo");
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testArgumentThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedLongSupplier<IOException> supplier = Spied.checkedLongSupplier(() -> throwable.throwUnchecked("foo"));
 
             LongSupplier unchecked = CheckedLongSupplier.unchecked(supplier);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, unchecked::getAsLong);
+            Throwable thrown = assertThrows(throwable.throwableType(), unchecked::getAsLong);
             assertEquals("foo", thrown.getMessage());
 
             verify(supplier).unchecked();

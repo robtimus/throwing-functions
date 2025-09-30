@@ -34,6 +34,8 @@ import java.util.function.ToDoubleBiFunction;
 import java.util.function.ToDoubleFunction;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 
 @SuppressWarnings("nls")
 class CheckedToDoubleBiFunctionTest {
@@ -83,17 +85,17 @@ class CheckedToDoubleBiFunctionTest {
             verifyNoMoreInteractions(function, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedToDoubleBiFunction<String, String, IOException> function = Spied.checkedToDoubleBiFunction((s1, s2) -> {
-                throw new IllegalStateException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedToDoubleBiFunction<String, String, IOException> function = Spied
+                    .checkedToDoubleBiFunction((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             Function<IOException, ExecutionException> errorMapper = Spied.function(ExecutionException::new);
 
             CheckedToDoubleBiFunction<String, String, ExecutionException> throwing = function.onErrorThrowAsChecked(errorMapper);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> throwing.applyAsDouble("foo", "bar"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> throwing.applyAsDouble("foo", "bar"));
             assertEquals("foobar", thrown.getMessage());
 
             verify(function).applyAsDouble("foo", "bar");
@@ -147,17 +149,17 @@ class CheckedToDoubleBiFunctionTest {
             verifyNoMoreInteractions(function, errorMapper);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedToDoubleBiFunction<String, String, IOException> function = Spied.checkedToDoubleBiFunction((s1, s2) -> {
-                throw new IllegalArgumentException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedToDoubleBiFunction<String, String, IOException> function = Spied
+                    .checkedToDoubleBiFunction((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             Function<IOException, IllegalStateException> errorMapper = Spied.function(IllegalStateException::new);
 
             ToDoubleBiFunction<String, String> throwing = function.onErrorThrowAsUnchecked(errorMapper);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> throwing.applyAsDouble("foo", "bar"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> throwing.applyAsDouble("foo", "bar"));
             assertEquals("foobar", thrown.getMessage());
 
             verify(function).applyAsDouble("foo", "bar");
@@ -234,19 +236,18 @@ class CheckedToDoubleBiFunctionTest {
                 verifyNoMoreInteractions(function, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException, ExecutionException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ExecutionException {
                 CheckedToDoubleBiFunction<String, String, IOException> function = Spied.checkedToDoubleBiFunction((s1, s2) -> {
                     throw new IOException(s1 + s2);
                 });
 
-                CheckedToDoubleFunction<IOException, ExecutionException> errorHandler = Spied.checkedToDoubleFunction(e -> {
-                    throw new IllegalStateException(e);
-                });
+                CheckedToDoubleFunction<IOException, ExecutionException> errorHandler = Spied.checkedToDoubleFunction(throwable::throwUnchecked);
 
                 CheckedToDoubleBiFunction<String, String, ExecutionException> handling = function.onErrorHandleChecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsDouble("foo", "bar"));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsDouble("foo", "bar"));
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("foobar", cause.getMessage());
 
@@ -257,17 +258,17 @@ class CheckedToDoubleBiFunctionTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedToDoubleBiFunction<String, String, IOException> function = Spied.checkedToDoubleBiFunction((s1, s2) -> {
-                throw new IllegalStateException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedToDoubleBiFunction<String, String, IOException> function = Spied
+                    .checkedToDoubleBiFunction((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             CheckedToDoubleFunction<IOException, ExecutionException> errorHandler = Spied.checkedToDoubleFunction(e -> 0D);
 
             CheckedToDoubleBiFunction<String, String, ExecutionException> handling = function.onErrorHandleChecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsDouble("foo", "bar"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsDouble("foo", "bar"));
             assertEquals("foobar", thrown.getMessage());
 
             verify(function).applyAsDouble("foo", "bar");
@@ -322,19 +323,18 @@ class CheckedToDoubleBiFunctionTest {
                 verifyNoMoreInteractions(function, errorHandler);
             }
 
-            @Test
-            void testHandlerThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testHandlerThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedToDoubleBiFunction<String, String, IOException> function = Spied.checkedToDoubleBiFunction((s1, s2) -> {
                     throw new IOException(s1 + s2);
                 });
 
-                ToDoubleFunction<IOException> errorHandler = Spied.toDoubleFunction(e -> {
-                    throw new IllegalStateException(e);
-                });
+                ToDoubleFunction<IOException> errorHandler = Spied.toDoubleFunction(throwable::throwUnchecked);
 
                 ToDoubleBiFunction<String, String> handling = function.onErrorHandleUnchecked(errorHandler);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsDouble("foo", "bar"));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsDouble("foo", "bar"));
                 IOException cause = assertInstanceOf(IOException.class, thrown.getCause());
                 assertEquals("foobar", cause.getMessage());
 
@@ -345,17 +345,17 @@ class CheckedToDoubleBiFunctionTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedToDoubleBiFunction<String, String, IOException> function = Spied.checkedToDoubleBiFunction((s1, s2) -> {
-                throw new IllegalStateException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedToDoubleBiFunction<String, String, IOException> function = Spied
+                    .checkedToDoubleBiFunction((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             ToDoubleFunction<IOException> errorHandler = Spied.toDoubleFunction(e -> 0D);
 
             ToDoubleBiFunction<String, String> handling = function.onErrorHandleUnchecked(errorHandler);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> handling.applyAsDouble("foo", "bar"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> handling.applyAsDouble("foo", "bar"));
             assertEquals("foobar", thrown.getMessage());
 
             verify(function).applyAsDouble("foo", "bar");
@@ -434,19 +434,19 @@ class CheckedToDoubleBiFunctionTest {
                 verifyNoMoreInteractions(function, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException, ParseException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ParseException {
                 CheckedToDoubleBiFunction<String, String, IOException> function = Spied.checkedToDoubleBiFunction((s1, s2) -> {
                     throw new IOException(s1 + s2);
                 });
 
-                CheckedToDoubleBiFunction<String, String, ParseException> fallback = Spied.checkedToDoubleBiFunction((s1, s2) -> {
-                    throw new IllegalStateException(s1 + s2);
-                });
+                CheckedToDoubleBiFunction<String, String, ParseException> fallback = Spied
+                        .checkedToDoubleBiFunction((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
                 CheckedToDoubleBiFunction<String, String, ParseException> applying = function.onErrorApplyChecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsDouble("foo", "bar"));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsDouble("foo", "bar"));
                 assertEquals("foobar", thrown.getMessage());
 
                 verify(function).applyAsDouble("foo", "bar");
@@ -456,18 +456,18 @@ class CheckedToDoubleBiFunctionTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedToDoubleBiFunction<String, String, IOException> function = Spied.checkedToDoubleBiFunction((s1, s2) -> {
-                throw new IllegalStateException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedToDoubleBiFunction<String, String, IOException> function = Spied
+                    .checkedToDoubleBiFunction((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             CheckedToDoubleBiFunction<String, String, ParseException> fallback = Spied
                     .checkedToDoubleBiFunction((s1, s2) -> 2 * s1.concat(s2).length());
 
             CheckedToDoubleBiFunction<String, String, ParseException> applying = function.onErrorApplyChecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsDouble("foo", "bar"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsDouble("foo", "bar"));
             assertEquals("foobar", thrown.getMessage());
 
             verify(function).applyAsDouble("foo", "bar");
@@ -522,19 +522,18 @@ class CheckedToDoubleBiFunctionTest {
                 verifyNoMoreInteractions(function, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedToDoubleBiFunction<String, String, IOException> function = Spied.checkedToDoubleBiFunction((s1, s2) -> {
                     throw new IOException(s1 + s2);
                 });
 
-                ToDoubleBiFunction<String, String> fallback = Spied.toDoubleBiFunction((s1, s2) -> {
-                    throw new IllegalStateException(s1 + s2);
-                });
+                ToDoubleBiFunction<String, String> fallback = Spied.toDoubleBiFunction((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
                 ToDoubleBiFunction<String, String> applying = function.onErrorApplyUnchecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsDouble("foo", "bar"));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsDouble("foo", "bar"));
                 assertEquals("foobar", thrown.getMessage());
 
                 verify(function).applyAsDouble("foo", "bar");
@@ -544,17 +543,17 @@ class CheckedToDoubleBiFunctionTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedToDoubleBiFunction<String, String, IOException> function = Spied.checkedToDoubleBiFunction((s1, s2) -> {
-                throw new IllegalStateException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedToDoubleBiFunction<String, String, IOException> function = Spied
+                    .checkedToDoubleBiFunction((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             ToDoubleBiFunction<String, String> fallback = Spied.toDoubleBiFunction((s1, s2) -> 2 * s1.concat(s2).length());
 
             ToDoubleBiFunction<String, String> applying = function.onErrorApplyUnchecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> applying.applyAsDouble("foo", "bar"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> applying.applyAsDouble("foo", "bar"));
             assertEquals("foobar", thrown.getMessage());
 
             verify(function).applyAsDouble("foo", "bar");
@@ -631,19 +630,18 @@ class CheckedToDoubleBiFunctionTest {
                 verifyNoMoreInteractions(function, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException, ParseException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException, ParseException {
                 CheckedToDoubleBiFunction<String, String, IOException> function = Spied.checkedToDoubleBiFunction((s1, s2) -> {
                     throw new IOException(s1 + s2);
                 });
 
-                CheckedDoubleSupplier<ParseException> fallback = Spied.checkedDoubleSupplier(() -> {
-                    throw new IllegalStateException("bar");
-                });
+                CheckedDoubleSupplier<ParseException> fallback = Spied.checkedDoubleSupplier(() -> throwable.throwUnchecked("bar"));
 
                 CheckedToDoubleBiFunction<String, String, ParseException> getting = function.onErrorGetChecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsDouble("foo", "bar"));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsDouble("foo", "bar"));
                 assertEquals("bar", thrown.getMessage());
 
                 verify(function).applyAsDouble("foo", "bar");
@@ -653,17 +651,17 @@ class CheckedToDoubleBiFunctionTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedToDoubleBiFunction<String, String, IOException> function = Spied.checkedToDoubleBiFunction((s1, s2) -> {
-                throw new IllegalStateException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedToDoubleBiFunction<String, String, IOException> function = Spied
+                    .checkedToDoubleBiFunction((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             CheckedDoubleSupplier<ParseException> fallback = Spied.checkedDoubleSupplier(() -> 0D);
 
             CheckedToDoubleBiFunction<String, String, ParseException> getting = function.onErrorGetChecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsDouble("foo", "bar"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsDouble("foo", "bar"));
             assertEquals("foobar", thrown.getMessage());
 
             verify(function).applyAsDouble("foo", "bar");
@@ -718,19 +716,18 @@ class CheckedToDoubleBiFunctionTest {
                 verifyNoMoreInteractions(function, fallback);
             }
 
-            @Test
-            void testFallbackThrowsUnchecked() throws IOException {
+            @ParameterizedTest
+            @ArgumentsSource(UncheckedThrowable.Provider.class)
+            void testFallbackThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
                 CheckedToDoubleBiFunction<String, String, IOException> function = Spied.checkedToDoubleBiFunction((s1, s2) -> {
                     throw new IOException(s1 + s2);
                 });
 
-                DoubleSupplier fallback = Spied.doubleSupplier(() -> {
-                    throw new IllegalStateException("bar");
-                });
+                DoubleSupplier fallback = Spied.doubleSupplier(() -> throwable.throwUnchecked("bar"));
 
                 ToDoubleBiFunction<String, String> getting = function.onErrorGetUnchecked(fallback);
 
-                IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsDouble("foo", "bar"));
+                Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsDouble("foo", "bar"));
                 assertEquals("bar", thrown.getMessage());
 
                 verify(function).applyAsDouble("foo", "bar");
@@ -740,17 +737,17 @@ class CheckedToDoubleBiFunctionTest {
             }
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedToDoubleBiFunction<String, String, IOException> function = Spied.checkedToDoubleBiFunction((s1, s2) -> {
-                throw new IllegalStateException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedToDoubleBiFunction<String, String, IOException> function = Spied
+                    .checkedToDoubleBiFunction((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             DoubleSupplier fallback = Spied.doubleSupplier(() -> 0D);
 
             ToDoubleBiFunction<String, String> getting = function.onErrorGetUnchecked(fallback);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> getting.applyAsDouble("foo", "bar"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> getting.applyAsDouble("foo", "bar"));
             assertEquals("foobar", thrown.getMessage());
 
             verify(function).applyAsDouble("foo", "bar");
@@ -790,15 +787,15 @@ class CheckedToDoubleBiFunctionTest {
             verifyNoMoreInteractions(function);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedToDoubleBiFunction<String, String, IOException> function = Spied.checkedToDoubleBiFunction((s1, s2) -> {
-                throw new IllegalStateException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedToDoubleBiFunction<String, String, IOException> function = Spied
+                    .checkedToDoubleBiFunction((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             ToDoubleBiFunction<String, String> returning = function.onErrorReturn(0D);
 
-            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> returning.applyAsDouble("foo", "bar"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> returning.applyAsDouble("foo", "bar"));
             assertEquals("foobar", thrown.getMessage());
 
             verify(function).applyAsDouble("foo", "bar");
@@ -842,15 +839,15 @@ class CheckedToDoubleBiFunctionTest {
             verifyNoMoreInteractions(function);
         }
 
-        @Test
-        void testThisThrowsUnchecked() throws IOException {
-            CheckedToDoubleBiFunction<String, String, IOException> function = Spied.checkedToDoubleBiFunction((s1, s2) -> {
-                throw new IllegalArgumentException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testThisThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedToDoubleBiFunction<String, String, IOException> function = Spied
+                    .checkedToDoubleBiFunction((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             ToDoubleBiFunction<String, String> unchecked = function.unchecked();
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.applyAsDouble("foo", "bar"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> unchecked.applyAsDouble("foo", "bar"));
             assertEquals("foobar", thrown.getMessage());
 
             verify(function).applyAsDouble("foo", "bar");
@@ -916,15 +913,15 @@ class CheckedToDoubleBiFunctionTest {
             verifyNoMoreInteractions(function);
         }
 
-        @Test
-        void testArgumentThrowsUnchecked() throws IOException {
-            CheckedToDoubleBiFunction<String, String, IOException> function = Spied.checkedToDoubleBiFunction((s1, s2) -> {
-                throw new IllegalArgumentException(s1 + s2);
-            });
+        @ParameterizedTest
+        @ArgumentsSource(UncheckedThrowable.Provider.class)
+        void testArgumentThrowsUnchecked(UncheckedThrowable<?> throwable) throws IOException {
+            CheckedToDoubleBiFunction<String, String, IOException> function = Spied
+                    .checkedToDoubleBiFunction((s1, s2) -> throwable.throwUnchecked(s1 + s2));
 
             ToDoubleBiFunction<String, String> unchecked = CheckedToDoubleBiFunction.unchecked(function);
 
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> unchecked.applyAsDouble("foo", "bar"));
+            Throwable thrown = assertThrows(throwable.throwableType(), () -> unchecked.applyAsDouble("foo", "bar"));
             assertEquals("foobar", thrown.getMessage());
 
             verify(function).unchecked();
