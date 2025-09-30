@@ -67,179 +67,179 @@ final class Spied {
     private Spied() {
     }
 
-    static <T, U, X extends Throwable> CheckedBiConsumer<T, U, X> checkedBiConsumer(CheckedBiConsumer<T, U, X> consumer) {
+    static <T, U, X extends Throwable> ThrowingBiConsumer<T, U, X> checkedBiConsumer(ThrowingBiConsumer<T, U, X> consumer) {
         return spy(new CheckedBiConsumerWrapper<>(consumer));
     }
 
-    static <T, U, R, X extends Throwable> CheckedBiFunction<T, U, R, X> checkedBiFunction(CheckedBiFunction<T, U, R, X> function) {
+    static <T, U, R, X extends Throwable> ThrowingBiFunction<T, U, R, X> checkedBiFunction(ThrowingBiFunction<T, U, R, X> function) {
         return spy(new CheckedBiFunctionWrapper<>(function));
     }
 
-    static <T, X extends Throwable> CheckedBinaryOperator<T, X> checkedBinaryOperator(CheckedBinaryOperator<T, X> operator) {
+    static <T, X extends Throwable> ThrowingBinaryOperator<T, X> checkedBinaryOperator(ThrowingBinaryOperator<T, X> operator) {
         return spy(new CheckedBinaryOperatorWrapper<>(operator));
     }
 
-    static <T, U, X extends Throwable> CheckedBiPredicate<T, U, X> checkedBiPredicate(CheckedBiPredicate<T, U, X> predicate) {
+    static <T, U, X extends Throwable> ThrowingBiPredicate<T, U, X> checkedBiPredicate(ThrowingBiPredicate<T, U, X> predicate) {
         return spy(new CheckedBiPredicateWrapper<>(predicate));
     }
 
-    static <X extends Throwable> CheckedBooleanSupplier<X> checkedBooleanSupplier(CheckedBooleanSupplier<X> supplier) {
+    static <X extends Throwable> ThrowingBooleanSupplier<X> checkedBooleanSupplier(ThrowingBooleanSupplier<X> supplier) {
         return spy(new CheckedBooleanSupplierWrapper<>(supplier));
     }
 
-    static <T, X extends Throwable> CheckedConsumer<T, X> checkedConsumer(CheckedConsumer<T, X> consumer) {
+    static <T, X extends Throwable> ThrowingConsumer<T, X> checkedConsumer(ThrowingConsumer<T, X> consumer) {
         return spy(new CheckedConsumerWrapper<>(consumer));
     }
 
-    static <X extends Throwable> CheckedDoubleBinaryOperator<X> checkedDoubleBinaryOperator(CheckedDoubleBinaryOperator<X> operator) {
+    static <X extends Throwable> ThrowingDoubleBinaryOperator<X> checkedDoubleBinaryOperator(ThrowingDoubleBinaryOperator<X> operator) {
         return spy(new CheckedDoubleBinaryOperatorWrapper<>(operator));
     }
 
-    static <X extends Throwable> CheckedDoubleConsumer<X> checkedDoubleConsumer(CheckedDoubleConsumer<X> consumer) {
+    static <X extends Throwable> ThrowingDoubleConsumer<X> checkedDoubleConsumer(ThrowingDoubleConsumer<X> consumer) {
         return spy(new CheckedDoubleConsumerWrapper<>(consumer));
     }
 
-    static <R, X extends Throwable> CheckedDoubleFunction<R, X> checkedDoubleFunction(CheckedDoubleFunction<R, X> function) {
+    static <R, X extends Throwable> ThrowingDoubleFunction<R, X> checkedDoubleFunction(ThrowingDoubleFunction<R, X> function) {
         return spy(new CheckedDoubleFunctionWrapper<>(function));
     }
 
-    static <X extends Throwable> CheckedDoublePredicate<X> checkedDoublePredicate(CheckedDoublePredicate<X> predicate) {
+    static <X extends Throwable> ThrowingDoublePredicate<X> checkedDoublePredicate(ThrowingDoublePredicate<X> predicate) {
         return spy(new CheckedDoublePredicateWrapper<>(predicate));
     }
 
-    static <X extends Throwable> CheckedDoubleSupplier<X> checkedDoubleSupplier(CheckedDoubleSupplier<X> supplier) {
+    static <X extends Throwable> ThrowingDoubleSupplier<X> checkedDoubleSupplier(ThrowingDoubleSupplier<X> supplier) {
         return spy(new CheckedDoubleSupplierWrapper<>(supplier));
     }
 
-    static <X extends Throwable> CheckedDoubleToIntFunction<X> checkedDoubleToIntFunction(CheckedDoubleToIntFunction<X> function) {
+    static <X extends Throwable> ThrowingDoubleToIntFunction<X> checkedDoubleToIntFunction(ThrowingDoubleToIntFunction<X> function) {
         return spy(new CheckedDoubleToIntFunctionWrapper<>(function));
     }
 
-    static <X extends Throwable> CheckedDoubleToLongFunction<X> checkedDoubleToLongFunction(CheckedDoubleToLongFunction<X> function) {
+    static <X extends Throwable> ThrowingDoubleToLongFunction<X> checkedDoubleToLongFunction(ThrowingDoubleToLongFunction<X> function) {
         return spy(new CheckedDoubleToLongFunctionWrapper<>(function));
     }
 
-    static <X extends Throwable> CheckedDoubleUnaryOperator<X> checkedDoubleUnaryOperator(CheckedDoubleUnaryOperator<X> operator) {
+    static <X extends Throwable> ThrowingDoubleUnaryOperator<X> checkedDoubleUnaryOperator(ThrowingDoubleUnaryOperator<X> operator) {
         return spy(new CheckedDoubleUnaryOperatorWrapper<>(operator));
     }
 
-    static <T, R, X extends Throwable> CheckedFunction<T, R, X> checkedFunction(CheckedFunction<T, R, X> function) {
+    static <T, R, X extends Throwable> ThrowingFunction<T, R, X> checkedFunction(ThrowingFunction<T, R, X> function) {
         return spy(new CheckedFunctionWrapper<>(function));
     }
 
-    static <X extends Throwable> CheckedIntBinaryOperator<X> checkedIntBinaryOperator(CheckedIntBinaryOperator<X> operator) {
+    static <X extends Throwable> ThrowingIntBinaryOperator<X> checkedIntBinaryOperator(ThrowingIntBinaryOperator<X> operator) {
         return spy(new CheckedIntBinaryOperatorWrapper<>(operator));
     }
 
-    static <X extends Throwable> CheckedIntConsumer<X> checkedIntConsumer(CheckedIntConsumer<X> consumer) {
+    static <X extends Throwable> ThrowingIntConsumer<X> checkedIntConsumer(ThrowingIntConsumer<X> consumer) {
         return spy(new CheckedIntConsumerWrapper<>(consumer));
     }
 
-    static <R, X extends Throwable> CheckedIntFunction<R, X> checkedIntFunction(CheckedIntFunction<R, X> function) {
+    static <R, X extends Throwable> ThrowingIntFunction<R, X> checkedIntFunction(ThrowingIntFunction<R, X> function) {
         return spy(new CheckedIntFunctionWrapper<>(function));
     }
 
-    static <X extends Throwable> CheckedIntPredicate<X> checkedIntPredicate(CheckedIntPredicate<X> predicate) {
+    static <X extends Throwable> ThrowingIntPredicate<X> checkedIntPredicate(ThrowingIntPredicate<X> predicate) {
         return spy(new CheckedIntPredicateWrapper<>(predicate));
     }
 
-    static <X extends Throwable> CheckedIntSupplier<X> checkedIntSupplier(CheckedIntSupplier<X> supplier) {
+    static <X extends Throwable> ThrowingIntSupplier<X> checkedIntSupplier(ThrowingIntSupplier<X> supplier) {
         return spy(new CheckedIntSupplierWrapper<>(supplier));
     }
 
-    static <X extends Throwable> CheckedIntToDoubleFunction<X> checkedIntToDoubleFunction(CheckedIntToDoubleFunction<X> function) {
+    static <X extends Throwable> ThrowingIntToDoubleFunction<X> checkedIntToDoubleFunction(ThrowingIntToDoubleFunction<X> function) {
         return spy(new CheckedIntToDoubleFunctionWrapper<>(function));
     }
 
-    static <X extends Throwable> CheckedIntToLongFunction<X> checkedIntToLongFunction(CheckedIntToLongFunction<X> function) {
+    static <X extends Throwable> ThrowingIntToLongFunction<X> checkedIntToLongFunction(ThrowingIntToLongFunction<X> function) {
         return spy(new CheckedIntToLongFunctionWrapper<>(function));
     }
 
-    static <X extends Throwable> CheckedIntUnaryOperator<X> checkedIntUnaryOperator(CheckedIntUnaryOperator<X> operator) {
+    static <X extends Throwable> ThrowingIntUnaryOperator<X> checkedIntUnaryOperator(ThrowingIntUnaryOperator<X> operator) {
         return spy(new CheckedIntUnaryOperatorWrapper<>(operator));
     }
 
-    static <X extends Throwable> CheckedLongBinaryOperator<X> checkedLongBinaryOperator(CheckedLongBinaryOperator<X> operator) {
+    static <X extends Throwable> ThrowingLongBinaryOperator<X> checkedLongBinaryOperator(ThrowingLongBinaryOperator<X> operator) {
         return spy(new CheckedLongBinaryOperatorWrapper<>(operator));
     }
 
-    static <X extends Throwable> CheckedLongConsumer<X> checkedLongConsumer(CheckedLongConsumer<X> consumer) {
+    static <X extends Throwable> ThrowingLongConsumer<X> checkedLongConsumer(ThrowingLongConsumer<X> consumer) {
         return spy(new CheckedLongConsumerWrapper<>(consumer));
     }
 
-    static <R, X extends Throwable> CheckedLongFunction<R, X> checkedLongFunction(CheckedLongFunction<R, X> function) {
+    static <R, X extends Throwable> ThrowingLongFunction<R, X> checkedLongFunction(ThrowingLongFunction<R, X> function) {
         return spy(new CheckedLongFunctionWrapper<>(function));
     }
 
-    static <X extends Throwable> CheckedLongPredicate<X> checkedLongPredicate(CheckedLongPredicate<X> predicate) {
+    static <X extends Throwable> ThrowingLongPredicate<X> checkedLongPredicate(ThrowingLongPredicate<X> predicate) {
         return spy(new CheckedLongPredicateWrapper<>(predicate));
     }
 
-    static <X extends Throwable> CheckedLongSupplier<X> checkedLongSupplier(CheckedLongSupplier<X> supplier) {
+    static <X extends Throwable> ThrowingLongSupplier<X> checkedLongSupplier(ThrowingLongSupplier<X> supplier) {
         return spy(new CheckedLongSupplierWrapper<>(supplier));
     }
 
-    static <X extends Throwable> CheckedLongToDoubleFunction<X> checkedLongToDoubleFunction(CheckedLongToDoubleFunction<X> function) {
+    static <X extends Throwable> ThrowingLongToDoubleFunction<X> checkedLongToDoubleFunction(ThrowingLongToDoubleFunction<X> function) {
         return spy(new CheckedLongToDoubleFunctionWrapper<>(function));
     }
 
-    static <X extends Throwable> CheckedLongToIntFunction<X> checkedLongToIntFunction(CheckedLongToIntFunction<X> function) {
+    static <X extends Throwable> ThrowingLongToIntFunction<X> checkedLongToIntFunction(ThrowingLongToIntFunction<X> function) {
         return spy(new CheckedLongToIntFunctionWrapper<>(function));
     }
 
-    static <X extends Throwable> CheckedLongUnaryOperator<X> checkedLongUnaryOperator(CheckedLongUnaryOperator<X> operator) {
+    static <X extends Throwable> ThrowingLongUnaryOperator<X> checkedLongUnaryOperator(ThrowingLongUnaryOperator<X> operator) {
         return spy(new CheckedLongUnaryOperatorWrapper<>(operator));
     }
 
-    static <T, X extends Throwable> CheckedObjDoubleConsumer<T, X> checkedObjDoubleConsumer(CheckedObjDoubleConsumer<T, X> consumer) {
+    static <T, X extends Throwable> ThrowingObjDoubleConsumer<T, X> checkedObjDoubleConsumer(ThrowingObjDoubleConsumer<T, X> consumer) {
         return spy(new CheckedObjDoubleConsumerWrapper<>(consumer));
     }
 
-    static <T, X extends Throwable> CheckedObjIntConsumer<T, X> checkedObjIntConsumer(CheckedObjIntConsumer<T, X> consumer) {
+    static <T, X extends Throwable> ThrowingObjIntConsumer<T, X> checkedObjIntConsumer(ThrowingObjIntConsumer<T, X> consumer) {
         return spy(new CheckedObjIntConsumerWrapper<>(consumer));
     }
 
-    static <T, X extends Throwable> CheckedObjLongConsumer<T, X> checkedObjLongConsumer(CheckedObjLongConsumer<T, X> consumer) {
+    static <T, X extends Throwable> ThrowingObjLongConsumer<T, X> checkedObjLongConsumer(ThrowingObjLongConsumer<T, X> consumer) {
         return spy(new CheckedObjLongConsumerWrapper<>(consumer));
     }
 
-    static <T, X extends Throwable> CheckedPredicate<T, X> checkedPredicate(CheckedPredicate<T, X> predicate) {
+    static <T, X extends Throwable> ThrowingPredicate<T, X> checkedPredicate(ThrowingPredicate<T, X> predicate) {
         return spy(new CheckedPredicateWrapper<>(predicate));
     }
 
-    static <X extends Throwable> CheckedRunnable<X> checkedRunnable(CheckedRunnable<X> runnable) {
+    static <X extends Throwable> ThrowingRunnable<X> checkedRunnable(ThrowingRunnable<X> runnable) {
         return spy(new CheckedRunnableWrapper<>(runnable));
     }
 
-    static <T, X extends Throwable> CheckedSupplier<T, X> checkedSupplier(CheckedSupplier<T, X> supplier) {
+    static <T, X extends Throwable> ThrowingSupplier<T, X> checkedSupplier(ThrowingSupplier<T, X> supplier) {
         return spy(new CheckedSupplierWrapper<>(supplier));
     }
 
-    static <T, U, X extends Throwable> CheckedToDoubleBiFunction<T, U, X> checkedToDoubleBiFunction(CheckedToDoubleBiFunction<T, U, X> function) {
+    static <T, U, X extends Throwable> ThrowingToDoubleBiFunction<T, U, X> checkedToDoubleBiFunction(ThrowingToDoubleBiFunction<T, U, X> function) {
         return spy(new CheckedToDoubleBiFunctionWrapper<>(function));
     }
 
-    static <T, X extends Throwable> CheckedToDoubleFunction<T, X> checkedToDoubleFunction(CheckedToDoubleFunction<T, X> function) {
+    static <T, X extends Throwable> ThrowingToDoubleFunction<T, X> checkedToDoubleFunction(ThrowingToDoubleFunction<T, X> function) {
         return spy(new CheckedToDoubleFunctionWrapper<>(function));
     }
 
-    static <T, U, X extends Throwable> CheckedToIntBiFunction<T, U, X> checkedToIntBiFunction(CheckedToIntBiFunction<T, U, X> function) {
+    static <T, U, X extends Throwable> ThrowingToIntBiFunction<T, U, X> checkedToIntBiFunction(ThrowingToIntBiFunction<T, U, X> function) {
         return spy(new CheckedToIntBiFunctionWrapper<>(function));
     }
 
-    static <T, X extends Throwable> CheckedToIntFunction<T, X> checkedToIntFunction(CheckedToIntFunction<T, X> function) {
+    static <T, X extends Throwable> ThrowingToIntFunction<T, X> checkedToIntFunction(ThrowingToIntFunction<T, X> function) {
         return spy(new CheckedToIntFunctionWrapper<>(function));
     }
 
-    static <T, U, X extends Throwable> CheckedToLongBiFunction<T, U, X> checkedToLongBiFunction(CheckedToLongBiFunction<T, U, X> function) {
+    static <T, U, X extends Throwable> ThrowingToLongBiFunction<T, U, X> checkedToLongBiFunction(ThrowingToLongBiFunction<T, U, X> function) {
         return spy(new CheckedToLongBiFunctionWrapper<>(function));
     }
 
-    static <T, X extends Throwable> CheckedToLongFunction<T, X> checkedToLongFunction(CheckedToLongFunction<T, X> function) {
+    static <T, X extends Throwable> ThrowingToLongFunction<T, X> checkedToLongFunction(ThrowingToLongFunction<T, X> function) {
         return spy(new CheckedToLongFunctionWrapper<>(function));
     }
 
-    static <T, X extends Throwable> CheckedUnaryOperator<T, X> checkedUnaryOperator(CheckedUnaryOperator<T, X> operator) {
+    static <T, X extends Throwable> ThrowingUnaryOperator<T, X> checkedUnaryOperator(ThrowingUnaryOperator<T, X> operator) {
         return spy(new CheckedUnaryOperatorWrapper<>(operator));
     }
 
@@ -419,11 +419,11 @@ final class Spied {
         return spy(new UnaryOperatorWrapper<>(operator));
     }
 
-    private static final class CheckedBiConsumerWrapper<T, U, X extends Throwable> implements CheckedBiConsumer<T, U, X> {
+    private static final class CheckedBiConsumerWrapper<T, U, X extends Throwable> implements ThrowingBiConsumer<T, U, X> {
 
-        private final CheckedBiConsumer<T, U, X> consumer;
+        private final ThrowingBiConsumer<T, U, X> consumer;
 
-        private CheckedBiConsumerWrapper(CheckedBiConsumer<T, U, X> consumer) {
+        private CheckedBiConsumerWrapper(ThrowingBiConsumer<T, U, X> consumer) {
             this.consumer = consumer;
         }
 
@@ -433,11 +433,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedBiFunctionWrapper<T, U, R, X extends Throwable> implements CheckedBiFunction<T, U, R, X> {
+    private static final class CheckedBiFunctionWrapper<T, U, R, X extends Throwable> implements ThrowingBiFunction<T, U, R, X> {
 
-        private final CheckedBiFunction<T, U, R, X> function;
+        private final ThrowingBiFunction<T, U, R, X> function;
 
-        private CheckedBiFunctionWrapper(CheckedBiFunction<T, U, R, X> function) {
+        private CheckedBiFunctionWrapper(ThrowingBiFunction<T, U, R, X> function) {
             this.function = function;
         }
 
@@ -447,11 +447,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedBinaryOperatorWrapper<T, X extends Throwable> implements CheckedBinaryOperator<T, X> {
+    private static final class CheckedBinaryOperatorWrapper<T, X extends Throwable> implements ThrowingBinaryOperator<T, X> {
 
-        private final CheckedBinaryOperator<T, X> operator;
+        private final ThrowingBinaryOperator<T, X> operator;
 
-        private CheckedBinaryOperatorWrapper(CheckedBinaryOperator<T, X> operator) {
+        private CheckedBinaryOperatorWrapper(ThrowingBinaryOperator<T, X> operator) {
             this.operator = operator;
         }
 
@@ -461,11 +461,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedBiPredicateWrapper<T, U, X extends Throwable> implements CheckedBiPredicate<T, U, X> {
+    private static final class CheckedBiPredicateWrapper<T, U, X extends Throwable> implements ThrowingBiPredicate<T, U, X> {
 
-        private final CheckedBiPredicate<T, U, X> predicate;
+        private final ThrowingBiPredicate<T, U, X> predicate;
 
-        private CheckedBiPredicateWrapper(CheckedBiPredicate<T, U, X> predicate) {
+        private CheckedBiPredicateWrapper(ThrowingBiPredicate<T, U, X> predicate) {
             this.predicate = predicate;
         }
 
@@ -475,11 +475,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedBooleanSupplierWrapper<X extends Throwable> implements CheckedBooleanSupplier<X> {
+    private static final class CheckedBooleanSupplierWrapper<X extends Throwable> implements ThrowingBooleanSupplier<X> {
 
-        private final CheckedBooleanSupplier<X> supplier;
+        private final ThrowingBooleanSupplier<X> supplier;
 
-        private CheckedBooleanSupplierWrapper(CheckedBooleanSupplier<X> supplier) {
+        private CheckedBooleanSupplierWrapper(ThrowingBooleanSupplier<X> supplier) {
             this.supplier = supplier;
         }
 
@@ -489,11 +489,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedConsumerWrapper<T, X extends Throwable> implements CheckedConsumer<T, X> {
+    private static final class CheckedConsumerWrapper<T, X extends Throwable> implements ThrowingConsumer<T, X> {
 
-        private final CheckedConsumer<T, X> consumer;
+        private final ThrowingConsumer<T, X> consumer;
 
-        private CheckedConsumerWrapper(CheckedConsumer<T, X> consumer) {
+        private CheckedConsumerWrapper(ThrowingConsumer<T, X> consumer) {
             this.consumer = consumer;
         }
 
@@ -503,11 +503,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedDoubleBinaryOperatorWrapper<X extends Throwable> implements CheckedDoubleBinaryOperator<X> {
+    private static final class CheckedDoubleBinaryOperatorWrapper<X extends Throwable> implements ThrowingDoubleBinaryOperator<X> {
 
-        private final CheckedDoubleBinaryOperator<X> operator;
+        private final ThrowingDoubleBinaryOperator<X> operator;
 
-        private CheckedDoubleBinaryOperatorWrapper(CheckedDoubleBinaryOperator<X> operator) {
+        private CheckedDoubleBinaryOperatorWrapper(ThrowingDoubleBinaryOperator<X> operator) {
             this.operator = operator;
         }
 
@@ -517,11 +517,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedDoubleConsumerWrapper<X extends Throwable> implements CheckedDoubleConsumer<X> {
+    private static final class CheckedDoubleConsumerWrapper<X extends Throwable> implements ThrowingDoubleConsumer<X> {
 
-        private final CheckedDoubleConsumer<X> consumer;
+        private final ThrowingDoubleConsumer<X> consumer;
 
-        private CheckedDoubleConsumerWrapper(CheckedDoubleConsumer<X> consumer) {
+        private CheckedDoubleConsumerWrapper(ThrowingDoubleConsumer<X> consumer) {
             this.consumer = consumer;
         }
 
@@ -531,11 +531,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedDoubleFunctionWrapper<R, X extends Throwable> implements CheckedDoubleFunction<R, X> {
+    private static final class CheckedDoubleFunctionWrapper<R, X extends Throwable> implements ThrowingDoubleFunction<R, X> {
 
-        private final CheckedDoubleFunction<R, X> function;
+        private final ThrowingDoubleFunction<R, X> function;
 
-        private CheckedDoubleFunctionWrapper(CheckedDoubleFunction<R, X> function) {
+        private CheckedDoubleFunctionWrapper(ThrowingDoubleFunction<R, X> function) {
             this.function = function;
         }
 
@@ -545,11 +545,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedDoublePredicateWrapper<X extends Throwable> implements CheckedDoublePredicate<X> {
+    private static final class CheckedDoublePredicateWrapper<X extends Throwable> implements ThrowingDoublePredicate<X> {
 
-        private final CheckedDoublePredicate<X> predicate;
+        private final ThrowingDoublePredicate<X> predicate;
 
-        private CheckedDoublePredicateWrapper(CheckedDoublePredicate<X> predicate) {
+        private CheckedDoublePredicateWrapper(ThrowingDoublePredicate<X> predicate) {
             this.predicate = predicate;
         }
 
@@ -559,11 +559,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedDoubleSupplierWrapper<X extends Throwable> implements CheckedDoubleSupplier<X> {
+    private static final class CheckedDoubleSupplierWrapper<X extends Throwable> implements ThrowingDoubleSupplier<X> {
 
-        private final CheckedDoubleSupplier<X> supplier;
+        private final ThrowingDoubleSupplier<X> supplier;
 
-        private CheckedDoubleSupplierWrapper(CheckedDoubleSupplier<X> supplier) {
+        private CheckedDoubleSupplierWrapper(ThrowingDoubleSupplier<X> supplier) {
             this.supplier = supplier;
         }
 
@@ -573,11 +573,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedDoubleToIntFunctionWrapper<X extends Throwable> implements CheckedDoubleToIntFunction<X> {
+    private static final class CheckedDoubleToIntFunctionWrapper<X extends Throwable> implements ThrowingDoubleToIntFunction<X> {
 
-        private final CheckedDoubleToIntFunction<X> function;
+        private final ThrowingDoubleToIntFunction<X> function;
 
-        private CheckedDoubleToIntFunctionWrapper(CheckedDoubleToIntFunction<X> function) {
+        private CheckedDoubleToIntFunctionWrapper(ThrowingDoubleToIntFunction<X> function) {
             this.function = function;
         }
 
@@ -587,11 +587,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedDoubleToLongFunctionWrapper<X extends Throwable> implements CheckedDoubleToLongFunction<X> {
+    private static final class CheckedDoubleToLongFunctionWrapper<X extends Throwable> implements ThrowingDoubleToLongFunction<X> {
 
-        private final CheckedDoubleToLongFunction<X> function;
+        private final ThrowingDoubleToLongFunction<X> function;
 
-        private CheckedDoubleToLongFunctionWrapper(CheckedDoubleToLongFunction<X> function) {
+        private CheckedDoubleToLongFunctionWrapper(ThrowingDoubleToLongFunction<X> function) {
             this.function = function;
         }
 
@@ -601,11 +601,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedDoubleUnaryOperatorWrapper<X extends Throwable> implements CheckedDoubleUnaryOperator<X> {
+    private static final class CheckedDoubleUnaryOperatorWrapper<X extends Throwable> implements ThrowingDoubleUnaryOperator<X> {
 
-        private final CheckedDoubleUnaryOperator<X> operator;
+        private final ThrowingDoubleUnaryOperator<X> operator;
 
-        private CheckedDoubleUnaryOperatorWrapper(CheckedDoubleUnaryOperator<X> operator) {
+        private CheckedDoubleUnaryOperatorWrapper(ThrowingDoubleUnaryOperator<X> operator) {
             this.operator = operator;
         }
 
@@ -615,11 +615,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedFunctionWrapper<T, R, X extends Throwable> implements CheckedFunction<T, R, X> {
+    private static final class CheckedFunctionWrapper<T, R, X extends Throwable> implements ThrowingFunction<T, R, X> {
 
-        private final CheckedFunction<T, R, X> function;
+        private final ThrowingFunction<T, R, X> function;
 
-        private CheckedFunctionWrapper(CheckedFunction<T, R, X> function) {
+        private CheckedFunctionWrapper(ThrowingFunction<T, R, X> function) {
             this.function = function;
         }
 
@@ -629,11 +629,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedIntBinaryOperatorWrapper<X extends Throwable> implements CheckedIntBinaryOperator<X> {
+    private static final class CheckedIntBinaryOperatorWrapper<X extends Throwable> implements ThrowingIntBinaryOperator<X> {
 
-        private final CheckedIntBinaryOperator<X> operator;
+        private final ThrowingIntBinaryOperator<X> operator;
 
-        private CheckedIntBinaryOperatorWrapper(CheckedIntBinaryOperator<X> operator) {
+        private CheckedIntBinaryOperatorWrapper(ThrowingIntBinaryOperator<X> operator) {
             this.operator = operator;
         }
 
@@ -643,11 +643,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedIntConsumerWrapper<X extends Throwable> implements CheckedIntConsumer<X> {
+    private static final class CheckedIntConsumerWrapper<X extends Throwable> implements ThrowingIntConsumer<X> {
 
-        private final CheckedIntConsumer<X> consumer;
+        private final ThrowingIntConsumer<X> consumer;
 
-        private CheckedIntConsumerWrapper(CheckedIntConsumer<X> consumer) {
+        private CheckedIntConsumerWrapper(ThrowingIntConsumer<X> consumer) {
             this.consumer = consumer;
         }
 
@@ -657,11 +657,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedIntFunctionWrapper<R, X extends Throwable> implements CheckedIntFunction<R, X> {
+    private static final class CheckedIntFunctionWrapper<R, X extends Throwable> implements ThrowingIntFunction<R, X> {
 
-        private final CheckedIntFunction<R, X> function;
+        private final ThrowingIntFunction<R, X> function;
 
-        private CheckedIntFunctionWrapper(CheckedIntFunction<R, X> function) {
+        private CheckedIntFunctionWrapper(ThrowingIntFunction<R, X> function) {
             this.function = function;
         }
 
@@ -671,11 +671,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedIntPredicateWrapper<X extends Throwable> implements CheckedIntPredicate<X> {
+    private static final class CheckedIntPredicateWrapper<X extends Throwable> implements ThrowingIntPredicate<X> {
 
-        private final CheckedIntPredicate<X> predicate;
+        private final ThrowingIntPredicate<X> predicate;
 
-        private CheckedIntPredicateWrapper(CheckedIntPredicate<X> predicate) {
+        private CheckedIntPredicateWrapper(ThrowingIntPredicate<X> predicate) {
             this.predicate = predicate;
         }
 
@@ -685,11 +685,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedIntSupplierWrapper<X extends Throwable> implements CheckedIntSupplier<X> {
+    private static final class CheckedIntSupplierWrapper<X extends Throwable> implements ThrowingIntSupplier<X> {
 
-        private final CheckedIntSupplier<X> supplier;
+        private final ThrowingIntSupplier<X> supplier;
 
-        private CheckedIntSupplierWrapper(CheckedIntSupplier<X> supplier) {
+        private CheckedIntSupplierWrapper(ThrowingIntSupplier<X> supplier) {
             this.supplier = supplier;
         }
 
@@ -699,11 +699,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedIntToDoubleFunctionWrapper<X extends Throwable> implements CheckedIntToDoubleFunction<X> {
+    private static final class CheckedIntToDoubleFunctionWrapper<X extends Throwable> implements ThrowingIntToDoubleFunction<X> {
 
-        private final CheckedIntToDoubleFunction<X> function;
+        private final ThrowingIntToDoubleFunction<X> function;
 
-        private CheckedIntToDoubleFunctionWrapper(CheckedIntToDoubleFunction<X> function) {
+        private CheckedIntToDoubleFunctionWrapper(ThrowingIntToDoubleFunction<X> function) {
             this.function = function;
         }
 
@@ -713,11 +713,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedIntToLongFunctionWrapper<X extends Throwable> implements CheckedIntToLongFunction<X> {
+    private static final class CheckedIntToLongFunctionWrapper<X extends Throwable> implements ThrowingIntToLongFunction<X> {
 
-        private final CheckedIntToLongFunction<X> function;
+        private final ThrowingIntToLongFunction<X> function;
 
-        private CheckedIntToLongFunctionWrapper(CheckedIntToLongFunction<X> function) {
+        private CheckedIntToLongFunctionWrapper(ThrowingIntToLongFunction<X> function) {
             this.function = function;
         }
 
@@ -727,11 +727,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedIntUnaryOperatorWrapper<X extends Throwable> implements CheckedIntUnaryOperator<X> {
+    private static final class CheckedIntUnaryOperatorWrapper<X extends Throwable> implements ThrowingIntUnaryOperator<X> {
 
-        private final CheckedIntUnaryOperator<X> operator;
+        private final ThrowingIntUnaryOperator<X> operator;
 
-        private CheckedIntUnaryOperatorWrapper(CheckedIntUnaryOperator<X> operator) {
+        private CheckedIntUnaryOperatorWrapper(ThrowingIntUnaryOperator<X> operator) {
             this.operator = operator;
         }
 
@@ -741,11 +741,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedLongBinaryOperatorWrapper<X extends Throwable> implements CheckedLongBinaryOperator<X> {
+    private static final class CheckedLongBinaryOperatorWrapper<X extends Throwable> implements ThrowingLongBinaryOperator<X> {
 
-        private final CheckedLongBinaryOperator<X> operator;
+        private final ThrowingLongBinaryOperator<X> operator;
 
-        private CheckedLongBinaryOperatorWrapper(CheckedLongBinaryOperator<X> operator) {
+        private CheckedLongBinaryOperatorWrapper(ThrowingLongBinaryOperator<X> operator) {
             this.operator = operator;
         }
 
@@ -755,11 +755,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedLongConsumerWrapper<X extends Throwable> implements CheckedLongConsumer<X> {
+    private static final class CheckedLongConsumerWrapper<X extends Throwable> implements ThrowingLongConsumer<X> {
 
-        private final CheckedLongConsumer<X> consumer;
+        private final ThrowingLongConsumer<X> consumer;
 
-        private CheckedLongConsumerWrapper(CheckedLongConsumer<X> consumer) {
+        private CheckedLongConsumerWrapper(ThrowingLongConsumer<X> consumer) {
             this.consumer = consumer;
         }
 
@@ -769,11 +769,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedLongFunctionWrapper<R, X extends Throwable> implements CheckedLongFunction<R, X> {
+    private static final class CheckedLongFunctionWrapper<R, X extends Throwable> implements ThrowingLongFunction<R, X> {
 
-        private final CheckedLongFunction<R, X> function;
+        private final ThrowingLongFunction<R, X> function;
 
-        private CheckedLongFunctionWrapper(CheckedLongFunction<R, X> function) {
+        private CheckedLongFunctionWrapper(ThrowingLongFunction<R, X> function) {
             this.function = function;
         }
 
@@ -783,11 +783,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedLongPredicateWrapper<X extends Throwable> implements CheckedLongPredicate<X> {
+    private static final class CheckedLongPredicateWrapper<X extends Throwable> implements ThrowingLongPredicate<X> {
 
-        private final CheckedLongPredicate<X> predicate;
+        private final ThrowingLongPredicate<X> predicate;
 
-        private CheckedLongPredicateWrapper(CheckedLongPredicate<X> predicate) {
+        private CheckedLongPredicateWrapper(ThrowingLongPredicate<X> predicate) {
             this.predicate = predicate;
         }
 
@@ -797,11 +797,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedLongSupplierWrapper<X extends Throwable> implements CheckedLongSupplier<X> {
+    private static final class CheckedLongSupplierWrapper<X extends Throwable> implements ThrowingLongSupplier<X> {
 
-        private final CheckedLongSupplier<X> supplier;
+        private final ThrowingLongSupplier<X> supplier;
 
-        private CheckedLongSupplierWrapper(CheckedLongSupplier<X> supplier) {
+        private CheckedLongSupplierWrapper(ThrowingLongSupplier<X> supplier) {
             this.supplier = supplier;
         }
 
@@ -811,11 +811,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedLongToDoubleFunctionWrapper<X extends Throwable> implements CheckedLongToDoubleFunction<X> {
+    private static final class CheckedLongToDoubleFunctionWrapper<X extends Throwable> implements ThrowingLongToDoubleFunction<X> {
 
-        private final CheckedLongToDoubleFunction<X> function;
+        private final ThrowingLongToDoubleFunction<X> function;
 
-        private CheckedLongToDoubleFunctionWrapper(CheckedLongToDoubleFunction<X> function) {
+        private CheckedLongToDoubleFunctionWrapper(ThrowingLongToDoubleFunction<X> function) {
             this.function = function;
         }
 
@@ -825,11 +825,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedLongToIntFunctionWrapper<X extends Throwable> implements CheckedLongToIntFunction<X> {
+    private static final class CheckedLongToIntFunctionWrapper<X extends Throwable> implements ThrowingLongToIntFunction<X> {
 
-        private final CheckedLongToIntFunction<X> function;
+        private final ThrowingLongToIntFunction<X> function;
 
-        private CheckedLongToIntFunctionWrapper(CheckedLongToIntFunction<X> function) {
+        private CheckedLongToIntFunctionWrapper(ThrowingLongToIntFunction<X> function) {
             this.function = function;
         }
 
@@ -839,11 +839,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedLongUnaryOperatorWrapper<X extends Throwable> implements CheckedLongUnaryOperator<X> {
+    private static final class CheckedLongUnaryOperatorWrapper<X extends Throwable> implements ThrowingLongUnaryOperator<X> {
 
-        private final CheckedLongUnaryOperator<X> operator;
+        private final ThrowingLongUnaryOperator<X> operator;
 
-        private CheckedLongUnaryOperatorWrapper(CheckedLongUnaryOperator<X> operator) {
+        private CheckedLongUnaryOperatorWrapper(ThrowingLongUnaryOperator<X> operator) {
             this.operator = operator;
         }
 
@@ -853,11 +853,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedObjDoubleConsumerWrapper<T, X extends Throwable> implements CheckedObjDoubleConsumer<T, X> {
+    private static final class CheckedObjDoubleConsumerWrapper<T, X extends Throwable> implements ThrowingObjDoubleConsumer<T, X> {
 
-        private final CheckedObjDoubleConsumer<T, X> consumer;
+        private final ThrowingObjDoubleConsumer<T, X> consumer;
 
-        private CheckedObjDoubleConsumerWrapper(CheckedObjDoubleConsumer<T, X> consumer) {
+        private CheckedObjDoubleConsumerWrapper(ThrowingObjDoubleConsumer<T, X> consumer) {
             this.consumer = consumer;
         }
 
@@ -867,11 +867,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedObjIntConsumerWrapper<T, X extends Throwable> implements CheckedObjIntConsumer<T, X> {
+    private static final class CheckedObjIntConsumerWrapper<T, X extends Throwable> implements ThrowingObjIntConsumer<T, X> {
 
-        private final CheckedObjIntConsumer<T, X> consumer;
+        private final ThrowingObjIntConsumer<T, X> consumer;
 
-        private CheckedObjIntConsumerWrapper(CheckedObjIntConsumer<T, X> consumer) {
+        private CheckedObjIntConsumerWrapper(ThrowingObjIntConsumer<T, X> consumer) {
             this.consumer = consumer;
         }
 
@@ -881,11 +881,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedObjLongConsumerWrapper<T, X extends Throwable> implements CheckedObjLongConsumer<T, X> {
+    private static final class CheckedObjLongConsumerWrapper<T, X extends Throwable> implements ThrowingObjLongConsumer<T, X> {
 
-        private final CheckedObjLongConsumer<T, X> consumer;
+        private final ThrowingObjLongConsumer<T, X> consumer;
 
-        private CheckedObjLongConsumerWrapper(CheckedObjLongConsumer<T, X> consumer) {
+        private CheckedObjLongConsumerWrapper(ThrowingObjLongConsumer<T, X> consumer) {
             this.consumer = consumer;
         }
 
@@ -895,11 +895,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedPredicateWrapper<T, X extends Throwable> implements CheckedPredicate<T, X> {
+    private static final class CheckedPredicateWrapper<T, X extends Throwable> implements ThrowingPredicate<T, X> {
 
-        private final CheckedPredicate<T, X> predicate;
+        private final ThrowingPredicate<T, X> predicate;
 
-        private CheckedPredicateWrapper(CheckedPredicate<T, X> predicate) {
+        private CheckedPredicateWrapper(ThrowingPredicate<T, X> predicate) {
             this.predicate = predicate;
         }
 
@@ -909,11 +909,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedRunnableWrapper<X extends Throwable> implements CheckedRunnable<X> {
+    private static final class CheckedRunnableWrapper<X extends Throwable> implements ThrowingRunnable<X> {
 
-        private final CheckedRunnable<X> runnable;
+        private final ThrowingRunnable<X> runnable;
 
-        private CheckedRunnableWrapper(CheckedRunnable<X> runnable) {
+        private CheckedRunnableWrapper(ThrowingRunnable<X> runnable) {
             this.runnable = runnable;
         }
 
@@ -923,11 +923,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedSupplierWrapper<T, X extends Throwable> implements CheckedSupplier<T, X> {
+    private static final class CheckedSupplierWrapper<T, X extends Throwable> implements ThrowingSupplier<T, X> {
 
-        private final CheckedSupplier<T, X> supplier;
+        private final ThrowingSupplier<T, X> supplier;
 
-        private CheckedSupplierWrapper(CheckedSupplier<T, X> supplier) {
+        private CheckedSupplierWrapper(ThrowingSupplier<T, X> supplier) {
             this.supplier = supplier;
         }
 
@@ -937,11 +937,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedToDoubleBiFunctionWrapper<T, U, X extends Throwable> implements CheckedToDoubleBiFunction<T, U, X> {
+    private static final class CheckedToDoubleBiFunctionWrapper<T, U, X extends Throwable> implements ThrowingToDoubleBiFunction<T, U, X> {
 
-        private final CheckedToDoubleBiFunction<T, U, X> function;
+        private final ThrowingToDoubleBiFunction<T, U, X> function;
 
-        private CheckedToDoubleBiFunctionWrapper(CheckedToDoubleBiFunction<T, U, X> function) {
+        private CheckedToDoubleBiFunctionWrapper(ThrowingToDoubleBiFunction<T, U, X> function) {
             this.function = function;
         }
 
@@ -951,11 +951,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedToDoubleFunctionWrapper<T, X extends Throwable> implements CheckedToDoubleFunction<T, X> {
+    private static final class CheckedToDoubleFunctionWrapper<T, X extends Throwable> implements ThrowingToDoubleFunction<T, X> {
 
-        private final CheckedToDoubleFunction<T, X> function;
+        private final ThrowingToDoubleFunction<T, X> function;
 
-        private CheckedToDoubleFunctionWrapper(CheckedToDoubleFunction<T, X> function) {
+        private CheckedToDoubleFunctionWrapper(ThrowingToDoubleFunction<T, X> function) {
             this.function = function;
         }
 
@@ -965,11 +965,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedToIntBiFunctionWrapper<T, U, X extends Throwable> implements CheckedToIntBiFunction<T, U, X> {
+    private static final class CheckedToIntBiFunctionWrapper<T, U, X extends Throwable> implements ThrowingToIntBiFunction<T, U, X> {
 
-        private final CheckedToIntBiFunction<T, U, X> function;
+        private final ThrowingToIntBiFunction<T, U, X> function;
 
-        private CheckedToIntBiFunctionWrapper(CheckedToIntBiFunction<T, U, X> function) {
+        private CheckedToIntBiFunctionWrapper(ThrowingToIntBiFunction<T, U, X> function) {
             this.function = function;
         }
 
@@ -979,11 +979,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedToIntFunctionWrapper<T, X extends Throwable> implements CheckedToIntFunction<T, X> {
+    private static final class CheckedToIntFunctionWrapper<T, X extends Throwable> implements ThrowingToIntFunction<T, X> {
 
-        private final CheckedToIntFunction<T, X> function;
+        private final ThrowingToIntFunction<T, X> function;
 
-        private CheckedToIntFunctionWrapper(CheckedToIntFunction<T, X> function) {
+        private CheckedToIntFunctionWrapper(ThrowingToIntFunction<T, X> function) {
             this.function = function;
         }
 
@@ -993,11 +993,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedToLongBiFunctionWrapper<T, U, X extends Throwable> implements CheckedToLongBiFunction<T, U, X> {
+    private static final class CheckedToLongBiFunctionWrapper<T, U, X extends Throwable> implements ThrowingToLongBiFunction<T, U, X> {
 
-        private final CheckedToLongBiFunction<T, U, X> function;
+        private final ThrowingToLongBiFunction<T, U, X> function;
 
-        private CheckedToLongBiFunctionWrapper(CheckedToLongBiFunction<T, U, X> function) {
+        private CheckedToLongBiFunctionWrapper(ThrowingToLongBiFunction<T, U, X> function) {
             this.function = function;
         }
 
@@ -1007,11 +1007,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedToLongFunctionWrapper<T, X extends Throwable> implements CheckedToLongFunction<T, X> {
+    private static final class CheckedToLongFunctionWrapper<T, X extends Throwable> implements ThrowingToLongFunction<T, X> {
 
-        private final CheckedToLongFunction<T, X> function;
+        private final ThrowingToLongFunction<T, X> function;
 
-        private CheckedToLongFunctionWrapper(CheckedToLongFunction<T, X> function) {
+        private CheckedToLongFunctionWrapper(ThrowingToLongFunction<T, X> function) {
             this.function = function;
         }
 
@@ -1021,11 +1021,11 @@ final class Spied {
         }
     }
 
-    private static final class CheckedUnaryOperatorWrapper<T, X extends Throwable> implements CheckedUnaryOperator<T, X> {
+    private static final class CheckedUnaryOperatorWrapper<T, X extends Throwable> implements ThrowingUnaryOperator<T, X> {
 
-        private final CheckedUnaryOperator<T, X> operator;
+        private final ThrowingUnaryOperator<T, X> operator;
 
-        private CheckedUnaryOperatorWrapper(CheckedUnaryOperator<T, X> operator) {
+        private CheckedUnaryOperatorWrapper(ThrowingUnaryOperator<T, X> operator) {
             this.operator = operator;
         }
 
