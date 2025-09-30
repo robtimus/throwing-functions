@@ -15,17 +15,17 @@
   limitations under the License.
 -->
 
-<site name="checked-functions"
+<site name="throwing-functions"
   xmlns="http://maven.apache.org/SITE/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/SITE/2.0.0 https://maven.apache.org/xsd/site-2.0.0.xsd">
 
-  <bannerLeft name="checked-functions" />
+  <bannerLeft name="throwing-functions" />
 
   <body>
-    <menu name="checked-functions">
+    <menu name="throwing-functions">
       <item name="Overview" href="index.html" />
       <item name="Download" href="download.html" />
-      <item name="Releases" href="https://github.com/robtimus/checked-functions/releases" />
+      <item name="Releases" href="https://github.com/robtimus/throwing-functions/releases" />
       <item name="Javadoc" href="apidocs/index.html" />
     </menu>
   </body>

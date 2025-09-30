@@ -1,5 +1,5 @@
 /*
- * module-info.java
+ * package-info.java
  * Copyright 2025 Rob Spoor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,4 @@
 /**
  * A collection of functional interfaces that can throw checked exceptions.
  */
-module com.github.robtimus.function.throwing {
-    exports com.github.robtimus.function.throwing;
-}
+package com.github.robtimus.function.throwing;
