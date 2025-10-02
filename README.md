@@ -17,7 +17,7 @@ try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, filter)) {
 }
 ```
 
-## Handling exceptions
+## Handling checked exceptions
 
 Each interface has a set of default methods that allow any thrown checked exception to be handled. These come in the following variants:
 
@@ -49,3 +49,7 @@ try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, filter)) {
     stream.forEach(ThrowingConsumer.of(Files::delete).onErrorHandleUnchecked(e -> logger.info("Failed to delete a file", e)));
 }
 ```
+
+## Handling unchecked exceptions
+
+Like the functional interfaces in `java.util.functions`, any thrown instance of `Error`, `RuntimeException` or one of their sub classes is relayed to the caller.
