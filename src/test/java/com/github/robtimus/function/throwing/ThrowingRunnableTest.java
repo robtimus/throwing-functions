@@ -750,7 +750,7 @@ class ThrowingRunnableTest {
         @Test
         void testArgumentThrowsUnchecked() {
             ThrowingRunnable<IOException> runnable = ThrowingRunnable.checked(() -> {
-                throw new UncheckedException("foo", new IOException());
+                throw UncheckedException.withoutStackTrace("foo", new IOException());
             });
 
             UncheckedException thrown = assertThrows(UncheckedException.class, runnable::run);
@@ -789,7 +789,7 @@ class ThrowingRunnableTest {
             @Test
             void testWrappingExactType() {
                 ThrowingRunnable<IOException> runnable = ThrowingRunnable.checked(() -> {
-                    throw new UncheckedException(new IOException("foo"));
+                    throw UncheckedException.withoutStackTrace(new IOException("foo"));
                 }, IOException.class);
 
                 IOException thrown = assertThrows(IOException.class, runnable::run);
@@ -799,7 +799,7 @@ class ThrowingRunnableTest {
             @Test
             void testWrappingSubType() {
                 ThrowingRunnable<IOException> runnable = ThrowingRunnable.checked(() -> {
-                    throw new UncheckedException(new FileNotFoundException("foo"));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException("foo"));
                 }, IOException.class);
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class, runnable::run);
@@ -809,7 +809,7 @@ class ThrowingRunnableTest {
             @Test
             void testWrappingOther() {
                 ThrowingRunnable<IOException> runnable = ThrowingRunnable.checked(() -> {
-                    throw new UncheckedException(new ParseException("foo", 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException("foo", 0));
                 }, IOException.class);
 
                 UncheckedException thrown = assertThrows(UncheckedException.class, runnable::run);
@@ -862,7 +862,7 @@ class ThrowingRunnableTest {
             @Test
             void testWrappingExactType() {
                 Runnable runnable = () -> {
-                    throw new UncheckedException(new IOException("foo"));
+                    throw UncheckedException.withoutStackTrace(new IOException("foo"));
                 };
 
                 IOException thrown = assertThrows(IOException.class, () -> ThrowingRunnable.invokeAndUnwrap(runnable, IOException.class));
@@ -872,7 +872,7 @@ class ThrowingRunnableTest {
             @Test
             void testWrappingSubType() {
                 Runnable runnable = () -> {
-                    throw new UncheckedException(new FileNotFoundException("foo"));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException("foo"));
                 };
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
@@ -883,7 +883,7 @@ class ThrowingRunnableTest {
             @Test
             void testWrappingOther() {
                 Runnable runnable = () -> {
-                    throw new UncheckedException(new ParseException("foo", 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException("foo", 0));
                 };
 
                 UncheckedException thrown = assertThrows(UncheckedException.class,

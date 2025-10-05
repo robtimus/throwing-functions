@@ -941,7 +941,7 @@ class ThrowingLongUnaryOperatorTest {
         @Test
         void testArgumentThrowsUnchecked() {
             ThrowingLongUnaryOperator<IOException> operator = ThrowingLongUnaryOperator.checked(l -> {
-                throw new UncheckedException(Long.toString(l), new IOException());
+                throw UncheckedException.withoutStackTrace(Long.toString(l), new IOException());
             });
 
             UncheckedException thrown = assertThrows(UncheckedException.class, () -> operator.applyAsLong(1L));
@@ -975,7 +975,7 @@ class ThrowingLongUnaryOperatorTest {
             @Test
             void testWrappingExactType() {
                 ThrowingLongUnaryOperator<IOException> operator = ThrowingLongUnaryOperator.checked(l -> {
-                    throw new UncheckedException(new IOException(Long.toString(l)));
+                    throw UncheckedException.withoutStackTrace(new IOException(Long.toString(l)));
                 }, IOException.class);
 
                 IOException thrown = assertThrows(IOException.class, () -> operator.applyAsLong(1L));
@@ -985,7 +985,7 @@ class ThrowingLongUnaryOperatorTest {
             @Test
             void testWrappingSubType() {
                 ThrowingLongUnaryOperator<IOException> operator = ThrowingLongUnaryOperator.checked(l -> {
-                    throw new UncheckedException(new FileNotFoundException(Long.toString(l)));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(Long.toString(l)));
                 }, IOException.class);
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class, () -> operator.applyAsLong(1L));
@@ -995,7 +995,7 @@ class ThrowingLongUnaryOperatorTest {
             @Test
             void testWrappingOther() {
                 ThrowingLongUnaryOperator<IOException> operator = ThrowingLongUnaryOperator.checked(l -> {
-                    throw new UncheckedException(new ParseException(Long.toString(l), 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(Long.toString(l), 0));
                 }, IOException.class);
 
                 UncheckedException thrown = assertThrows(UncheckedException.class, () -> operator.applyAsLong(1L));
@@ -1040,7 +1040,7 @@ class ThrowingLongUnaryOperatorTest {
             @Test
             void testWrappingExactType() {
                 LongUnaryOperator operator = l -> {
-                    throw new UncheckedException(new IOException(Long.toString(l)));
+                    throw UncheckedException.withoutStackTrace(new IOException(Long.toString(l)));
                 };
 
                 IOException thrown = assertThrows(IOException.class,
@@ -1051,7 +1051,7 @@ class ThrowingLongUnaryOperatorTest {
             @Test
             void testWrappingSubType() {
                 LongUnaryOperator operator = l -> {
-                    throw new UncheckedException(new FileNotFoundException(Long.toString(l)));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(Long.toString(l)));
                 };
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
@@ -1062,7 +1062,7 @@ class ThrowingLongUnaryOperatorTest {
             @Test
             void testWrappingOther() {
                 LongUnaryOperator operator = l -> {
-                    throw new UncheckedException(new ParseException(Long.toString(l), 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(Long.toString(l), 0));
                 };
 
                 UncheckedException thrown = assertThrows(UncheckedException.class,

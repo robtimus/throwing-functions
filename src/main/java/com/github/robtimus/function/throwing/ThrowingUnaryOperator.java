@@ -174,7 +174,7 @@ public interface ThrowingUnaryOperator<T, X extends Throwable> extends ThrowingF
 
     @Override
     default UnaryOperator<T> unchecked() {
-        return onErrorThrowAsUnchecked(UncheckedException::new);
+        return onErrorThrowAsUnchecked(UncheckedException::withoutStackTrace);
     }
 
     /**

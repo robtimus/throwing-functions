@@ -289,12 +289,12 @@ public interface ThrowingPredicate<T, X extends Throwable> {
 
     /**
      * Returns a predicate that evaluates this predicate on its input. Any checked exception thrown by this predicate is wrapped in an
-     * {@link UncheckedException}.
+     * {@link UncheckedException} {@linkplain UncheckedException#withoutStackTrace(Throwable) without a stack trace}.
      *
      * @return A predicate that wraps any checked exception in an {@link UncheckedException}.
      */
     default Predicate<T> unchecked() {
-        return onErrorThrowAsUnchecked(UncheckedException::new);
+        return onErrorThrowAsUnchecked(UncheckedException::withoutStackTrace);
     }
 
     /**

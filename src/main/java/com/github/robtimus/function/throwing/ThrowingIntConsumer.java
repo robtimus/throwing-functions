@@ -218,12 +218,12 @@ public interface ThrowingIntConsumer<X extends Throwable> {
 
     /**
      * Returns an operation that performs this operation on its input. Any checked exception thrown by this operation is wrapped in an
-     * {@link UncheckedException}.
+     * {@link UncheckedException} {@linkplain UncheckedException#withoutStackTrace(Throwable) without a stack trace}.
      *
      * @return An operation that wraps any checked exception in an {@link UncheckedException}.
      */
     default IntConsumer unchecked() {
-        return onErrorThrowAsUnchecked(UncheckedException::new);
+        return onErrorThrowAsUnchecked(UncheckedException::withoutStackTrace);
     }
 
     /**

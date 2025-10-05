@@ -1484,7 +1484,7 @@ class ThrowingLongPredicateTest {
         @Test
         void testArgumentThrowsUnchecked() {
             ThrowingLongPredicate<IOException> predicate = ThrowingLongPredicate.checked(l -> {
-                throw new UncheckedException(Long.toString(l), new IOException());
+                throw UncheckedException.withoutStackTrace(Long.toString(l), new IOException());
             });
 
             UncheckedException thrown = assertThrows(UncheckedException.class, () -> predicate.test(1L));
@@ -1518,7 +1518,7 @@ class ThrowingLongPredicateTest {
             @Test
             void testWrappingExactType() {
                 ThrowingLongPredicate<IOException> predicate = ThrowingLongPredicate.checked(l -> {
-                    throw new UncheckedException(new IOException(Long.toString(l)));
+                    throw UncheckedException.withoutStackTrace(new IOException(Long.toString(l)));
                 }, IOException.class);
 
                 IOException thrown = assertThrows(IOException.class, () -> predicate.test(1L));
@@ -1528,7 +1528,7 @@ class ThrowingLongPredicateTest {
             @Test
             void testWrappingSubType() {
                 ThrowingLongPredicate<IOException> predicate = ThrowingLongPredicate.checked(l -> {
-                    throw new UncheckedException(new FileNotFoundException(Long.toString(l)));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(Long.toString(l)));
                 }, IOException.class);
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class, () -> predicate.test(1L));
@@ -1538,7 +1538,7 @@ class ThrowingLongPredicateTest {
             @Test
             void testWrappingOther() {
                 ThrowingLongPredicate<IOException> predicate = ThrowingLongPredicate.checked(l -> {
-                    throw new UncheckedException(new ParseException(Long.toString(l), 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(Long.toString(l), 0));
                 }, IOException.class);
 
                 UncheckedException thrown = assertThrows(UncheckedException.class, () -> predicate.test(1L));
@@ -1583,7 +1583,7 @@ class ThrowingLongPredicateTest {
             @Test
             void testWrappingExactType() {
                 LongPredicate predicate = l -> {
-                    throw new UncheckedException(new IOException(Long.toString(l)));
+                    throw UncheckedException.withoutStackTrace(new IOException(Long.toString(l)));
                 };
 
                 IOException thrown = assertThrows(IOException.class, () -> ThrowingLongPredicate.invokeAndUnwrap(predicate, 1L, IOException.class));
@@ -1593,7 +1593,7 @@ class ThrowingLongPredicateTest {
             @Test
             void testWrappingSubType() {
                 LongPredicate predicate = l -> {
-                    throw new UncheckedException(new FileNotFoundException(Long.toString(l)));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(Long.toString(l)));
                 };
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
@@ -1604,7 +1604,7 @@ class ThrowingLongPredicateTest {
             @Test
             void testWrappingOther() {
                 LongPredicate predicate = l -> {
-                    throw new UncheckedException(new ParseException(Long.toString(l), 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(Long.toString(l), 0));
                 };
 
                 UncheckedException thrown = assertThrows(UncheckedException.class,

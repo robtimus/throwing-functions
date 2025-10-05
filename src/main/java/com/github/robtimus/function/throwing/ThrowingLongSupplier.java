@@ -203,12 +203,12 @@ public interface ThrowingLongSupplier<X extends Throwable> {
 
     /**
      * Returns a supplier that applies this supplier to its input. Any checked exception thrown by this supplier is wrapped in an
-     * {@link UncheckedException}.
+     * {@link UncheckedException} {@linkplain UncheckedException#withoutStackTrace(Throwable) without a stack trace}.
      *
      * @return A supplier that wraps any checked exception in an {@link UncheckedException}.
      */
     default LongSupplier unchecked() {
-        return onErrorThrowAsUnchecked(UncheckedException::new);
+        return onErrorThrowAsUnchecked(UncheckedException::withoutStackTrace);
     }
 
     /**

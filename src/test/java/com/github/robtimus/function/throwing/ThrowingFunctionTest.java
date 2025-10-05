@@ -1138,7 +1138,7 @@ class ThrowingFunctionTest {
         @Test
         void testArgumentThrowsUnchecked() {
             ThrowingFunction<String, String, IOException> function = ThrowingFunction.checked(s -> {
-                throw new UncheckedException(s, new IOException());
+                throw UncheckedException.withoutStackTrace(s, new IOException());
             });
 
             UncheckedException thrown = assertThrows(UncheckedException.class, () -> function.apply("foo"));
@@ -1172,7 +1172,7 @@ class ThrowingFunctionTest {
             @Test
             void testWrappingExactType() {
                 ThrowingFunction<String, String, IOException> function = ThrowingFunction.checked(s -> {
-                    throw new UncheckedException(new IOException(s));
+                    throw UncheckedException.withoutStackTrace(new IOException(s));
                 }, IOException.class);
 
                 IOException thrown = assertThrows(IOException.class, () -> function.apply("foo"));
@@ -1182,7 +1182,7 @@ class ThrowingFunctionTest {
             @Test
             void testWrappingSubType() {
                 ThrowingFunction<String, String, IOException> function = ThrowingFunction.checked(s -> {
-                    throw new UncheckedException(new FileNotFoundException(s));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(s));
                 }, IOException.class);
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class, () -> function.apply("foo"));
@@ -1192,7 +1192,7 @@ class ThrowingFunctionTest {
             @Test
             void testWrappingOther() {
                 ThrowingFunction<String, String, IOException> function = ThrowingFunction.checked(s -> {
-                    throw new UncheckedException(new ParseException(s, 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(s, 0));
                 }, IOException.class);
 
                 UncheckedException thrown = assertThrows(UncheckedException.class, () -> function.apply("foo"));
@@ -1239,7 +1239,7 @@ class ThrowingFunctionTest {
             @Test
             void testWrappingExactType() {
                 Function<String, String> function = s -> {
-                    throw new UncheckedException(new IOException(s));
+                    throw UncheckedException.withoutStackTrace(new IOException(s));
                 };
 
                 IOException thrown = assertThrows(IOException.class, () -> ThrowingFunction.invokeAndUnwrap(function, "foo", IOException.class));
@@ -1249,7 +1249,7 @@ class ThrowingFunctionTest {
             @Test
             void testWrappingSubType() {
                 Function<String, String> function = s -> {
-                    throw new UncheckedException(new FileNotFoundException(s));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(s));
                 };
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
@@ -1260,7 +1260,7 @@ class ThrowingFunctionTest {
             @Test
             void testWrappingOther() {
                 Function<String, String> function = s -> {
-                    throw new UncheckedException(new ParseException(s, 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(s, 0));
                 };
 
                 UncheckedException thrown = assertThrows(UncheckedException.class,

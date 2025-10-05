@@ -25,26 +25,57 @@ import java.util.Objects;
  * @author Rob Spoor
  */
 @SuppressWarnings("serial")
-public class UncheckedException extends RuntimeException {
+public final class UncheckedException extends RuntimeException {
 
-    /**
-     * Creates a new exception.
-     *
-     * @param message The optional detail message.
-     * @param cause The throwable to wrap.
-     * @throws NullPointerException If the given throwable is {@code null}.
-     */
-    public UncheckedException(String message, Throwable cause) {
-        super(message, Objects.requireNonNull(cause));
+    private UncheckedException(String message, Throwable cause, boolean includeStackTrace) {
+        super(message, cause, true, includeStackTrace);
     }
 
     /**
-     * Creates a new exception.
+     * Creates a new exception with a stack trace of its own.
      *
      * @param cause The throwable to wrap.
+     * @return The created exception.
      * @throws NullPointerException If the given throwable is {@code null}.
      */
-    public UncheckedException(Throwable cause) {
-        super(Objects.requireNonNull(cause));
+    public static UncheckedException withStackTrace(Throwable cause) {
+        return withStackTrace(cause.toString(), cause);
+    }
+
+    /**
+     * Creates a new exception with a stack trace of its own.
+     *
+     * @param message The optional detail message.
+     * @param cause The throwable to wrap.
+     * @return The created exception.
+     * @throws NullPointerException If the given throwable is {@code null}.
+     */
+    public static UncheckedException withStackTrace(String message, Throwable cause) {
+        Objects.requireNonNull(cause);
+        return new UncheckedException(message, cause, true);
+    }
+
+    /**
+     * Creates a new exception without a stack trace of its own. This makes the created exception more lightweight.
+     *
+     * @param cause The throwable to wrap.
+     * @return The created exception.
+     * @throws NullPointerException If the given throwable is {@code null}.
+     */
+    public static UncheckedException withoutStackTrace(Throwable cause) {
+        return withoutStackTrace(cause.toString(), cause);
+    }
+
+    /**
+     * Creates a new exception with a stack trace of its own. This makes the created exception more lightweight.
+     *
+     * @param message The optional detail message.
+     * @param cause The throwable to wrap.
+     * @return The created exception.
+     * @throws NullPointerException If the given throwable is {@code null}.
+     */
+    public static UncheckedException withoutStackTrace(String message, Throwable cause) {
+        Objects.requireNonNull(cause);
+        return new UncheckedException(message, cause, false);
     }
 }

@@ -933,7 +933,7 @@ class ThrowingBinaryOperatorTest {
         @Test
         void testArgumentThrowsUnchecked() {
             ThrowingBinaryOperator<String, IOException> operator = ThrowingBinaryOperator.checked((s1, s2) -> {
-                throw new UncheckedException(s1 + s2, new IOException());
+                throw UncheckedException.withoutStackTrace(s1 + s2, new IOException());
             });
 
             UncheckedException thrown = assertThrows(UncheckedException.class, () -> operator.apply("foo", "bar"));
@@ -967,7 +967,7 @@ class ThrowingBinaryOperatorTest {
             @Test
             void testWrappingExactType() {
                 ThrowingBinaryOperator<String, IOException> operator = ThrowingBinaryOperator.checked((s1, s2) -> {
-                    throw new UncheckedException(new IOException(s1 + s2));
+                    throw UncheckedException.withoutStackTrace(new IOException(s1 + s2));
                 }, IOException.class);
 
                 IOException thrown = assertThrows(IOException.class, () -> operator.apply("foo", "bar"));
@@ -977,7 +977,7 @@ class ThrowingBinaryOperatorTest {
             @Test
             void testWrappingSubType() {
                 ThrowingBinaryOperator<String, IOException> operator = ThrowingBinaryOperator.checked((s1, s2) -> {
-                    throw new UncheckedException(new FileNotFoundException(s1 + s2));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(s1 + s2));
                 }, IOException.class);
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class, () -> operator.apply("foo", "bar"));
@@ -987,7 +987,7 @@ class ThrowingBinaryOperatorTest {
             @Test
             void testWrappingOther() {
                 ThrowingBinaryOperator<String, IOException> operator = ThrowingBinaryOperator.checked((s1, s2) -> {
-                    throw new UncheckedException(new ParseException(s1 + s2, 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(s1 + s2, 0));
                 }, IOException.class);
 
                 UncheckedException thrown = assertThrows(UncheckedException.class, () -> operator.apply("foo", "bar"));
@@ -1035,7 +1035,7 @@ class ThrowingBinaryOperatorTest {
             @Test
             void testWrappingExactType() {
                 BinaryOperator<String> operator = (s1, s2) -> {
-                    throw new UncheckedException(new IOException(s1 + s2));
+                    throw UncheckedException.withoutStackTrace(new IOException(s1 + s2));
                 };
 
                 IOException thrown = assertThrows(IOException.class,
@@ -1046,7 +1046,7 @@ class ThrowingBinaryOperatorTest {
             @Test
             void testWrappingSubType() {
                 BinaryOperator<String> operator = (s1, s2) -> {
-                    throw new UncheckedException(new FileNotFoundException(s1 + s2));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(s1 + s2));
                 };
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
@@ -1057,7 +1057,7 @@ class ThrowingBinaryOperatorTest {
             @Test
             void testWrappingOther() {
                 BinaryOperator<String> operator = (s1, s2) -> {
-                    throw new UncheckedException(new ParseException(s1 + s2, 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(s1 + s2, 0));
                 };
 
                 UncheckedException thrown = assertThrows(UncheckedException.class,

@@ -1484,7 +1484,7 @@ class ThrowingIntPredicateTest {
         @Test
         void testArgumentThrowsUnchecked() {
             ThrowingIntPredicate<IOException> predicate = ThrowingIntPredicate.checked(i -> {
-                throw new UncheckedException(Integer.toString(i), new IOException());
+                throw UncheckedException.withoutStackTrace(Integer.toString(i), new IOException());
             });
 
             UncheckedException thrown = assertThrows(UncheckedException.class, () -> predicate.test(1));
@@ -1518,7 +1518,7 @@ class ThrowingIntPredicateTest {
             @Test
             void testWrappingExactType() {
                 ThrowingIntPredicate<IOException> predicate = ThrowingIntPredicate.checked(i -> {
-                    throw new UncheckedException(new IOException(Integer.toString(i)));
+                    throw UncheckedException.withoutStackTrace(new IOException(Integer.toString(i)));
                 }, IOException.class);
 
                 IOException thrown = assertThrows(IOException.class, () -> predicate.test(1));
@@ -1528,7 +1528,7 @@ class ThrowingIntPredicateTest {
             @Test
             void testWrappingSubType() {
                 ThrowingIntPredicate<IOException> predicate = ThrowingIntPredicate.checked(i -> {
-                    throw new UncheckedException(new FileNotFoundException(Integer.toString(i)));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(Integer.toString(i)));
                 }, IOException.class);
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class, () -> predicate.test(1));
@@ -1538,7 +1538,7 @@ class ThrowingIntPredicateTest {
             @Test
             void testWrappingOther() {
                 ThrowingIntPredicate<IOException> predicate = ThrowingIntPredicate.checked(i -> {
-                    throw new UncheckedException(new ParseException(Integer.toString(i), 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(Integer.toString(i), 0));
                 }, IOException.class);
 
                 UncheckedException thrown = assertThrows(UncheckedException.class, () -> predicate.test(1));
@@ -1583,7 +1583,7 @@ class ThrowingIntPredicateTest {
             @Test
             void testWrappingExactType() {
                 IntPredicate predicate = i -> {
-                    throw new UncheckedException(new IOException(Integer.toString(i)));
+                    throw UncheckedException.withoutStackTrace(new IOException(Integer.toString(i)));
                 };
 
                 IOException thrown = assertThrows(IOException.class, () -> ThrowingIntPredicate.invokeAndUnwrap(predicate, 1, IOException.class));
@@ -1593,7 +1593,7 @@ class ThrowingIntPredicateTest {
             @Test
             void testWrappingSubType() {
                 IntPredicate predicate = i -> {
-                    throw new UncheckedException(new FileNotFoundException(Integer.toString(i)));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(Integer.toString(i)));
                 };
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
@@ -1604,7 +1604,7 @@ class ThrowingIntPredicateTest {
             @Test
             void testWrappingOther() {
                 IntPredicate predicate = i -> {
-                    throw new UncheckedException(new ParseException(Integer.toString(i), 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(Integer.toString(i), 0));
                 };
 
                 UncheckedException thrown = assertThrows(UncheckedException.class,

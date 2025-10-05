@@ -248,12 +248,12 @@ public interface ThrowingIntUnaryOperator<X extends Throwable> {
 
     /**
      * Returns a unary operator that applies this operator to its input. Any checked exception thrown by this operator is wrapped in an
-     * {@link UncheckedException}.
+     * {@link UncheckedException} {@linkplain UncheckedException#withoutStackTrace(Throwable) without a stack trace}.
      *
      * @return A unary operator that wraps any checked exception in an {@link UncheckedException}.
      */
     default IntUnaryOperator unchecked() {
-        return onErrorThrowAsUnchecked(UncheckedException::new);
+        return onErrorThrowAsUnchecked(UncheckedException::withoutStackTrace);
     }
 
     /**

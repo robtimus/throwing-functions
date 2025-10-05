@@ -933,7 +933,7 @@ class ThrowingToLongFunctionTest {
         @Test
         void testArgumentThrowsUnchecked() {
             ThrowingToLongFunction<String, IOException> function = ThrowingToLongFunction.checked(s -> {
-                throw new UncheckedException(s, new IOException());
+                throw UncheckedException.withoutStackTrace(s, new IOException());
             });
 
             UncheckedException thrown = assertThrows(UncheckedException.class, () -> function.applyAsLong("foo"));
@@ -967,7 +967,7 @@ class ThrowingToLongFunctionTest {
             @Test
             void testWrappingExactType() {
                 ThrowingToLongFunction<String, IOException> function = ThrowingToLongFunction.checked(s -> {
-                    throw new UncheckedException(new IOException(s));
+                    throw UncheckedException.withoutStackTrace(new IOException(s));
                 }, IOException.class);
 
                 IOException thrown = assertThrows(IOException.class, () -> function.applyAsLong("foo"));
@@ -977,7 +977,7 @@ class ThrowingToLongFunctionTest {
             @Test
             void testWrappingSubType() {
                 ThrowingToLongFunction<String, IOException> function = ThrowingToLongFunction.checked(s -> {
-                    throw new UncheckedException(new FileNotFoundException(s));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(s));
                 }, IOException.class);
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class, () -> function.applyAsLong("foo"));
@@ -987,7 +987,7 @@ class ThrowingToLongFunctionTest {
             @Test
             void testWrappingOther() {
                 ThrowingToLongFunction<String, IOException> function = ThrowingToLongFunction.checked(s -> {
-                    throw new UncheckedException(new ParseException(s, 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(s, 0));
                 }, IOException.class);
 
                 UncheckedException thrown = assertThrows(UncheckedException.class, () -> function.applyAsLong("foo"));
@@ -1034,7 +1034,7 @@ class ThrowingToLongFunctionTest {
             @Test
             void testWrappingExactType() {
                 ToLongFunction<String> function = s -> {
-                    throw new UncheckedException(new IOException(s));
+                    throw UncheckedException.withoutStackTrace(new IOException(s));
                 };
 
                 IOException thrown = assertThrows(IOException.class,
@@ -1045,7 +1045,7 @@ class ThrowingToLongFunctionTest {
             @Test
             void testWrappingSubType() {
                 ToLongFunction<String> function = s -> {
-                    throw new UncheckedException(new FileNotFoundException(s));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(s));
                 };
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
@@ -1056,7 +1056,7 @@ class ThrowingToLongFunctionTest {
             @Test
             void testWrappingOther() {
                 ToLongFunction<String> function = s -> {
-                    throw new UncheckedException(new ParseException(s, 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(s, 0));
                 };
 
                 UncheckedException thrown = assertThrows(UncheckedException.class,

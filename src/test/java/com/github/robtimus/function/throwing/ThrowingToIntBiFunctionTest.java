@@ -948,7 +948,7 @@ class ThrowingToIntBiFunctionTest {
         @Test
         void testArgumentThrowsUnchecked() {
             ThrowingToIntBiFunction<String, String, IOException> function = ThrowingToIntBiFunction.checked((s1, s2) -> {
-                throw new UncheckedException(s1 + s2, new IOException());
+                throw UncheckedException.withoutStackTrace(s1 + s2, new IOException());
             });
 
             UncheckedException thrown = assertThrows(UncheckedException.class, () -> function.applyAsInt("foo", "bar"));
@@ -983,7 +983,7 @@ class ThrowingToIntBiFunctionTest {
             @Test
             void testWrappingExactType() {
                 ThrowingToIntBiFunction<String, String, IOException> function = ThrowingToIntBiFunction.checked((s1, s2) -> {
-                    throw new UncheckedException(new IOException(s1 + s2));
+                    throw UncheckedException.withoutStackTrace(new IOException(s1 + s2));
                 }, IOException.class);
 
                 IOException thrown = assertThrows(IOException.class, () -> function.applyAsInt("foo", "bar"));
@@ -993,7 +993,7 @@ class ThrowingToIntBiFunctionTest {
             @Test
             void testWrappingSubType() {
                 ThrowingToIntBiFunction<String, String, IOException> function = ThrowingToIntBiFunction.checked((s1, s2) -> {
-                    throw new UncheckedException(new FileNotFoundException(s1 + s2));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(s1 + s2));
                 }, IOException.class);
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class, () -> function.applyAsInt("foo", "bar"));
@@ -1003,7 +1003,7 @@ class ThrowingToIntBiFunctionTest {
             @Test
             void testWrappingOther() {
                 ThrowingToIntBiFunction<String, String, IOException> function = ThrowingToIntBiFunction.checked((s1, s2) -> {
-                    throw new UncheckedException(new ParseException(s1 + s2, 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(s1 + s2, 0));
                 }, IOException.class);
 
                 UncheckedException thrown = assertThrows(UncheckedException.class, () -> function.applyAsInt("foo", "bar"));
@@ -1051,7 +1051,7 @@ class ThrowingToIntBiFunctionTest {
             @Test
             void testWrappingExactType() {
                 ToIntBiFunction<String, String> function = (s1, s2) -> {
-                    throw new UncheckedException(new IOException(s1 + s2));
+                    throw UncheckedException.withoutStackTrace(new IOException(s1 + s2));
                 };
 
                 IOException thrown = assertThrows(IOException.class,
@@ -1062,7 +1062,7 @@ class ThrowingToIntBiFunctionTest {
             @Test
             void testWrappingSubType() {
                 ToIntBiFunction<String, String> function = (s1, s2) -> {
-                    throw new UncheckedException(new FileNotFoundException(s1 + s2));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(s1 + s2));
                 };
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
@@ -1073,7 +1073,7 @@ class ThrowingToIntBiFunctionTest {
             @Test
             void testWrappingOther() {
                 ToIntBiFunction<String, String> function = (s1, s2) -> {
-                    throw new UncheckedException(new ParseException(s1 + s2, 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(s1 + s2, 0));
                 };
 
                 UncheckedException thrown = assertThrows(UncheckedException.class,

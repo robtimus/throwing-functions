@@ -250,12 +250,12 @@ public interface ThrowingDoubleFunction<R, X extends Throwable> {
 
     /**
      * Returns a function that applies this function to its input. Any checked exception thrown by this function is wrapped in an
-     * {@link UncheckedException}.
+     * {@link UncheckedException} {@linkplain UncheckedException#withoutStackTrace(Throwable) without a stack trace}.
      *
      * @return A function that wraps any checked exception in an {@link UncheckedException}.
      */
     default DoubleFunction<R> unchecked() {
-        return onErrorThrowAsUnchecked(UncheckedException::new);
+        return onErrorThrowAsUnchecked(UncheckedException::withoutStackTrace);
     }
 
     /**

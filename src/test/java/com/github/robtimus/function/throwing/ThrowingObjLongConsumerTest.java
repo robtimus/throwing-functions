@@ -751,7 +751,7 @@ class ThrowingObjLongConsumerTest {
         @Test
         void testArgumentThrowsUnchecked() {
             ThrowingObjLongConsumer<String, IOException> consumer = ThrowingObjLongConsumer.checked((s, l) -> {
-                throw new UncheckedException(s + l, new IOException());
+                throw UncheckedException.withoutStackTrace(s + l, new IOException());
             });
 
             UncheckedException thrown = assertThrows(UncheckedException.class, () -> consumer.accept("foo", 1L));
@@ -790,7 +790,7 @@ class ThrowingObjLongConsumerTest {
             @Test
             void testWrappingExactType() {
                 ThrowingObjLongConsumer<String, IOException> consumer = ThrowingObjLongConsumer.checked((s, l) -> {
-                    throw new UncheckedException(new IOException(s + l));
+                    throw UncheckedException.withoutStackTrace(new IOException(s + l));
                 }, IOException.class);
 
                 IOException thrown = assertThrows(IOException.class, () -> consumer.accept("foo", 1L));
@@ -800,7 +800,7 @@ class ThrowingObjLongConsumerTest {
             @Test
             void testWrappingSubType() {
                 ThrowingObjLongConsumer<String, IOException> consumer = ThrowingObjLongConsumer.checked((s, l) -> {
-                    throw new UncheckedException(new FileNotFoundException(s + l));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(s + l));
                 }, IOException.class);
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class, () -> consumer.accept("foo", 1L));
@@ -810,7 +810,7 @@ class ThrowingObjLongConsumerTest {
             @Test
             void testWrappingOther() {
                 ThrowingObjLongConsumer<String, IOException> consumer = ThrowingObjLongConsumer.checked((s, l) -> {
-                    throw new UncheckedException(new ParseException(s + l, 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(s + l, 0));
                 }, IOException.class);
 
                 UncheckedException thrown = assertThrows(UncheckedException.class, () -> consumer.accept("foo", 1L));
@@ -863,7 +863,7 @@ class ThrowingObjLongConsumerTest {
             @Test
             void testWrappingExactType() {
                 ObjLongConsumer<String> consumer = (s, l) -> {
-                    throw new UncheckedException(new IOException(s + l));
+                    throw UncheckedException.withoutStackTrace(new IOException(s + l));
                 };
 
                 IOException thrown = assertThrows(IOException.class,
@@ -874,7 +874,7 @@ class ThrowingObjLongConsumerTest {
             @Test
             void testWrappingSubType() {
                 ObjLongConsumer<String> consumer = (s, l) -> {
-                    throw new UncheckedException(new FileNotFoundException(s + l));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(s + l));
                 };
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
@@ -885,7 +885,7 @@ class ThrowingObjLongConsumerTest {
             @Test
             void testWrappingOther() {
                 ObjLongConsumer<String> consumer = (s, l) -> {
-                    throw new UncheckedException(new ParseException(s + l, 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(s + l, 0));
                 };
 
                 UncheckedException thrown = assertThrows(UncheckedException.class,

@@ -743,7 +743,7 @@ class ThrowingBooleanSupplierTest {
         @Test
         void testArgumentThrowsUnchecked() {
             ThrowingBooleanSupplier<IOException> supplier = ThrowingBooleanSupplier.checked(() -> {
-                throw new UncheckedException("foo", new IOException());
+                throw UncheckedException.withoutStackTrace("foo", new IOException());
             });
 
             UncheckedException thrown = assertThrows(UncheckedException.class, supplier::getAsBoolean);
@@ -777,7 +777,7 @@ class ThrowingBooleanSupplierTest {
             @Test
             void testWrappingExactType() {
                 ThrowingBooleanSupplier<IOException> supplier = ThrowingBooleanSupplier.checked(() -> {
-                    throw new UncheckedException(new IOException("foo"));
+                    throw UncheckedException.withoutStackTrace(new IOException("foo"));
                 }, IOException.class);
 
                 IOException thrown = assertThrows(IOException.class, supplier::getAsBoolean);
@@ -787,7 +787,7 @@ class ThrowingBooleanSupplierTest {
             @Test
             void testWrappingSubType() {
                 ThrowingBooleanSupplier<IOException> supplier = ThrowingBooleanSupplier.checked(() -> {
-                    throw new UncheckedException(new FileNotFoundException("foo"));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException("foo"));
                 }, IOException.class);
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class, supplier::getAsBoolean);
@@ -797,7 +797,7 @@ class ThrowingBooleanSupplierTest {
             @Test
             void testWrappingOther() {
                 ThrowingBooleanSupplier<IOException> supplier = ThrowingBooleanSupplier.checked(() -> {
-                    throw new UncheckedException(new ParseException("foo", 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException("foo", 0));
                 }, IOException.class);
 
                 UncheckedException thrown = assertThrows(UncheckedException.class, supplier::getAsBoolean);
@@ -842,7 +842,7 @@ class ThrowingBooleanSupplierTest {
             @Test
             void testWrappingExactType() {
                 BooleanSupplier supplier = () -> {
-                    throw new UncheckedException(new IOException("foo"));
+                    throw UncheckedException.withoutStackTrace(new IOException("foo"));
                 };
 
                 IOException thrown = assertThrows(IOException.class, () -> ThrowingBooleanSupplier.invokeAndUnwrap(supplier, IOException.class));
@@ -852,7 +852,7 @@ class ThrowingBooleanSupplierTest {
             @Test
             void testWrappingSubType() {
                 BooleanSupplier supplier = () -> {
-                    throw new UncheckedException(new FileNotFoundException("foo"));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException("foo"));
                 };
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
@@ -863,7 +863,7 @@ class ThrowingBooleanSupplierTest {
             @Test
             void testWrappingOther() {
                 BooleanSupplier supplier = () -> {
-                    throw new UncheckedException(new ParseException("foo", 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException("foo", 0));
                 };
 
                 UncheckedException thrown = assertThrows(UncheckedException.class,

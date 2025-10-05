@@ -194,12 +194,13 @@ public interface ThrowingRunnable<X extends Throwable> {
     }
 
     /**
-     * Returns a task that performs this task. Any checked exception thrown by this taks is wrapped in an {@link UncheckedException}.
+     * Returns a task that performs this task. Any checked exception thrown by this tasl is wrapped in an {@link UncheckedException}
+     * {@linkplain UncheckedException#withoutStackTrace(Throwable) without a stack trace}.
      *
      * @return A task that wraps any checked exception in an {@link UncheckedException}.
      */
     default Runnable unchecked() {
-        return onErrorThrowAsUnchecked(UncheckedException::new);
+        return onErrorThrowAsUnchecked(UncheckedException::withoutStackTrace);
     }
 
     /**

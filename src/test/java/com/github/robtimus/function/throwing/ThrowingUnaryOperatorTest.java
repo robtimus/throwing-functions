@@ -951,7 +951,7 @@ class ThrowingUnaryOperatorTest {
         @Test
         void testArgumentThrowsUnchecked() {
             ThrowingUnaryOperator<String, IOException> operator = ThrowingUnaryOperator.checked(s -> {
-                throw new UncheckedException(s, new IOException());
+                throw UncheckedException.withoutStackTrace(s, new IOException());
             });
 
             UncheckedException thrown = assertThrows(UncheckedException.class, () -> operator.apply("foo"));
@@ -985,7 +985,7 @@ class ThrowingUnaryOperatorTest {
             @Test
             void testWrappingExactType() {
                 ThrowingUnaryOperator<String, IOException> operator = ThrowingUnaryOperator.checked(s -> {
-                    throw new UncheckedException(new IOException(s));
+                    throw UncheckedException.withoutStackTrace(new IOException(s));
                 }, IOException.class);
 
                 IOException thrown = assertThrows(IOException.class, () -> operator.apply("foo"));
@@ -995,7 +995,7 @@ class ThrowingUnaryOperatorTest {
             @Test
             void testWrappingSubType() {
                 ThrowingUnaryOperator<String, IOException> operator = ThrowingUnaryOperator.checked(s -> {
-                    throw new UncheckedException(new FileNotFoundException(s));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(s));
                 }, IOException.class);
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class, () -> operator.apply("foo"));
@@ -1005,7 +1005,7 @@ class ThrowingUnaryOperatorTest {
             @Test
             void testWrappingOther() {
                 ThrowingUnaryOperator<String, IOException> operator = ThrowingUnaryOperator.checked(s -> {
-                    throw new UncheckedException(new ParseException(s, 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(s, 0));
                 }, IOException.class);
 
                 UncheckedException thrown = assertThrows(UncheckedException.class, () -> operator.apply("foo"));
@@ -1052,7 +1052,7 @@ class ThrowingUnaryOperatorTest {
             @Test
             void testWrappingExactType() {
                 UnaryOperator<String> operator = s -> {
-                    throw new UncheckedException(new IOException(s));
+                    throw UncheckedException.withoutStackTrace(new IOException(s));
                 };
 
                 IOException thrown = assertThrows(IOException.class, () -> ThrowingUnaryOperator.invokeAndUnwrap(operator, "foo", IOException.class));
@@ -1062,7 +1062,7 @@ class ThrowingUnaryOperatorTest {
             @Test
             void testWrappingSubType() {
                 UnaryOperator<String> operator = s -> {
-                    throw new UncheckedException(new FileNotFoundException(s));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(s));
                 };
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
@@ -1073,7 +1073,7 @@ class ThrowingUnaryOperatorTest {
             @Test
             void testWrappingOther() {
                 UnaryOperator<String> operator = s -> {
-                    throw new UncheckedException(new ParseException(s, 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(s, 0));
                 };
 
                 UncheckedException thrown = assertThrows(UncheckedException.class,

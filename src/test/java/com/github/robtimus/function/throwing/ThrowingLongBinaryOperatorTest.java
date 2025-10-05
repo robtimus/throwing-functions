@@ -934,7 +934,7 @@ class ThrowingLongBinaryOperatorTest {
         @Test
         void testArgumentThrowsUnchecked() {
             ThrowingLongBinaryOperator<IOException> operator = ThrowingLongBinaryOperator.checked((l1, l2) -> {
-                throw new UncheckedException(Long.toString(l1 + l2), new IOException());
+                throw UncheckedException.withoutStackTrace(Long.toString(l1 + l2), new IOException());
             });
 
             UncheckedException thrown = assertThrows(UncheckedException.class, () -> operator.applyAsLong(1L, 2L));
@@ -968,7 +968,7 @@ class ThrowingLongBinaryOperatorTest {
             @Test
             void testWrappingExactType() {
                 ThrowingLongBinaryOperator<IOException> operator = ThrowingLongBinaryOperator.checked((l1, l2) -> {
-                    throw new UncheckedException(new IOException(Long.toString(l1 + l2)));
+                    throw UncheckedException.withoutStackTrace(new IOException(Long.toString(l1 + l2)));
                 }, IOException.class);
 
                 IOException thrown = assertThrows(IOException.class, () -> operator.applyAsLong(1L, 2L));
@@ -978,7 +978,7 @@ class ThrowingLongBinaryOperatorTest {
             @Test
             void testWrappingSubType() {
                 ThrowingLongBinaryOperator<IOException> operator = ThrowingLongBinaryOperator.checked((l1, l2) -> {
-                    throw new UncheckedException(new FileNotFoundException(Long.toString(l1 + l2)));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(Long.toString(l1 + l2)));
                 }, IOException.class);
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class, () -> operator.applyAsLong(1L, 2L));
@@ -988,7 +988,7 @@ class ThrowingLongBinaryOperatorTest {
             @Test
             void testWrappingOther() {
                 ThrowingLongBinaryOperator<IOException> operator = ThrowingLongBinaryOperator.checked((l1, l2) -> {
-                    throw new UncheckedException(new ParseException(Long.toString(l1 + l2), 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(Long.toString(l1 + l2), 0));
                 }, IOException.class);
 
                 UncheckedException thrown = assertThrows(UncheckedException.class, () -> operator.applyAsLong(1L, 2L));
@@ -1033,7 +1033,7 @@ class ThrowingLongBinaryOperatorTest {
             @Test
             void testWrappingExactType() {
                 LongBinaryOperator operator = (l1, l2) -> {
-                    throw new UncheckedException(new IOException(Long.toString(l1 + l2)));
+                    throw UncheckedException.withoutStackTrace(new IOException(Long.toString(l1 + l2)));
                 };
 
                 IOException thrown = assertThrows(IOException.class,
@@ -1044,7 +1044,7 @@ class ThrowingLongBinaryOperatorTest {
             @Test
             void testWrappingSubType() {
                 LongBinaryOperator operator = (l1, l2) -> {
-                    throw new UncheckedException(new FileNotFoundException(Long.toString(l1 + l2)));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(Long.toString(l1 + l2)));
                 };
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
@@ -1055,7 +1055,7 @@ class ThrowingLongBinaryOperatorTest {
             @Test
             void testWrappingOther() {
                 LongBinaryOperator operator = (l1, l2) -> {
-                    throw new UncheckedException(new ParseException(Long.toString(l1 + l2), 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(Long.toString(l1 + l2), 0));
                 };
 
                 UncheckedException thrown = assertThrows(UncheckedException.class,

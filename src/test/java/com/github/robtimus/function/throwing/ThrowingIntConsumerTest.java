@@ -845,7 +845,7 @@ class ThrowingIntConsumerTest {
         @Test
         void testArgumentThrowsUnchecked() {
             ThrowingIntConsumer<IOException> consumer = ThrowingIntConsumer.checked(i -> {
-                throw new UncheckedException(Integer.toString(i), new IOException());
+                throw UncheckedException.withoutStackTrace(Integer.toString(i), new IOException());
             });
 
             UncheckedException thrown = assertThrows(UncheckedException.class, () -> consumer.accept(1));
@@ -884,7 +884,7 @@ class ThrowingIntConsumerTest {
             @Test
             void testWrappingExactType() {
                 ThrowingIntConsumer<IOException> consumer = ThrowingIntConsumer.checked(i -> {
-                    throw new UncheckedException(new IOException(Integer.toString(i)));
+                    throw UncheckedException.withoutStackTrace(new IOException(Integer.toString(i)));
                 }, IOException.class);
 
                 IOException thrown = assertThrows(IOException.class, () -> consumer.accept(1));
@@ -894,7 +894,7 @@ class ThrowingIntConsumerTest {
             @Test
             void testWrappingSubType() {
                 ThrowingIntConsumer<IOException> consumer = ThrowingIntConsumer.checked(i -> {
-                    throw new UncheckedException(new FileNotFoundException(Integer.toString(i)));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(Integer.toString(i)));
                 }, IOException.class);
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class, () -> consumer.accept(1));
@@ -904,7 +904,7 @@ class ThrowingIntConsumerTest {
             @Test
             void testWrappingOther() {
                 ThrowingIntConsumer<IOException> consumer = ThrowingIntConsumer.checked(i -> {
-                    throw new UncheckedException(new ParseException(Integer.toString(i), 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(Integer.toString(i), 0));
                 }, IOException.class);
 
                 UncheckedException thrown = assertThrows(UncheckedException.class, () -> consumer.accept(1));
@@ -952,7 +952,7 @@ class ThrowingIntConsumerTest {
             @Test
             void testWrappingExactType() {
                 IntConsumer consumer = i -> {
-                    throw new UncheckedException(new IOException(Integer.toString(i)));
+                    throw UncheckedException.withoutStackTrace(new IOException(Integer.toString(i)));
                 };
 
                 IOException thrown = assertThrows(IOException.class, () -> ThrowingIntConsumer.invokeAndUnwrap(consumer, 1, IOException.class));
@@ -962,7 +962,7 @@ class ThrowingIntConsumerTest {
             @Test
             void testWrappingSubType() {
                 IntConsumer consumer = i -> {
-                    throw new UncheckedException(new FileNotFoundException(Integer.toString(i)));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(Integer.toString(i)));
                 };
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
@@ -973,7 +973,7 @@ class ThrowingIntConsumerTest {
             @Test
             void testWrappingOther() {
                 IntConsumer consumer = i -> {
-                    throw new UncheckedException(new ParseException(Integer.toString(i), 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(Integer.toString(i), 0));
                 };
 
                 UncheckedException thrown = assertThrows(UncheckedException.class,

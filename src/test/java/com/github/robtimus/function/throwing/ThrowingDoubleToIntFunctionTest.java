@@ -935,7 +935,7 @@ class ThrowingDoubleToIntFunctionTest {
         @Test
         void testArgumentThrowsUnchecked() {
             ThrowingDoubleToIntFunction<IOException> function = ThrowingDoubleToIntFunction.checked(d -> {
-                throw new UncheckedException(Double.toString(d), new IOException());
+                throw UncheckedException.withoutStackTrace(Double.toString(d), new IOException());
             });
 
             UncheckedException thrown = assertThrows(UncheckedException.class, () -> function.applyAsInt(1D));
@@ -969,7 +969,7 @@ class ThrowingDoubleToIntFunctionTest {
             @Test
             void testWrappingExactType() {
                 ThrowingDoubleToIntFunction<IOException> function = ThrowingDoubleToIntFunction.checked(d -> {
-                    throw new UncheckedException(new IOException(Double.toString(d)));
+                    throw UncheckedException.withoutStackTrace(new IOException(Double.toString(d)));
                 }, IOException.class);
 
                 IOException thrown = assertThrows(IOException.class, () -> function.applyAsInt(1D));
@@ -979,7 +979,7 @@ class ThrowingDoubleToIntFunctionTest {
             @Test
             void testWrappingSubType() {
                 ThrowingDoubleToIntFunction<IOException> function = ThrowingDoubleToIntFunction.checked(d -> {
-                    throw new UncheckedException(new FileNotFoundException(Double.toString(d)));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(Double.toString(d)));
                 }, IOException.class);
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class, () -> function.applyAsInt(1D));
@@ -989,7 +989,7 @@ class ThrowingDoubleToIntFunctionTest {
             @Test
             void testWrappingOther() {
                 ThrowingDoubleToIntFunction<IOException> function = ThrowingDoubleToIntFunction.checked(d -> {
-                    throw new UncheckedException(new ParseException(Double.toString(d), 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(Double.toString(d), 0));
                 }, IOException.class);
 
                 UncheckedException thrown = assertThrows(UncheckedException.class, () -> function.applyAsInt(1D));
@@ -1034,7 +1034,7 @@ class ThrowingDoubleToIntFunctionTest {
             @Test
             void testWrappingExactType() {
                 DoubleToIntFunction function = d -> {
-                    throw new UncheckedException(new IOException(Double.toString(d)));
+                    throw UncheckedException.withoutStackTrace(new IOException(Double.toString(d)));
                 };
 
                 IOException thrown = assertThrows(IOException.class,
@@ -1045,7 +1045,7 @@ class ThrowingDoubleToIntFunctionTest {
             @Test
             void testWrappingSubType() {
                 DoubleToIntFunction function = d -> {
-                    throw new UncheckedException(new FileNotFoundException(Double.toString(d)));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(Double.toString(d)));
                 };
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
@@ -1056,7 +1056,7 @@ class ThrowingDoubleToIntFunctionTest {
             @Test
             void testWrappingOther() {
                 DoubleToIntFunction function = d -> {
-                    throw new UncheckedException(new ParseException(Double.toString(d), 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(Double.toString(d), 0));
                 };
 
                 UncheckedException thrown = assertThrows(UncheckedException.class,

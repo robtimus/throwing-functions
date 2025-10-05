@@ -1484,7 +1484,7 @@ class ThrowingDoublePredicateTest {
         @Test
         void testArgumentThrowsUnchecked() {
             ThrowingDoublePredicate<IOException> predicate = ThrowingDoublePredicate.checked(d -> {
-                throw new UncheckedException(Double.toString(d), new IOException());
+                throw UncheckedException.withoutStackTrace(Double.toString(d), new IOException());
             });
 
             UncheckedException thrown = assertThrows(UncheckedException.class, () -> predicate.test(1D));
@@ -1518,7 +1518,7 @@ class ThrowingDoublePredicateTest {
             @Test
             void testWrappingExactType() {
                 ThrowingDoublePredicate<IOException> predicate = ThrowingDoublePredicate.checked(d -> {
-                    throw new UncheckedException(new IOException(Double.toString(d)));
+                    throw UncheckedException.withoutStackTrace(new IOException(Double.toString(d)));
                 }, IOException.class);
 
                 IOException thrown = assertThrows(IOException.class, () -> predicate.test(1D));
@@ -1528,7 +1528,7 @@ class ThrowingDoublePredicateTest {
             @Test
             void testWrappingSubType() {
                 ThrowingDoublePredicate<IOException> predicate = ThrowingDoublePredicate.checked(d -> {
-                    throw new UncheckedException(new FileNotFoundException(Double.toString(d)));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(Double.toString(d)));
                 }, IOException.class);
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class, () -> predicate.test(1D));
@@ -1538,7 +1538,7 @@ class ThrowingDoublePredicateTest {
             @Test
             void testWrappingOther() {
                 ThrowingDoublePredicate<IOException> predicate = ThrowingDoublePredicate.checked(d -> {
-                    throw new UncheckedException(new ParseException(Double.toString(d), 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(Double.toString(d), 0));
                 }, IOException.class);
 
                 UncheckedException thrown = assertThrows(UncheckedException.class, () -> predicate.test(1D));
@@ -1583,7 +1583,7 @@ class ThrowingDoublePredicateTest {
             @Test
             void testWrappingExactType() {
                 DoublePredicate predicate = d -> {
-                    throw new UncheckedException(new IOException(Double.toString(d)));
+                    throw UncheckedException.withoutStackTrace(new IOException(Double.toString(d)));
                 };
 
                 IOException thrown = assertThrows(IOException.class, () -> ThrowingDoublePredicate.invokeAndUnwrap(predicate, 1D, IOException.class));
@@ -1593,7 +1593,7 @@ class ThrowingDoublePredicateTest {
             @Test
             void testWrappingSubType() {
                 DoublePredicate predicate = d -> {
-                    throw new UncheckedException(new FileNotFoundException(Double.toString(d)));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(Double.toString(d)));
                 };
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
@@ -1604,7 +1604,7 @@ class ThrowingDoublePredicateTest {
             @Test
             void testWrappingOther() {
                 DoublePredicate predicate = d -> {
-                    throw new UncheckedException(new ParseException(Double.toString(d), 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(Double.toString(d), 0));
                 };
 
                 UncheckedException thrown = assertThrows(UncheckedException.class,

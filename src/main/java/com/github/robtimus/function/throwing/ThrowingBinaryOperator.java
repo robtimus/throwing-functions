@@ -177,7 +177,7 @@ public interface ThrowingBinaryOperator<T, X extends Throwable> extends Throwing
 
     @Override
     default BinaryOperator<T> unchecked() {
-        return onErrorThrowAsUnchecked(UncheckedException::new);
+        return onErrorThrowAsUnchecked(UncheckedException::withoutStackTrace);
     }
 
     /**

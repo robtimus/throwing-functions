@@ -949,7 +949,7 @@ class ThrowingToLongBiFunctionTest {
         @Test
         void testArgumentThrowsUnchecked() {
             ThrowingToLongBiFunction<String, String, IOException> function = ThrowingToLongBiFunction.checked((s1, s2) -> {
-                throw new UncheckedException(s1 + s2, new IOException());
+                throw UncheckedException.withoutStackTrace(s1 + s2, new IOException());
             });
 
             UncheckedException thrown = assertThrows(UncheckedException.class, () -> function.applyAsLong("foo", "bar"));
@@ -984,7 +984,7 @@ class ThrowingToLongBiFunctionTest {
             @Test
             void testWrappingExactType() {
                 ThrowingToLongBiFunction<String, String, IOException> function = ThrowingToLongBiFunction.checked((s1, s2) -> {
-                    throw new UncheckedException(new IOException(s1 + s2));
+                    throw UncheckedException.withoutStackTrace(new IOException(s1 + s2));
                 }, IOException.class);
 
                 IOException thrown = assertThrows(IOException.class, () -> function.applyAsLong("foo", "bar"));
@@ -994,7 +994,7 @@ class ThrowingToLongBiFunctionTest {
             @Test
             void testWrappingSubType() {
                 ThrowingToLongBiFunction<String, String, IOException> function = ThrowingToLongBiFunction.checked((s1, s2) -> {
-                    throw new UncheckedException(new FileNotFoundException(s1 + s2));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(s1 + s2));
                 }, IOException.class);
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class, () -> function.applyAsLong("foo", "bar"));
@@ -1004,7 +1004,7 @@ class ThrowingToLongBiFunctionTest {
             @Test
             void testWrappingOther() {
                 ThrowingToLongBiFunction<String, String, IOException> function = ThrowingToLongBiFunction.checked((s1, s2) -> {
-                    throw new UncheckedException(new ParseException(s1 + s2, 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(s1 + s2, 0));
                 }, IOException.class);
 
                 UncheckedException thrown = assertThrows(UncheckedException.class, () -> function.applyAsLong("foo", "bar"));
@@ -1052,7 +1052,7 @@ class ThrowingToLongBiFunctionTest {
             @Test
             void testWrappingExactType() {
                 ToLongBiFunction<String, String> function = (s1, s2) -> {
-                    throw new UncheckedException(new IOException(s1 + s2));
+                    throw UncheckedException.withoutStackTrace(new IOException(s1 + s2));
                 };
 
                 IOException thrown = assertThrows(IOException.class,
@@ -1063,7 +1063,7 @@ class ThrowingToLongBiFunctionTest {
             @Test
             void testWrappingSubType() {
                 ToLongBiFunction<String, String> function = (s1, s2) -> {
-                    throw new UncheckedException(new FileNotFoundException(s1 + s2));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(s1 + s2));
                 };
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
@@ -1074,7 +1074,7 @@ class ThrowingToLongBiFunctionTest {
             @Test
             void testWrappingOther() {
                 ToLongBiFunction<String, String> function = (s1, s2) -> {
-                    throw new UncheckedException(new ParseException(s1 + s2, 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(s1 + s2, 0));
                 };
 
                 UncheckedException thrown = assertThrows(UncheckedException.class,

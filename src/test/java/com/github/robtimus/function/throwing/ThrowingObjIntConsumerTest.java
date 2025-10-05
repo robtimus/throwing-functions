@@ -751,7 +751,7 @@ class ThrowingObjIntConsumerTest {
         @Test
         void testArgumentThrowsUnchecked() {
             ThrowingObjIntConsumer<String, IOException> consumer = ThrowingObjIntConsumer.checked((s, i) -> {
-                throw new UncheckedException(s + i, new IOException());
+                throw UncheckedException.withoutStackTrace(s + i, new IOException());
             });
 
             UncheckedException thrown = assertThrows(UncheckedException.class, () -> consumer.accept("foo", 1));
@@ -790,7 +790,7 @@ class ThrowingObjIntConsumerTest {
             @Test
             void testWrappingExactType() {
                 ThrowingObjIntConsumer<String, IOException> consumer = ThrowingObjIntConsumer.checked((s, i) -> {
-                    throw new UncheckedException(new IOException(s + i));
+                    throw UncheckedException.withoutStackTrace(new IOException(s + i));
                 }, IOException.class);
 
                 IOException thrown = assertThrows(IOException.class, () -> consumer.accept("foo", 1));
@@ -800,7 +800,7 @@ class ThrowingObjIntConsumerTest {
             @Test
             void testWrappingSubType() {
                 ThrowingObjIntConsumer<String, IOException> consumer = ThrowingObjIntConsumer.checked((s, i) -> {
-                    throw new UncheckedException(new FileNotFoundException(s + i));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(s + i));
                 }, IOException.class);
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class, () -> consumer.accept("foo", 1));
@@ -810,7 +810,7 @@ class ThrowingObjIntConsumerTest {
             @Test
             void testWrappingOther() {
                 ThrowingObjIntConsumer<String, IOException> consumer = ThrowingObjIntConsumer.checked((s, i) -> {
-                    throw new UncheckedException(new ParseException(s + i, 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(s + i, 0));
                 }, IOException.class);
 
                 UncheckedException thrown = assertThrows(UncheckedException.class, () -> consumer.accept("foo", 1));
@@ -863,7 +863,7 @@ class ThrowingObjIntConsumerTest {
             @Test
             void testWrappingExactType() {
                 ObjIntConsumer<String> consumer = (s, i) -> {
-                    throw new UncheckedException(new IOException(s + i));
+                    throw UncheckedException.withoutStackTrace(new IOException(s + i));
                 };
 
                 IOException thrown = assertThrows(IOException.class,
@@ -874,7 +874,7 @@ class ThrowingObjIntConsumerTest {
             @Test
             void testWrappingSubType() {
                 ObjIntConsumer<String> consumer = (s, i) -> {
-                    throw new UncheckedException(new FileNotFoundException(s + i));
+                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(s + i));
                 };
 
                 FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
@@ -885,7 +885,7 @@ class ThrowingObjIntConsumerTest {
             @Test
             void testWrappingOther() {
                 ObjIntConsumer<String> consumer = (s, i) -> {
-                    throw new UncheckedException(new ParseException(s + i, 0));
+                    throw UncheckedException.withoutStackTrace(new ParseException(s + i, 0));
                 };
 
                 UncheckedException thrown = assertThrows(UncheckedException.class,
