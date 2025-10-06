@@ -344,35 +344,16 @@ public interface ThrowingBiFunction<T, U, R, X extends Throwable> {
                                                                                  Class<X> errorType) {
         Objects.requireNonNull(function);
         Objects.requireNonNull(errorType);
-        return (t, u) -> invokeAndUnwrap(function, t, u, errorType);
-    }
-
-    /**
-     * Invokes a function, unwrapping any {@link UncheckedException} that is thrown if its cause if an instance of {@code errorType}.
-     *
-     * @param <T> The type of the first argument to the function.
-     * @param <U> The type of the second argument to the function.
-     * @param <R> The type of the result of the function.
-     * @param <X> The type of checked exception that can be thrown.
-     * @param function The function to invoke.
-     * @param input1 The first input to the function.
-     * @param input2 The second input to the function.
-     * @param errorType The type of checked exception that can be thrown.
-     * @return The result of invoking {@code function}.
-     * @throws NullPointerException If {@code function} or {@code errorType} is {@code null}.
-     * @throws X If {@code function} throws an {@link UncheckedException} that wraps an instance of {@code errorType}.
-     */
-    static <T, U, R, X extends Throwable> R invokeAndUnwrap(BiFunction<? super T, ? super U, ? extends R> function, T input1, U input2,
-                                                            Class<X> errorType) throws X {
-        Objects.requireNonNull(errorType);
-        try {
-            return function.apply(input1, input2);
-        } catch (UncheckedException e) {
-            Throwable cause = e.getCause();
-            if (errorType.isInstance(cause)) {
-                throw errorType.cast(cause);
+        return (t, u) -> {
+            try {
+                return function.apply(t, u);
+            } catch (UncheckedException e) {
+                Throwable cause = e.getCause();
+                if (errorType.isInstance(cause)) {
+                    throw errorType.cast(cause);
+                }
+                throw e;
             }
-            throw e;
-        }
+        };
     }
 }

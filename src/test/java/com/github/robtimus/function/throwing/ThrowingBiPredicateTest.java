@@ -29,7 +29,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.function.BiPredicate;
 import java.util.function.BooleanSupplier;
@@ -1557,78 +1556,6 @@ class ThrowingBiPredicateTest {
 
             IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> predicate.test("foo", "FOO"));
             assertEquals("fooFOO", thrown.getMessage());
-        }
-    }
-
-    @Nested
-    class InvokeAndUnwrap {
-
-        @Test
-        void testNullArguments() throws IOException {
-            BiPredicate<String, String> predicate = Objects::equals;
-
-            assertThrows(NullPointerException.class, () -> ThrowingBiPredicate.invokeAndUnwrap(null, "foo", "bar", IOException.class));
-            assertThrows(NullPointerException.class, () -> ThrowingBiPredicate.invokeAndUnwrap(predicate, "foo", "bar", null));
-
-            assertFalse(ThrowingBiPredicate.invokeAndUnwrap(predicate, null, "bar", IOException.class));
-            assertFalse(ThrowingBiPredicate.invokeAndUnwrap(predicate, "foo", null, IOException.class));
-        }
-
-        @Test
-        void testArgumentThrowsNothing() throws IOException {
-            BiPredicate<String, String> predicate = String::equalsIgnoreCase;
-
-            assertTrue(ThrowingBiPredicate.invokeAndUnwrap(predicate, "foo", "FOO", IOException.class));
-        }
-
-        @Nested
-        class ArgumentThrowsUncheckedException {
-
-            @Test
-            void testWrappingExactType() {
-                BiPredicate<String, String> predicate = (s1, s2) -> {
-                    throw UncheckedException.withoutStackTrace(new IOException(s1 + s2));
-                };
-
-                IOException thrown = assertThrows(IOException.class,
-                        () -> ThrowingBiPredicate.invokeAndUnwrap(predicate, "foo", "bar", IOException.class));
-                assertEquals("foobar", thrown.getMessage());
-            }
-
-            @Test
-            void testWrappingSubType() {
-                BiPredicate<String, String> predicate = (s1, s2) -> {
-                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(s1 + s2));
-                };
-
-                FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
-                        () -> ThrowingBiPredicate.invokeAndUnwrap(predicate, "foo", "bar", IOException.class));
-                assertEquals("foobar", thrown.getMessage());
-            }
-
-            @Test
-            void testWrappingOther() {
-                BiPredicate<String, String> predicate = (s1, s2) -> {
-                    throw UncheckedException.withoutStackTrace(new ParseException(s1 + s2, 0));
-                };
-
-                UncheckedException thrown = assertThrows(UncheckedException.class,
-                        () -> ThrowingBiPredicate.invokeAndUnwrap(predicate, "foo", "bar", IOException.class));
-                ParseException cause = assertInstanceOf(ParseException.class, thrown.getCause());
-                assertEquals("foobar", cause.getMessage());
-                assertEquals(0, cause.getErrorOffset());
-            }
-        }
-
-        @Test
-        void testArgumentThrowsOther() {
-            BiPredicate<String, String> predicate = (s1, s2) -> {
-                throw new IllegalStateException(s1 + s2);
-            };
-
-            IllegalStateException thrown = assertThrows(IllegalStateException.class,
-                    () -> ThrowingBiPredicate.invokeAndUnwrap(predicate, "foo", "bar", IOException.class));
-            assertEquals("foobar", thrown.getMessage());
         }
     }
 }

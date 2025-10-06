@@ -311,31 +311,16 @@ public interface ThrowingLongBinaryOperator<X extends Throwable> {
     static <X extends Throwable> ThrowingLongBinaryOperator<X> checked(LongBinaryOperator operator, Class<X> errorType) {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(errorType);
-        return (t, u) -> invokeAndUnwrap(operator, t, u, errorType);
-    }
-
-    /**
-     * Invokes a binary operator, unwrapping any {@link UncheckedException} that is thrown if its cause if an instance of {@code errorType}.
-     *
-     * @param <X> The type of checked exception that can be thrown.
-     * @param operator The operator to invoke.
-     * @param input1 The first input to the operator.
-     * @param input2 The second input to the operator.
-     * @param errorType The type of checked exception that can be thrown.
-     * @return The result of invoking {@code operator}.
-     * @throws NullPointerException If {@code operator} or {@code errorType} is {@code null}.
-     * @throws X If {@code operator} throws an {@link UncheckedException} that wraps an instance of {@code errorType}.
-     */
-    static <X extends Throwable> long invokeAndUnwrap(LongBinaryOperator operator, long input1, long input2, Class<X> errorType) throws X {
-        Objects.requireNonNull(errorType);
-        try {
-            return operator.applyAsLong(input1, input2);
-        } catch (UncheckedException e) {
-            Throwable cause = e.getCause();
-            if (errorType.isInstance(cause)) {
-                throw errorType.cast(cause);
+        return (t, u) -> {
+            try {
+                return operator.applyAsLong(t, u);
+            } catch (UncheckedException e) {
+                Throwable cause = e.getCause();
+                if (errorType.isInstance(cause)) {
+                    throw errorType.cast(cause);
+                }
+                throw e;
             }
-            throw e;
-        }
+        };
     }
 }

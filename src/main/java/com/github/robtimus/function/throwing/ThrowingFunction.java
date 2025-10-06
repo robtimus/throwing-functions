@@ -359,32 +359,16 @@ public interface ThrowingFunction<T, R, X extends Throwable> {
     static <T, R, X extends Throwable> ThrowingFunction<T, R, X> checked(Function<? super T, ? extends R> function, Class<X> errorType) {
         Objects.requireNonNull(function);
         Objects.requireNonNull(errorType);
-        return t -> invokeAndUnwrap(function, t, errorType);
-    }
-
-    /**
-     * Invokes a function, unwrapping any {@link UncheckedException} that is thrown if its cause if an instance of {@code errorType}.
-     *
-     * @param <T> The type of the input to the function.
-     * @param <R> The type of the result of the function.
-     * @param <X> The type of checked exception that can be thrown.
-     * @param function The function to invoke.
-     * @param input The input to the function.
-     * @param errorType The type of checked exception that can be thrown.
-     * @return The result of invoking {@code function}.
-     * @throws NullPointerException If {@code function} or {@code errorType} is {@code null}.
-     * @throws X If {@code function} throws an {@link UncheckedException} that wraps an instance of {@code errorType}.
-     */
-    static <T, R, X extends Throwable> R invokeAndUnwrap(Function<? super T, ? extends R> function, T input, Class<X> errorType) throws X {
-        Objects.requireNonNull(errorType);
-        try {
-            return function.apply(input);
-        } catch (UncheckedException e) {
-            Throwable cause = e.getCause();
-            if (errorType.isInstance(cause)) {
-                throw errorType.cast(cause);
+        return t -> {
+            try {
+                return function.apply(t);
+            } catch (UncheckedException e) {
+                Throwable cause = e.getCause();
+                if (errorType.isInstance(cause)) {
+                    throw errorType.cast(cause);
+                }
+                throw e;
             }
-            throw e;
-        }
+        };
     }
 }

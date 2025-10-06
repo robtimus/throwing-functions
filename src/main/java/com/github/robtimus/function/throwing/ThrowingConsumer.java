@@ -285,30 +285,16 @@ public interface ThrowingConsumer<T, X extends Throwable> {
     static <T, X extends Throwable> ThrowingConsumer<T, X> checked(Consumer<? super T> operation, Class<X> errorType) {
         Objects.requireNonNull(operation);
         Objects.requireNonNull(errorType);
-        return t -> invokeAndUnwrap(operation, t, errorType);
-    }
-
-    /**
-     * Invokes an operation, unwrapping any {@link UncheckedException} that is thrown if its cause if an instance of {@code errorType}.
-     *
-     * @param <T> The type of the input to the operation.
-     * @param <X> The type of checked exception that can be thrown.
-     * @param operation The operation to invoke.
-     * @param input The input to the operation.
-     * @param errorType The type of checked exception that can be thrown.
-     * @throws NullPointerException If {@code operation} or {@code errorType} is {@code null}.
-     * @throws X If {@code operation} throws an {@link UncheckedException} that wraps an instance of {@code errorType}.
-     */
-    static <T, X extends Throwable> void invokeAndUnwrap(Consumer<? super T> operation, T input, Class<X> errorType) throws X {
-        Objects.requireNonNull(errorType);
-        try {
-            operation.accept(input);
-        } catch (UncheckedException e) {
-            Throwable cause = e.getCause();
-            if (errorType.isInstance(cause)) {
-                throw errorType.cast(cause);
+        return t -> {
+            try {
+                operation.accept(t);
+            } catch (UncheckedException e) {
+                Throwable cause = e.getCause();
+                if (errorType.isInstance(cause)) {
+                    throw errorType.cast(cause);
+                }
+                throw e;
             }
-            throw e;
-        }
+        };
     }
 }

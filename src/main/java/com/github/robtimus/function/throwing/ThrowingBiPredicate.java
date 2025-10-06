@@ -379,35 +379,16 @@ public interface ThrowingBiPredicate<T, U, X extends Throwable> {
     static <T, U, X extends Throwable> ThrowingBiPredicate<T, U, X> checked(BiPredicate<? super T, ? super U> predicate, Class<X> errorType) {
         Objects.requireNonNull(predicate);
         Objects.requireNonNull(errorType);
-        return (t, u) -> invokeAndUnwrap(predicate, t, u, errorType);
-    }
-
-    /**
-     * Invokes a predicate, unwrapping any {@link UncheckedException} that is thrown if its cause if an instance of {@code errorType}.
-     *
-     * @param <T> The type of the first argument to the predicate.
-     * @param <U> The type of the second argument the predicate.
-     * @param <X> The type of checked exception that can be thrown.
-     * @param predicate The predicate to invoke.
-     * @param input1 The first input to the predicate.
-     * @param input2 The second input to the predicate.
-     * @param errorType The type of checked exception that can be thrown.
-     * @return The result of invoking {@code predicate}.
-     * @throws NullPointerException If {@code predicate} or {@code errorType} is {@code null}.
-     * @throws X If {@code predicate} throws an {@link UncheckedException} that wraps an instance of {@code errorType}.
-     */
-    static <T, U, X extends Throwable> boolean invokeAndUnwrap(BiPredicate<? super T, ? super U> predicate, T input1, U input2, Class<X> errorType)
-            throws X {
-
-        Objects.requireNonNull(errorType);
-        try {
-            return predicate.test(input1, input2);
-        } catch (UncheckedException e) {
-            Throwable cause = e.getCause();
-            if (errorType.isInstance(cause)) {
-                throw errorType.cast(cause);
+        return (t, u) -> {
+            try {
+                return predicate.test(t, u);
+            } catch (UncheckedException e) {
+                Throwable cause = e.getCause();
+                if (errorType.isInstance(cause)) {
+                    throw errorType.cast(cause);
+                }
+                throw e;
             }
-            throw e;
-        }
+        };
     }
 }

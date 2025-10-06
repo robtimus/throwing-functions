@@ -29,7 +29,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoublePredicate;
@@ -1555,74 +1554,6 @@ class ThrowingDoublePredicateTest {
             }, IOException.class);
 
             IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> predicate.test(1D));
-            assertEquals("1.0", thrown.getMessage());
-        }
-    }
-
-    @Nested
-    class InvokeAndUnwrap {
-
-        @Test
-        void testNullArguments() {
-            DoublePredicate predicate = Objects::nonNull;
-
-            assertThrows(NullPointerException.class, () -> ThrowingDoublePredicate.invokeAndUnwrap(null, 1D, IOException.class));
-            assertThrows(NullPointerException.class, () -> ThrowingDoublePredicate.invokeAndUnwrap(predicate, 1D, null));
-        }
-
-        @Test
-        void testArgumentThrowsNothing() throws IOException {
-            DoublePredicate predicate = d -> d % 2 != 0;
-
-            assertTrue(ThrowingDoublePredicate.invokeAndUnwrap(predicate, 1D, IOException.class));
-        }
-
-        @Nested
-        class ArgumentThrowsUncheckedException {
-
-            @Test
-            void testWrappingExactType() {
-                DoublePredicate predicate = d -> {
-                    throw UncheckedException.withoutStackTrace(new IOException(Double.toString(d)));
-                };
-
-                IOException thrown = assertThrows(IOException.class, () -> ThrowingDoublePredicate.invokeAndUnwrap(predicate, 1D, IOException.class));
-                assertEquals("1.0", thrown.getMessage());
-            }
-
-            @Test
-            void testWrappingSubType() {
-                DoublePredicate predicate = d -> {
-                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(Double.toString(d)));
-                };
-
-                FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
-                        () -> ThrowingDoublePredicate.invokeAndUnwrap(predicate, 1D, IOException.class));
-                assertEquals("1.0", thrown.getMessage());
-            }
-
-            @Test
-            void testWrappingOther() {
-                DoublePredicate predicate = d -> {
-                    throw UncheckedException.withoutStackTrace(new ParseException(Double.toString(d), 0));
-                };
-
-                UncheckedException thrown = assertThrows(UncheckedException.class,
-                        () -> ThrowingDoublePredicate.invokeAndUnwrap(predicate, 1D, IOException.class));
-                ParseException cause = assertInstanceOf(ParseException.class, thrown.getCause());
-                assertEquals("1.0", cause.getMessage());
-                assertEquals(0, cause.getErrorOffset());
-            }
-        }
-
-        @Test
-        void testArgumentThrowsOther() {
-            DoublePredicate predicate = d -> {
-                throw new IllegalStateException(Double.toString(d));
-            };
-
-            IllegalStateException thrown = assertThrows(IllegalStateException.class,
-                    () -> ThrowingDoublePredicate.invokeAndUnwrap(predicate, 1D, IOException.class));
             assertEquals("1.0", thrown.getMessage());
         }
     }

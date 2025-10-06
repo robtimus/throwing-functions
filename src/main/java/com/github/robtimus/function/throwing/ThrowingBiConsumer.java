@@ -292,34 +292,16 @@ public interface ThrowingBiConsumer<T, U, X extends Throwable> {
     static <T, U, X extends Throwable> ThrowingBiConsumer<T, U, X> checked(BiConsumer<? super T, ? super U> operation, Class<X> errorType) {
         Objects.requireNonNull(operation);
         Objects.requireNonNull(errorType);
-        return (t, u) -> invokeAndUnwrap(operation, t, u, errorType);
-    }
-
-    /**
-     * Invokes an operation, unwrapping any {@link UncheckedException} that is thrown if its cause if an instance of {@code errorType}.
-     *
-     * @param <T> The type of the first argument to the operation.
-     * @param <U> The type of the second argument to the operation.
-     * @param <X> The type of checked exception that can be thrown.
-     * @param operation The operation to invoke.
-     * @param input1 The first input to the operation.
-     * @param input2 The second input to the operation.
-     * @param errorType The type of checked exception that can be thrown.
-     * @throws NullPointerException If {@code operation} or {@code errorType} is {@code null}.
-     * @throws X If {@code operation} throws an {@link UncheckedException} that wraps an instance of {@code errorType}.
-     */
-    static <T, U, X extends Throwable> void invokeAndUnwrap(BiConsumer<? super T, ? super U> operation, T input1, U input2, Class<X> errorType)
-            throws X {
-
-        Objects.requireNonNull(errorType);
-        try {
-            operation.accept(input1, input2);
-        } catch (UncheckedException e) {
-            Throwable cause = e.getCause();
-            if (errorType.isInstance(cause)) {
-                throw errorType.cast(cause);
+        return (t, u) -> {
+            try {
+                operation.accept(t, u);
+            } catch (UncheckedException e) {
+                Throwable cause = e.getCause();
+                if (errorType.isInstance(cause)) {
+                    throw errorType.cast(cause);
+                }
+                throw e;
             }
-            throw e;
-        }
+        };
     }
 }

@@ -238,32 +238,16 @@ public interface ThrowingBinaryOperator<T, X extends Throwable> extends Throwing
     static <T, X extends Throwable> ThrowingBinaryOperator<T, X> checked(BinaryOperator<T> operator, Class<X> errorType) {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(errorType);
-        return (t, u) -> invokeAndUnwrap(operator, t, u, errorType);
-    }
-
-    /**
-     * Invokes a binary operator, unwrapping any {@link UncheckedException} that is thrown if its cause if an instance of {@code errorType}.
-     *
-     * @param <T> The type of the operands and result of the operator.
-     * @param <X> The type of checked exception that can be thrown.
-     * @param operator The binary operator to invoke.
-     * @param input1 The first input to the binary operator.
-     * @param input2 The second input to the binary operator.
-     * @param errorType The type of checked exception that can be thrown.
-     * @return The result of invoking {@code operator}.
-     * @throws NullPointerException If {@code operator} or {@code errorType} is {@code null}.
-     * @throws X If {@code operator} throws an {@link UncheckedException} that wraps an instance of {@code errorType}.
-     */
-    static <T, X extends Throwable> T invokeAndUnwrap(BinaryOperator<T> operator, T input1, T input2, Class<X> errorType) throws X {
-        Objects.requireNonNull(errorType);
-        try {
-            return operator.apply(input1, input2);
-        } catch (UncheckedException e) {
-            Throwable cause = e.getCause();
-            if (errorType.isInstance(cause)) {
-                throw errorType.cast(cause);
+        return (t, u) -> {
+            try {
+                return operator.apply(t, u);
+            } catch (UncheckedException e) {
+                Throwable cause = e.getCause();
+                if (errorType.isInstance(cause)) {
+                    throw errorType.cast(cause);
+                }
+                throw e;
             }
-            throw e;
-        }
+        };
     }
 }

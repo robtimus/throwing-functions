@@ -246,31 +246,16 @@ public interface ThrowingUnaryOperator<T, X extends Throwable> extends ThrowingF
     static <T, X extends Throwable> ThrowingUnaryOperator<T, X> checked(UnaryOperator<T> operator, Class<X> errorType) {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(errorType);
-        return t -> invokeAndUnwrap(operator, t, errorType);
-    }
-
-    /**
-     * Invokes a unary operator, unwrapping any {@link UncheckedException} that is thrown if its cause if an instance of {@code errorType}.
-     *
-     * @param <T> The type of the operand and result of the operator.
-     * @param <X> The type of checked exception that can be thrown.
-     * @param operator The unary operator to invoke.
-     * @param input The input to the unary operator.
-     * @param errorType The type of checked exception that can be thrown.
-     * @return The result of invoking {@code operator}.
-     * @throws NullPointerException If {@code operator} or {@code errorType} is {@code null}.
-     * @throws X If {@code operator} throws an {@link UncheckedException} that wraps an instance of {@code errorType}.
-     */
-    static <T, X extends Throwable> T invokeAndUnwrap(UnaryOperator<T> operator, T input, Class<X> errorType) throws X {
-        Objects.requireNonNull(errorType);
-        try {
-            return operator.apply(input);
-        } catch (UncheckedException e) {
-            Throwable cause = e.getCause();
-            if (errorType.isInstance(cause)) {
-                throw errorType.cast(cause);
+        return t -> {
+            try {
+                return operator.apply(t);
+            } catch (UncheckedException e) {
+                Throwable cause = e.getCause();
+                if (errorType.isInstance(cause)) {
+                    throw errorType.cast(cause);
+                }
+                throw e;
             }
-            throw e;
-        }
+        };
     }
 }

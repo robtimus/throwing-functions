@@ -256,28 +256,16 @@ public interface ThrowingRunnable<X extends Throwable> {
     static <X extends Throwable> ThrowingRunnable<X> checked(Runnable task, Class<X> errorType) {
         Objects.requireNonNull(task);
         Objects.requireNonNull(errorType);
-        return () -> invokeAndUnwrap(task, errorType);
-    }
-
-    /**
-     * Invokes a task, unwrapping any {@link UncheckedException} that is thrown if its cause if an instance of {@code errorType}.
-     *
-     * @param <X> The type of checked exception that can be thrown.
-     * @param task The task to invoke.
-     * @param errorType The type of checked exception that can be thrown.
-     * @throws NullPointerException If {@code task} or {@code errorType} is {@code null}.
-     * @throws X If {@code task} throws an {@link UncheckedException} that wraps an instance of {@code errorType}.
-     */
-    static <X extends Throwable> void invokeAndUnwrap(Runnable task, Class<X> errorType) throws X {
-        Objects.requireNonNull(errorType);
-        try {
-            task.run();
-        } catch (UncheckedException e) {
-            Throwable cause = e.getCause();
-            if (errorType.isInstance(cause)) {
-                throw errorType.cast(cause);
+        return () -> {
+            try {
+                task.run();
+            } catch (UncheckedException e) {
+                Throwable cause = e.getCause();
+                if (errorType.isInstance(cause)) {
+                    throw errorType.cast(cause);
+                }
+                throw e;
             }
-            throw e;
-        }
+        };
     }
 }

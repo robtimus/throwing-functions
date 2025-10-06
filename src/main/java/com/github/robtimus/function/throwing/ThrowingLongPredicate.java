@@ -365,30 +365,16 @@ public interface ThrowingLongPredicate<X extends Throwable> {
     static <X extends Throwable> ThrowingLongPredicate<X> checked(LongPredicate predicate, Class<X> errorType) {
         Objects.requireNonNull(predicate);
         Objects.requireNonNull(errorType);
-        return t -> invokeAndUnwrap(predicate, t, errorType);
-    }
-
-    /**
-     * Invokes a predicate, unwrapping any {@link UncheckedException} that is thrown if its cause if an instance of {@code errorType}.
-     *
-     * @param <X> The type of checked exception that can be thrown.
-     * @param predicate The predicate to invoke.
-     * @param input The input to the predicate.
-     * @param errorType The type of checked exception that can be thrown.
-     * @return The result of invoking {@code predicate}.
-     * @throws NullPointerException If {@code predicate} or {@code errorType} is {@code null}.
-     * @throws X If {@code predicate} throws an {@link UncheckedException} that wraps an instance of {@code errorType}.
-     */
-    static <X extends Throwable> boolean invokeAndUnwrap(LongPredicate predicate, long input, Class<X> errorType) throws X {
-        Objects.requireNonNull(errorType);
-        try {
-            return predicate.test(input);
-        } catch (UncheckedException e) {
-            Throwable cause = e.getCause();
-            if (errorType.isInstance(cause)) {
-                throw errorType.cast(cause);
+        return t -> {
+            try {
+                return predicate.test(t);
+            } catch (UncheckedException e) {
+                Throwable cause = e.getCause();
+                if (errorType.isInstance(cause)) {
+                    throw errorType.cast(cause);
+                }
+                throw e;
             }
-            throw e;
-        }
+        };
     }
 }

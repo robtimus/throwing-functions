@@ -29,7 +29,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
@@ -1555,74 +1554,6 @@ class ThrowingLongPredicateTest {
             }, IOException.class);
 
             IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> predicate.test(1L));
-            assertEquals("1", thrown.getMessage());
-        }
-    }
-
-    @Nested
-    class InvokeAndUnwrap {
-
-        @Test
-        void testNullArguments() {
-            LongPredicate predicate = Objects::nonNull;
-
-            assertThrows(NullPointerException.class, () -> ThrowingLongPredicate.invokeAndUnwrap(null, 1L, IOException.class));
-            assertThrows(NullPointerException.class, () -> ThrowingLongPredicate.invokeAndUnwrap(predicate, 1L, null));
-        }
-
-        @Test
-        void testArgumentThrowsNothing() throws IOException {
-            LongPredicate predicate = l -> l % 2 != 0;
-
-            assertTrue(ThrowingLongPredicate.invokeAndUnwrap(predicate, 1L, IOException.class));
-        }
-
-        @Nested
-        class ArgumentThrowsUncheckedException {
-
-            @Test
-            void testWrappingExactType() {
-                LongPredicate predicate = l -> {
-                    throw UncheckedException.withoutStackTrace(new IOException(Long.toString(l)));
-                };
-
-                IOException thrown = assertThrows(IOException.class, () -> ThrowingLongPredicate.invokeAndUnwrap(predicate, 1L, IOException.class));
-                assertEquals("1", thrown.getMessage());
-            }
-
-            @Test
-            void testWrappingSubType() {
-                LongPredicate predicate = l -> {
-                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(Long.toString(l)));
-                };
-
-                FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
-                        () -> ThrowingLongPredicate.invokeAndUnwrap(predicate, 1L, IOException.class));
-                assertEquals("1", thrown.getMessage());
-            }
-
-            @Test
-            void testWrappingOther() {
-                LongPredicate predicate = l -> {
-                    throw UncheckedException.withoutStackTrace(new ParseException(Long.toString(l), 0));
-                };
-
-                UncheckedException thrown = assertThrows(UncheckedException.class,
-                        () -> ThrowingLongPredicate.invokeAndUnwrap(predicate, 1L, IOException.class));
-                ParseException cause = assertInstanceOf(ParseException.class, thrown.getCause());
-                assertEquals("1", cause.getMessage());
-                assertEquals(0, cause.getErrorOffset());
-            }
-        }
-
-        @Test
-        void testArgumentThrowsOther() {
-            LongPredicate predicate = l -> {
-                throw new IllegalStateException(Long.toString(l));
-            };
-
-            IllegalStateException thrown = assertThrows(IllegalStateException.class,
-                    () -> ThrowingLongPredicate.invokeAndUnwrap(predicate, 1L, IOException.class));
             assertEquals("1", thrown.getMessage());
         }
     }

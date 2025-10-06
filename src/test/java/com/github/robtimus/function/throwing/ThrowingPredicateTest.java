@@ -29,7 +29,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
@@ -1554,76 +1553,6 @@ class ThrowingPredicateTest {
             }, IOException.class);
 
             IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> predicate.test("foo"));
-            assertEquals("foo", thrown.getMessage());
-        }
-    }
-
-    @Nested
-    class InvokeAndUnwrap {
-
-        @Test
-        void testNullArguments() throws IOException {
-            Predicate<String> predicate = Objects::nonNull;
-
-            assertThrows(NullPointerException.class, () -> ThrowingPredicate.invokeAndUnwrap(null, "foo", IOException.class));
-            assertThrows(NullPointerException.class, () -> ThrowingPredicate.invokeAndUnwrap(predicate, "foo", null));
-
-            assertFalse(ThrowingPredicate.invokeAndUnwrap(predicate, null, IOException.class));
-        }
-
-        @Test
-        void testArgumentThrowsNothing() throws IOException {
-            Predicate<String> predicate = String::isBlank;
-
-            assertTrue(ThrowingPredicate.invokeAndUnwrap(predicate, " ", IOException.class));
-        }
-
-        @Nested
-        class ArgumentThrowsUncheckedException {
-
-            @Test
-            void testWrappingExactType() {
-                Predicate<String> predicate = s -> {
-                    throw UncheckedException.withoutStackTrace(new IOException(s));
-                };
-
-                IOException thrown = assertThrows(IOException.class, () -> ThrowingPredicate.invokeAndUnwrap(predicate, "foo", IOException.class));
-                assertEquals("foo", thrown.getMessage());
-            }
-
-            @Test
-            void testWrappingSubType() {
-                Predicate<String> predicate = s -> {
-                    throw UncheckedException.withoutStackTrace(new FileNotFoundException(s));
-                };
-
-                FileNotFoundException thrown = assertThrows(FileNotFoundException.class,
-                        () -> ThrowingPredicate.invokeAndUnwrap(predicate, "foo", IOException.class));
-                assertEquals("foo", thrown.getMessage());
-            }
-
-            @Test
-            void testWrappingOther() {
-                Predicate<String> predicate = s -> {
-                    throw UncheckedException.withoutStackTrace(new ParseException(s, 0));
-                };
-
-                UncheckedException thrown = assertThrows(UncheckedException.class,
-                        () -> ThrowingPredicate.invokeAndUnwrap(predicate, "foo", IOException.class));
-                ParseException cause = assertInstanceOf(ParseException.class, thrown.getCause());
-                assertEquals("foo", cause.getMessage());
-                assertEquals(0, cause.getErrorOffset());
-            }
-        }
-
-        @Test
-        void testArgumentThrowsOther() {
-            Predicate<String> predicate = s -> {
-                throw new IllegalStateException(s);
-            };
-
-            IllegalStateException thrown = assertThrows(IllegalStateException.class,
-                    () -> ThrowingPredicate.invokeAndUnwrap(predicate, "foo", IOException.class));
             assertEquals("foo", thrown.getMessage());
         }
     }

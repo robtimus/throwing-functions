@@ -320,30 +320,16 @@ public interface ThrowingDoubleUnaryOperator<X extends Throwable> {
     static <X extends Throwable> ThrowingDoubleUnaryOperator<X> checked(DoubleUnaryOperator operator, Class<X> errorType) {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(errorType);
-        return t -> invokeAndUnwrap(operator, t, errorType);
-    }
-
-    /**
-     * Invokes a unary operator, unwrapping any {@link UncheckedException} that is thrown if its cause if an instance of {@code errorType}.
-     *
-     * @param <X> The type of checked exception that can be thrown.
-     * @param operator The operator to invoke.
-     * @param input The input to the operator.
-     * @param errorType The type of checked exception that can be thrown.
-     * @return The result of invoking {@code operator}.
-     * @throws NullPointerException If {@code operator} or {@code errorType} is {@code null}.
-     * @throws X If {@code operator} throws an {@link UncheckedException} that wraps an instance of {@code errorType}.
-     */
-    static <X extends Throwable> double invokeAndUnwrap(DoubleUnaryOperator operator, double input, Class<X> errorType) throws X {
-        Objects.requireNonNull(errorType);
-        try {
-            return operator.applyAsDouble(input);
-        } catch (UncheckedException e) {
-            Throwable cause = e.getCause();
-            if (errorType.isInstance(cause)) {
-                throw errorType.cast(cause);
+        return t -> {
+            try {
+                return operator.applyAsDouble(t);
+            } catch (UncheckedException e) {
+                Throwable cause = e.getCause();
+                if (errorType.isInstance(cause)) {
+                    throw errorType.cast(cause);
+                }
+                throw e;
             }
-            throw e;
-        }
+        };
     }
 }

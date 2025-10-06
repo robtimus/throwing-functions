@@ -320,30 +320,16 @@ public interface ThrowingLongUnaryOperator<X extends Throwable> {
     static <X extends Throwable> ThrowingLongUnaryOperator<X> checked(LongUnaryOperator operator, Class<X> errorType) {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(errorType);
-        return t -> invokeAndUnwrap(operator, t, errorType);
-    }
-
-    /**
-     * Invokes a unary operator, unwrapping any {@link UncheckedException} that is thrown if its cause if an instance of {@code errorType}.
-     *
-     * @param <X> The type of checked exception that can be thrown.
-     * @param operator The operator to invoke.
-     * @param input The input to the operator.
-     * @param errorType The type of checked exception that can be thrown.
-     * @return The result of invoking {@code operator}.
-     * @throws NullPointerException If {@code operator} or {@code errorType} is {@code null}.
-     * @throws X If {@code operator} throws an {@link UncheckedException} that wraps an instance of {@code errorType}.
-     */
-    static <X extends Throwable> long invokeAndUnwrap(LongUnaryOperator operator, long input, Class<X> errorType) throws X {
-        Objects.requireNonNull(errorType);
-        try {
-            return operator.applyAsLong(input);
-        } catch (UncheckedException e) {
-            Throwable cause = e.getCause();
-            if (errorType.isInstance(cause)) {
-                throw errorType.cast(cause);
+        return t -> {
+            try {
+                return operator.applyAsLong(t);
+            } catch (UncheckedException e) {
+                Throwable cause = e.getCause();
+                if (errorType.isInstance(cause)) {
+                    throw errorType.cast(cause);
+                }
+                throw e;
             }
-            throw e;
-        }
+        };
     }
 }

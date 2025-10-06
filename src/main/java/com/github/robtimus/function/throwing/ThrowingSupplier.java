@@ -269,30 +269,16 @@ public interface ThrowingSupplier<T, X extends Throwable> {
     static <T, X extends Throwable> ThrowingSupplier<T, X> checked(Supplier<? extends T> supplier, Class<X> errorType) {
         Objects.requireNonNull(supplier);
         Objects.requireNonNull(errorType);
-        return () -> invokeAndUnwrap(supplier, errorType);
-    }
-
-    /**
-     * Invokes a supplier, unwrapping any {@link UncheckedException} that is thrown if its cause if an instance of {@code errorType}.
-     *
-     * @param <T> The type of the results supplied by the supplier.
-     * @param <X> The type of checked exception that can be thrown.
-     * @param supplier The supplier to invoke.
-     * @param errorType The type of checked exception that can be thrown.
-     * @return The result of invoking {@code supplier}.
-     * @throws NullPointerException If {@code supplier} or {@code errorType} is {@code null}.
-     * @throws X If {@code supplier} throws an {@link UncheckedException} that wraps an instance of {@code errorType}.
-     */
-    static <T, X extends Throwable> T invokeAndUnwrap(Supplier<? extends T> supplier, Class<X> errorType) throws X {
-        Objects.requireNonNull(errorType);
-        try {
-            return supplier.get();
-        } catch (UncheckedException e) {
-            Throwable cause = e.getCause();
-            if (errorType.isInstance(cause)) {
-                throw errorType.cast(cause);
+        return () -> {
+            try {
+                return supplier.get();
+            } catch (UncheckedException e) {
+                Throwable cause = e.getCause();
+                if (errorType.isInstance(cause)) {
+                    throw errorType.cast(cause);
+                }
+                throw e;
             }
-            throw e;
-        }
+        };
     }
 }
