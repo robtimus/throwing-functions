@@ -24,12 +24,17 @@ import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.ParseException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("nls")
@@ -111,5 +116,111 @@ class UncheckedExceptionTest {
             lineNumber++;
         }
         return fail("No line starting with 'Caused by: ' found");
+    }
+
+    @Nested
+    class ThrowCauseAs {
+
+        @Test
+        void testCauseInstanceOfErrorType() {
+            IOException cause = new IOException();
+            UncheckedException exception = UncheckedException.withoutStackTrace(cause);
+
+            IOException thrown = assertThrows(IOException.class, () -> exception.throwCauseAs(IOException.class));
+            assertSame(cause, thrown);
+        }
+
+        @Test
+        void testCauseNotInstanceOfErrorType() {
+            ParseException cause = new ParseException("", 0);
+            UncheckedException exception = UncheckedException.withoutStackTrace(cause);
+
+            IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> exception.throwCauseAs(IOException.class));
+            assertEquals("Unexpected exception thrown: " + cause, thrown.getMessage());
+            assertSame(cause, thrown.getCause());
+        }
+    }
+
+    @Nested
+    class ThrowCauseAsOneOf {
+
+        @Nested
+        class OneOfTwo {
+
+            @Test
+            void testCauseInstanceOfFirstErrorType() {
+                IOException cause = new IOException();
+                UncheckedException exception = UncheckedException.withoutStackTrace(cause);
+
+                IOException thrown = assertThrows(IOException.class, () -> exception.throwCauseAsOneOf(IOException.class, ParseException.class));
+                assertSame(cause, thrown);
+            }
+
+            @Test
+            void testCauseInstanceOfSecondErrorType() {
+                ParseException cause = new ParseException("", 0);
+                UncheckedException exception = UncheckedException.withoutStackTrace(cause);
+
+                ParseException thrown = assertThrows(ParseException.class,
+                        () -> exception.throwCauseAsOneOf(IOException.class, ParseException.class));
+                assertSame(cause, thrown);
+            }
+
+            @Test
+            void testCauseNotInstanceOfEitherErrorType() {
+                IllegalArgumentException cause = new IllegalArgumentException();
+                UncheckedException exception = UncheckedException.withoutStackTrace(cause);
+
+                IllegalStateException thrown = assertThrows(IllegalStateException.class,
+                        () -> exception.throwCauseAsOneOf(IOException.class, ParseException.class));
+                assertEquals("Unexpected exception thrown: " + cause, thrown.getMessage());
+                assertSame(cause, thrown.getCause());
+            }
+        }
+
+        @Nested
+        class OneOfThree {
+
+            @Test
+            void testCauseInstanceOfFirstErrorType() {
+                IOException cause = new IOException();
+                UncheckedException exception = UncheckedException.withoutStackTrace(cause);
+
+                IOException thrown = assertThrows(IOException.class,
+                        () -> exception.throwCauseAsOneOf(IOException.class, ParseException.class, IllegalArgumentException.class));
+                assertSame(cause, thrown);
+            }
+
+            @Test
+            void testCauseInstanceOfSecondErrorType() {
+                ParseException cause = new ParseException("", 0);
+                UncheckedException exception = UncheckedException.withoutStackTrace(cause);
+
+                ParseException thrown = assertThrows(ParseException.class,
+                        () -> exception.throwCauseAsOneOf(IOException.class, ParseException.class, IllegalArgumentException.class));
+                assertSame(cause, thrown);
+            }
+
+            @Test
+            void testCauseInstanceOfThirdErrorType() {
+                IllegalArgumentException cause = new IllegalArgumentException();
+                UncheckedException exception = UncheckedException.withoutStackTrace(cause);
+
+                IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
+                        () -> exception.throwCauseAsOneOf(IOException.class, ParseException.class, IllegalArgumentException.class));
+                assertSame(cause, thrown);
+            }
+
+            @Test
+            void testCauseNotInstanceOfAnyErrorType() {
+                NoSuchElementException cause = new NoSuchElementException();
+                UncheckedException exception = UncheckedException.withoutStackTrace(cause);
+
+                IllegalStateException thrown = assertThrows(IllegalStateException.class,
+                        () -> exception.throwCauseAsOneOf(IOException.class, ParseException.class, IllegalArgumentException.class));
+                assertEquals("Unexpected exception thrown: " + cause, thrown.getMessage());
+                assertSame(cause, thrown.getCause());
+            }
+        }
     }
 }

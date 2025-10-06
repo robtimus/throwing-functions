@@ -13,7 +13,7 @@ Each of these interfaces also contains static methods `unchecked` and `checked` 
 try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, filter)) {
     stream.forEach(unchecked(Files::delete));
 } catch (UncheckedException e) {
-    throw (IOException) e.getCause();
+    e.throwCauseAs(IOException.class);
 }
 ```
 

@@ -78,4 +78,81 @@ public final class UncheckedException extends RuntimeException {
         Objects.requireNonNull(cause);
         return new UncheckedException(message, cause, false);
     }
+
+    /**
+     * Throws the wrapped throwable as an instance of a specific error type.
+     *
+     * @param <T> The return type. This allows this method to be used with return statements.
+     * @param <X> The type of error to throw.
+     * @param errorType The type of error to throw.
+     * @return Nothing. This method always thrown an exception.
+     * @throws NullPointerException If the given error type is {@code null}.
+     * @throws X The wrapped throwable cast to an instance of the given error type.
+     * @throws IllegalStateException If the wrapped throwable is not an instance of the given error type.
+     */
+    public <T, X extends Throwable> T throwCauseAs(Class<X> errorType) throws X {
+        Throwable cause = getCause();
+        if (errorType.isInstance(cause)) {
+            throw errorType.cast(cause);
+        }
+        throw new IllegalStateException("Unexpected exception thrown: " + cause, cause); //$NON-NLS-1$
+    }
+
+    /**
+     * Throws the wrapped throwable as an instance of one of a set of specific error types.
+     *
+     * @param <T> The return type. This allows this method to be used with return statements.
+     * @param <X1> The type of the first possible error to throw.
+     * @param <X2> The type of the second possible error to throw.
+     * @param errorType1 The type of the first possible error to throw.
+     * @param errorType2 The type of the second possible error to throw.
+     * @return Nothing. This method always thrown an exception.
+     * @throws NullPointerException If either given error type is {@code null}.
+     * @throws X1 The wrapped throwable cast to an instance of the first given error type.
+     * @throws X2 The wrapped throwable cast to an instance of the second given error type.
+     * @throws IllegalStateException If the wrapped throwable is not an instance of either given error type.
+     */
+    public <T, X1 extends Throwable, X2 extends Throwable> T throwCauseAsOneOf(Class<X1> errorType1, Class<X2> errorType2) throws X1, X2 {
+        Throwable cause = getCause();
+        if (errorType1.isInstance(cause)) {
+            throw errorType1.cast(cause);
+        }
+        if (errorType2.isInstance(cause)) {
+            throw errorType2.cast(cause);
+        }
+        throw new IllegalStateException("Unexpected exception thrown: " + cause, cause); //$NON-NLS-1$
+    }
+
+    /**
+     * Throws the wrapped throwable as an instance of one of a set of specific error types.
+     *
+     * @param <T> The return type. This allows this method to be used with return statements.
+     * @param <X1> The type of the first possible error to throw.
+     * @param <X2> The type of the second possible error to throw.
+     * @param <X3> The type of the third possible error to throw.
+     * @param errorType1 The type of the first possible error to throw.
+     * @param errorType2 The type of the second possible error to throw.
+     * @param errorType3 The type of the third possible error to throw.
+     * @return Nothing. This method always thrown an exception.
+     * @throws NullPointerException If any given error type is {@code null}.
+     * @throws X1 The wrapped throwable cast to an instance of the first given error type.
+     * @throws X2 The wrapped throwable cast to an instance of the second given error type.
+     * @throws X3 The wrapped throwable cast to an instance of the third given error type.
+     * @throws IllegalStateException If the wrapped throwable is not an instance of any given error type.
+     */
+    public <T, X1 extends Throwable, X2 extends Throwable, X3 extends Throwable> T throwCauseAsOneOf(Class<X1> errorType1,
+                                                                                                     Class<X2> errorType2,
+                                                                                                     Class<X3> errorType3) throws X1, X2, X3 {
+        Throwable cause = getCause();
+        if (errorType1.isInstance(cause)) {
+            throw errorType1.cast(cause);
+        }
+        if (errorType2.isInstance(cause)) {
+            throw errorType2.cast(cause);
+        }
+        if (errorType3.isInstance(cause)) {
+            throw errorType3.cast(cause);
+        }
+        throw new IllegalStateException("Unexpected exception thrown: " + cause, cause); //$NON-NLS-1$
+    }
 }
