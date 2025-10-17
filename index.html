@@ -60,7 +60,7 @@
 <section><a id="throwing-functions"></a>
 <h1>throwing-functions</h1>
 <p>The <code>throwing-functions</code> library provides copies of the functional interfaces in <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/package-summary.html" class="externalLink">java.util.functions</a> that allow their functional interface methods to throw checked exceptions.</p>
-<p>Each of these interfaces also contains static methods <code>unchecked</code> and <code>checked</code> to convert them to and from their matching equivalents in <code>java.util.functions</code>. For example, to delete all files in a directory that match a filter, you can use <a href="apidocs/com.github.robtimus.function.throwing/com/github/robtimus/function/throwing/ThrowingConsumer.html#unchecked.28com.github.robtimus.function.throwing.ThrowingConsumer.29">ThrowingConsumer.unchecked</a>:</p>
+<p>Each of these interfaces also contains static methods <code>unchecked</code> and <code>checked</code> to convert them to and from their matching equivalents in <code>java.util.functions</code>. For example, to delete all files in a directory that match a filter, you can use <a href="apidocs/com.github.robtimus.function.throwing/com/github/robtimus/function/throwing/ThrowingConsumer.html#unchecked(com.github.robtimus.function.throwing.ThrowingConsumer)">ThrowingConsumer.unchecked</a>:</p>
 
 <pre class="prettyprint"><code class="language-java">try (DirectoryStream&lt;Path&gt; stream = Files.newDirectoryStream(dir, filter)) {
     stream.forEach(ThrowingConsumer.unchecked(Files::delete));
@@ -68,7 +68,7 @@
     e.throwCauseAs(IOException.class);
 }
 </code></pre>
-<p>The <code>throwCauseAs</code> method above is declared to return any type, allowing it to be used as return statement. For instance, using <a href="apidocs/com.github.robtimus.function.throwing/com/github/robtimus/function/throwing/ThrowingToLongFunction.html#unchecked.28com.github.robtimus.function.throwing.ThrowingConsumer.29">ThrowingToLongFunction.unchecked</a>:</p>
+<p>The <code>throwCauseAs</code> method above is declared to return any type, allowing it to be used as return statement. For instance, using <a href="apidocs/com.github.robtimus.function.throwing/com/github/robtimus/function/throwing/ThrowingToLongFunction.html#unchecked(com.github.robtimus.function.throwing.ThrowingToLongFunction)">ThrowingToLongFunction.unchecked</a>:</p>
 
 <pre class="prettyprint"><code class="language-java">static long getTotalSize(Path dir) throws IOException {
     try (Stream&lt;Path&gt; stream = Files.walk(dir)) {
