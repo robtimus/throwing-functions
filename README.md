@@ -7,7 +7,7 @@
 
 The `throwing-functions` library provides copies of the functional interfaces in [java.util.functions](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/package-summary.html) that allow their functional interface methods to throw checked exceptions.
 
-Each of these interfaces also contains static methods `unchecked` and `checked` to convert them to and from their matching equivalents in `java.util.functions`. For example, to delete all files in a directory that match a filter, you can use [TheckedConsumer.unchecked](https://robtimus.github.io/throwing-functions/apidocs/com.github.robtimus.function.throwing/com/github/robtimus/function/throwing/ThrowingConsumer.html#unchecked\(com.github.robtimus.function.throwing.ThrowingConsumer\)):
+Each of these interfaces also contains static methods `unchecked` and `checked` to convert them to and from their matching equivalents in `java.util.functions`. For example, to delete all files in a directory that match a filter, you can use [ThrowingConsumer.unchecked](https://robtimus.github.io/throwing-functions/apidocs/com.github.robtimus.function.throwing/com/github/robtimus/function/throwing/ThrowingConsumer.html#unchecked\(com.github.robtimus.function.throwing.ThrowingConsumer\)):
 
 ```java
 try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, filter)) {
