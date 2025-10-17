@@ -11,9 +11,24 @@ Each of these interfaces also contains static methods `unchecked` and `checked` 
 
 ```java
 try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, filter)) {
-    stream.forEach(unchecked(Files::delete));
+    stream.forEach(ThrowingConsumer.unchecked(Files::delete));
 } catch (UncheckedException e) {
     e.throwCauseAs(IOException.class);
+}
+```
+
+The `throwCauseAs` method above is declared to return any type, allowing it to be used as return statement. For instance, using [ThrowingToLongFunction.unchecked](https://robtimus.github.io/throwing-functions/apidocs/com.github.robtimus.function.throwing/com/github/robtimus/function/throwing/ThrowingToLongFunction.html#unchecked\(com.github.robtimus.function.throwing.ThrowingConsumer\)):
+
+```java
+static long getTotalSize(Path dir) throws IOException {
+    try (Stream<Path> stream = Files.walk(dir)) {
+        return stream
+                .filter(Files::isRegularFile)
+                .mapToLong(ThrowingToLongFunction.unchecked(Files::size))
+                .reduce(0, Long::sum);
+    } catch (UncheckedException e) {
+        return e.throwCauseAs(IOException.class);
+    }
 }
 ```
 
@@ -47,6 +62,19 @@ It also becomes easy to log exceptions instead of letting them be relayed to the
 ```java
 try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, filter)) {
     stream.forEach(ThrowingConsumer.of(Files::delete).onErrorHandleUnchecked(e -> logger.info("Failed to delete a file", e)));
+}
+```
+
+And the `getTotalSize` method shown above can be changed to not fail if a file's size cannot be determined:
+
+```java
+static long getTotalSize(Path dir) throws IOException {
+    try (Stream<Path> stream = Files.walk(dir)) {
+        return stream
+                .filter(Files::isRegularFile)
+                .mapToLong(ThrowingToLongFunction.of(Files::size).onErrorReturn(0))
+                .reduce(0, Long::sum);
+    }
 }
 ```
 
