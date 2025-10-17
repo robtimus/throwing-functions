@@ -17,7 +17,7 @@ try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, filter)) {
 }
 ```
 
-The `throwCauseAs` method above is declared to return any type, allowing it to be used as return statement. For instance, using [ThrowingToLongFunction.unchecked](https://robtimus.github.io/throwing-functions/apidocs/com.github.robtimus.function.throwing/com/github/robtimus/function/throwing/ThrowingToLongFunction.html#unchecked\(com.github.robtimus.function.throwing.ThrowingConsumer\)):
+The `throwCauseAs` method above is declared to return any type, allowing it to be used as return statement. For instance, using [ThrowingToLongFunction.unchecked](https://robtimus.github.io/throwing-functions/apidocs/com.github.robtimus.function.throwing/com/github/robtimus/function/throwing/ThrowingToLongFunction.html#unchecked\(com.github.robtimus.function.throwing.ThrowingToLongFunction\)):
 
 ```java
 static long getTotalSize(Path dir) throws IOException {
