@@ -211,12 +211,4 @@
       </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <id>min-versions</id>
-      <properties>
-      </properties>
-    </profile>
-  </profiles>
 </project>
