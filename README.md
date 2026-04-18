@@ -3,7 +3,6 @@
 [![Build Status](https://github.com/robtimus/throwing-functions/actions/workflows/build.yml/badge.svg)](https://github.com/robtimus/throwing-functions/actions/workflows/build.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=com.github.robtimus%3Athrowing-functions&metric=alert_status)](https://sonarcloud.io/summary/overall?id=com.github.robtimus%3Athrowing-functions)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=com.github.robtimus%3Athrowing-functions&metric=coverage)](https://sonarcloud.io/summary/overall?id=com.github.robtimus%3Athrowing-functions)
-[![Known Vulnerabilities](https://snyk.io/test/github/robtimus/throwing-functions/badge.svg)](https://snyk.io/test/github/robtimus/throwing-functions)
 
 The `throwing-functions` library provides copies of the functional interfaces in [java.util.functions](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/package-summary.html) that allow their functional interface methods to throw checked exceptions.
 
